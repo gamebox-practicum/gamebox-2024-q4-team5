@@ -45,8 +45,11 @@ protected:
 
     /* ---   Base   --- */
 
-    // Called when the game starts or when spawned
+    /** Overridable native event for when play begins for this actor */
     virtual void BeginPlay() override;
+
+    /** Overridable function called whenever this actor is being removed from a level */
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     //-------------------------------------------
 
 
@@ -83,8 +86,8 @@ private:
 
     /* ---   Preview   --- */
 
-    // Массив Указателей на все Клетки
-    TArray<ASquare*> AllSquare;
+    // Тег для определения клетки, созданной генератором
+    FName VerificationTag = "Generate";
 
     //
 
@@ -93,6 +96,9 @@ private:
 
     /** Удалить все клетки */
     void DeleteAllSquares();
+
+    /** Получить все созданные клетки (проверка по Тегу) */
+    TArray<ASquare*> GetAllSquares();
     //-------------------------------------------
 
 

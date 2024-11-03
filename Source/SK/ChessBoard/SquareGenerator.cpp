@@ -3,6 +3,9 @@
 // Base:
 #include "SquareGenerator.h"
 
+// UE:
+#include "Kismet/GameplayStatics.h"
+
 // Interaction:
 #include "Square.h"
 #include "SquareStruct.h"
@@ -33,6 +36,11 @@ void ASquareGenerator::BeginPlay()
 
 }
 
+void ASquareGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+}
+
 void ASquareGenerator::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
@@ -53,12 +61,44 @@ void ASquareGenerator::Preview()
 
 void ASquareGenerator::DeleteAllSquares()
 {
-    for (auto Data : AllSquare)
+    for (auto lSquare : GetAllSquares())
     {
-        Data->Destroy();
+        lSquare->Destroy();
     }
-    AllSquare.Empty();
     BlockSize = FVector::ZeroVector;
+}
+
+TArray<ASquare*> ASquareGenerator::GetAllSquares()
+{
+    TArray<ASquare*> lResult;
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASquare::StaticClass(), lResultActors);
+
+    if (lResultActors.IsValidIndex(0))
+    {
+        bool bCheckTags = false;
+
+        for (AActor* lData : lResultActors)
+        {
+            ASquare* lCurrentSquare = Cast<ASquare>(lData);
+
+            for (FName lTags : lCurrentSquare->Tags)
+            {
+                if (lTags == VerificationTag)
+                {
+                    bCheckTags = true;
+                }
+            }
+
+            if (bCheckTags)
+            {
+                lResult.Add(lCurrentSquare);
+            }
+        }
+    }
+
+    return lResult;
 }
 //--------------------------------------------------------------------------------------
 
@@ -91,12 +131,12 @@ void ASquareGenerator::CreateSquare(const FIndex2D& iXY)
     }
     else
     {
-        lSquare = GetWorld()->SpawnActor<ASquare>(BlockType.Get(), GetLocationForSquare(iXY), FRotator());
+        lSquare = GetWorld()->SpawnActor<ASquare>(BlockType.Get(), GetLocationForSquare(iXY), FRotator::ZeroRotator);
     }
 
-    SetSquareData(lSquare, SquareDataGeneration(iXY));
+    lSquare->Tags.Add(VerificationTag);
 
-    AllSquare.Add(lSquare);
+    SetSquareData(lSquare, SquareDataGeneration(iXY));
 }
 
 void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
