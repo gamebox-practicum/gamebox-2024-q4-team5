@@ -3,7 +3,12 @@
 // Base:
 #include "Square.h"
 
+// UE:
+#include "Kismet/GameplayStatics.h"
+
+// Interaction:
 #include "SquareStruct.h"
+#include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -62,6 +67,24 @@ void ASquare::NotifyActorEndCursorOver()
     Super::NotifyActorEndCursorOver();
 
     BlockMesh->SetRenderCustomDepth(false);
+}
+
+void ASquare::NotifyActorOnClicked(FKey ButtonReleased)
+{
+    Super::NotifyActorOnClicked(ButtonReleased);
+
+    // Предварительное присвоение
+    ASK_Character* lCharacter = Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn());
+    // Warning: Потребуется переделать, если переделывать на Multiplayer
+
+    if (lCharacter)
+    {
+        lCharacter->MoveToSquare(this);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': lCharacter is NOT"), *GetNameSafe(this));
+    }
 }
 //--------------------------------------------------------------------------------------
 

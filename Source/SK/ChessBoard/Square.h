@@ -6,9 +6,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-// Tools:
-
-
 // Generated:
 #include "Square.generated.h"
 //--------------------------------------------------------------------------------------
@@ -19,6 +16,7 @@
 
 // Interaction:
 struct FSquareData;
+class ASK_Character;
 //--------------------------------------------------------------------------------------
 
 
@@ -41,7 +39,8 @@ public:
     /* ---   Components   --- */
 
     /** Меш визуализации блока */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components, meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+        meta = (AllowPrivateAccess = "true"))
     UStaticMeshComponent* BlockMesh = nullptr;
     //-------------------------------------------
 
@@ -66,6 +65,9 @@ public:
 
     /** Событие, когда с него убирают курсор мыши с помощью интерактивного интерфейса */
     virtual void NotifyActorEndCursorOver() override;
+
+    /** Событие, когда этот субъект находится под мышкой при нажатии клавиши реагирования с помощью интерактивного интерфейса */
+    virtual void NotifyActorOnClicked(FKey ButtonReleased) override;
     //-------------------------------------------
 
 

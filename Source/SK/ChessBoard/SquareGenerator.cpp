@@ -36,11 +36,6 @@ void ASquareGenerator::BeginPlay()
 
 }
 
-void ASquareGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-    Super::EndPlay(EndPlayReason);
-}
-
 void ASquareGenerator::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
