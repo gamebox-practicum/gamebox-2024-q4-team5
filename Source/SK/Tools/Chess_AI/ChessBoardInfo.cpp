@@ -1,0 +1,43 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "ChessBoardInfo.h"
+
+void UChessBoardInfo::Init( int sizeY, int sizeX)
+{
+    m_sizeY = sizeY;
+    m_sizeX = sizeX;
+    m_Board = new FSquareInfo*[sizeY];
+    for (int count = 0; count < sizeY; ++count)
+    {
+        m_Board[count] = new FSquareInfo[sizeX];
+    }
+}
+
+FSquareInfo UChessBoardInfo::Get(int Y, int X)
+{
+    return m_Board[Y][X];
+}
+
+void UChessBoardInfo::Set(int Y, int X, FSquareInfo value)
+{
+    m_Board[Y][X] = value;
+}
+
+FSquareInfo*& UChessBoardInfo::operator[](int Y)
+{
+    return m_Board[Y];
+}
+
+UChessBoardInfo::~UChessBoardInfo()
+{
+    if(m_Board == nullptr)
+    {
+        return;
+    }
+    for (int count = 0; count < m_sizeY; ++count)
+    {
+        delete[] m_Board[count];
+    }
+    delete[] m_Board;
+}
