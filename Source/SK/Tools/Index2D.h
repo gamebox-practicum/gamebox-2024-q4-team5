@@ -55,4 +55,4 @@ FVector operator*(const FVector& iVector, const FIndex2D& iIndex);
 FVector operator*(const FIndex2D& iIndex, const FVector& iVector);
 //--------------------------------------------------------------------------------------
 
-//UE_LOG(LogTemp, Error, TEXT("Text"));
+//UE_LOG(LogTemp, Error, TEXT("'%s': ** is NOT"), *GetNameSafe(this));

@@ -8,7 +8,6 @@
 
 // Interaction:
 #include "Square.h"
-#include "SquareStruct.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -40,15 +39,16 @@ void ASquareGenerator::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
 
-    Preview();
+    //ReGenerate();
 }
 //--------------------------------------------------------------------------------------
 
 
 
-/* ---   Preview   --- */
+/* ---   Re Generate   --- */
+// PS: Следует переделать как шаблонные функции универсального Генератора
 
-void ASquareGenerator::Preview()
+void ASquareGenerator::ReGenerate()
 {
     DeleteAllSquares();
     CreateGeneratedSquares();
@@ -100,19 +100,29 @@ TArray<ASquare*> ASquareGenerator::GetAllSquares()
 
 
 /* ---   Generator   --- */
+// PS: Следует переделать как шаблонные функции универсального Генератора
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
+    TDArraySquares.Empty();
+    TDArraySquares.SetNum(NumberAlongAxes.X);
+
     for (int32 x = 0; x < NumberAlongAxes.X; ++x)
     {
+        TArray<ASquare*>* lArraySquare = &TDArraySquares[x];
+
+        // Создание недостающего массива
+        lArraySquare->SetNum(NumberAlongAxes.Y);
+
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
         {
-            CreateSquare(FIndex2D(x, y));
+            // Создание Клетки и добавление её в массив
+            (*lArraySquare)[y] = CreateSquare(FIndex2D(x, y));
         }
     }
 }
 
-void ASquareGenerator::CreateSquare(const FIndex2D& iXY)
+ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
 {
     ASquare* lSquare = nullptr;
 
@@ -129,9 +139,13 @@ void ASquareGenerator::CreateSquare(const FIndex2D& iXY)
         lSquare = GetWorld()->SpawnActor<ASquare>(BlockType.Get(), GetLocationForSquare(iXY), FRotator::ZeroRotator);
     }
 
+    // Тег-маркировка Клетки.
+    // Необходим для удаления только Генерируемых Клеток
     lSquare->Tags.Add(VerificationTag);
 
     SetSquareData(lSquare, SquareDataGeneration(iXY));
+
+    return lSquare;
 }
 
 void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
@@ -184,5 +198,15 @@ FSquareData ASquareGenerator::SquareDataGeneration(const FIndex2D& iXY)
 int32 ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
 {
     return (iXY.X + iXY.Y) % 2;
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Get Data   --- */
+
+const TArray<TArray<ASquare*>>* ASquareGenerator::GetPointerToAllSquares()
+{
+    return &TDArraySquares;
 }
 //--------------------------------------------------------------------------------------

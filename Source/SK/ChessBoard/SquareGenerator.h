@@ -7,8 +7,10 @@
 #include "GameFramework/Actor.h"
 
 // Tools:
-#include "SK/Tools/MyRandom.h"
 #include "SK/Tools/Index2D.h"
+
+// Structs:
+#include "SquareStruct.h"
 
 // Generated:
 #include "SquareGenerator.generated.h"
@@ -20,7 +22,6 @@
 
 // Interaction:
 class ASquare;
-struct FSquareData;
 //--------------------------------------------------------------------------------------
 
 
@@ -61,34 +62,50 @@ public:
     //-------------------------------------------
 
 
+
+    /* ---   Re Generate   --- */
+
+    /** Перегенерировать (перезапустить) данный Генератор */
+    UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
+    void ReGenerate();
+    //-------------------------------------------
+
+
+
     /* ---   Generator   --- */
 
     // Тип генерируемого блока
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     TSubclassOf<ASquare> BlockType;
 
     // Зазор между блоками
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     FVector Gap = { 0.f, 0.f, 0.f };
 
     // Количество вдоль осей
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
+    //-------------------------------------------
+
+
+
+    /* ---   Get Data   --- */
+
+    /** Получение всех клеток в виде двумерного массива */
+    const TArray<TArray<ASquare*>>* GetPointerToAllSquares();
+    // PS: UFUNCTION() для него не работает
     //-------------------------------------------
 
 
 
 private:
 
-    /* ---   Preview   --- */
+    /* ---   Re Generate   --- */
 
     // Тег для определения клетки, созданной генератором
     FName VerificationTag = "Generate";
 
     //
-
-    /** Предварительная визуализация */
-    void Preview();
 
     /** Удалить все клетки */
     void DeleteAllSquares();
@@ -113,7 +130,7 @@ private:
     void CreateGeneratedSquares();
 
     /** Создать блок в указанной позиции */
-    void CreateSquare(const FIndex2D& XY);
+    ASquare* CreateSquare(const FIndex2D& XY);
 
     /** Проверить данные, при необходимости обновляет их по Актору */
     void GetSquareSize(const ASquare* Block);
@@ -134,5 +151,13 @@ private:
 
     /** Генерация номера материала по координатам */
     int32 GetMaterialNumber(const FIndex2D& XY);
+    //-------------------------------------------
+
+
+
+    /* ---   Get Data   --- */
+
+    // Все клетки в виде двумерного массива
+    TArray<TArray<ASquare*>> TDArraySquares;
     //-------------------------------------------
 };

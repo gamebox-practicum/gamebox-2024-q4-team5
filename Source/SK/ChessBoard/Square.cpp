@@ -7,7 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 
 // Interaction:
-#include "SquareStruct.h"
 #include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
@@ -29,7 +28,7 @@ ASquare::ASquare()
     // Корневой компонент
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
-    // Главный Мешь
+    // Главный Меш
     BlockMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Block Mesh"));
     BlockMesh->SetupAttachment(RootComponent);
     BlockMesh->SetRelativeLocation(FVector(0.f, 0.f, -25.f));

@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+// Structs:
+#include "SquareStruct.h"
+
 // Generated:
 #include "Square.generated.h"
 //--------------------------------------------------------------------------------------
@@ -15,7 +18,6 @@
 /* ---   Pre-declaration of classes and structures   --- */
 
 // Interaction:
-struct FSquareData;
 class ASK_Character;
 //--------------------------------------------------------------------------------------
 

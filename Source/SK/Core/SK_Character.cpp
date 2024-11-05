@@ -6,7 +6,6 @@
 // UE:
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/PawnNoiseEmitterComponent.h"
 
 // Interaction:
 #include "SK/ChessBoard/Square.h"

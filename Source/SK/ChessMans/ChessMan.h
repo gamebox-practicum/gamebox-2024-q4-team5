@@ -4,18 +4,18 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "GameFramework/Pawn.h"
+
+// Structs:
+#include "ChessManStruct.h"
 
 // Generated:
-#include "SK_Character.generated.h"
+#include "ChessMan.generated.h"
 //--------------------------------------------------------------------------------------
 
 
 
-/* ---   Pre-declaration of classes   --- */
-
-// UE:
-class UCameraComponent;
+/* ---   Pre-declaration of classes and structures   --- */
 
 // Interaction:
 class ASquare;
@@ -24,7 +24,7 @@ class ASquare;
 
 
 UCLASS()
-class SK_API ASK_Character : public ACharacter
+class SK_API AChessMan : public APawn
 {
     GENERATED_BODY()
 
@@ -32,18 +32,13 @@ public:
 
     /* ---   Constructors   --- */
 
-    // Устанавливает значения по умолчанию для свойств этого персонажа
-    ASK_Character();
+    // Sets default values for this pawn's properties
+    AChessMan();
     //-------------------------------------------
 
 
 
     /* ---   Components   --- */
-
-    // Камера от первого лица
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    UCameraComponent* FirstPersonCameraComponent;
 
     // Меш Шахматной Фигуры со скелетом
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
@@ -62,16 +57,8 @@ protected:
 
     /* ---   Base   --- */
 
-    // Вызывается при запуске игры или при запуске spawn
+    // Called when the game starts or when spawned
     virtual void BeginPlay() override;
-    //-------------------------------------------
-
-
-
-    /* ---   Input Action   --- */
-
-    /** Вызывается для привязки функциональности к входным данным */
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     //-------------------------------------------
 
 
@@ -82,19 +69,18 @@ public:
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
+
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     //-------------------------------------------
 
 
 
-    /* ---   Input Action   --- */
+    /* ---   Type   --- */
 
-    // Базовая скорость поворота, град/сек
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
-    float BaseTurnRate = 1.f;
-
-    // Базовая скорость обзора вверх/вниз в градусах в секунду
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
-    float BaseLookUpRate = 1.f;
+    // Текущая информация о данной Фигуре
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+    FChessManData CurrentData;
     //-------------------------------------------
 
 
@@ -124,23 +110,6 @@ private:
 
     /* Очистка от неиспользуемых компонентов */
     void Cleaning();
-    //-------------------------------------------
-
-
-
-    /* ---   Input Action   --- */
-
-    /** Перемещение вперёд/назад */
-    void MoveForward(float Val);
-
-    /** Перемещение влево/вправо */
-    void MoveRight(float Val);
-
-    /**	Поворот с заданной скоростью */
-    void TurnAtRate(float Rate);
-
-    /**	Обзор вверх/вниз с заданной скоростью */
-    void LookUpAtRate(float Rate);
     //-------------------------------------------
 
 
