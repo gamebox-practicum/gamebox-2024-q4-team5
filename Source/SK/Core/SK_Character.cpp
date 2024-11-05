@@ -23,6 +23,12 @@ ASK_Character::ASK_Character()
 
     /* ---   Components   --- */
 
+    // Корневой компонент
+    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+
+    // Капсула коллизии
+    GetCapsuleComponent()->SetupAttachment(RootComponent);
+
     // Меш с манекеном. Необходим для визуализации движения камеры
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -96.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
@@ -36,11 +42,12 @@ ASK_Character::ASK_Character()
 
     // Меш Шахматной Фигуры со скелетом
     ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
-    ChessmanSkeletalMesh->SetupAttachment(RootComponent);
+    ChessmanSkeletalMesh->SetupAttachment(GetCapsuleComponent());
 
     // Статичный Меш Шахматной Фигуры
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
-    ChessmanStaticMesh->SetupAttachment(RootComponent);
+    ChessmanStaticMesh->SetupAttachment(GetCapsuleComponent());
+    ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------

@@ -9,6 +9,9 @@
 // UE:
 #include "Engine/DataTable.h"
 
+// Interaction:
+#include "SK/Core/SK_Character.h"
+
 // Generated:
 #include "ChessManStruct.generated.h"
 //--------------------------------------------------------------------------------------
@@ -32,6 +35,32 @@ enum struct EChessManType : uint8
 
     // Базовый без эффектов
     NONE	// Всегда в конце для строгого назначения количества элементов массива
+};
+
+
+
+// Данные Игроков
+USTRUCT(BlueprintType)
+struct FPlayerData : public FTableRowBase
+{
+    GENERATED_BODY()
+
+    // Тип Фигуры
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<ASK_Character> Type;
+
+    // Позиция на доске
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FIndex2D Position = { 0,0 };
+
+
+
+    /* ---   Constructors   --- */
+    FPlayerData() {};
+
+    FPlayerData(TSubclassOf<ASK_Character> iType, FIndex2D iPosition)
+        : Type(iType), Position(iPosition) {};
+    //-------------------------------------------
 };
 
 

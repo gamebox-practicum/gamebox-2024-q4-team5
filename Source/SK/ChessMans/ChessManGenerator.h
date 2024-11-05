@@ -25,6 +25,7 @@ class UDataTable;
 
 // Interaction:
 class ASquare;
+class ASK_Character;
 class AChessMan;
 //--------------------------------------------------------------------------------------
 
@@ -76,10 +77,20 @@ public:
 
 
 
-    /* ---   Generator   --- */
+    /* ---   Generator | Players   --- */
 
     // Таблица данных местоположения фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator|ChessMan",
+        meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
+    UDataTable* PlayersTable;
+    //-------------------------------------------
+
+
+
+    /* ---   Generator | ChessMan   --- */
+
+    // Таблица данных местоположения фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator|ChessMan",
         meta = (RequiredAssetDataTags = "RowStructure=ChessManData"))
     UDataTable* ChessMansTable;
 
@@ -99,11 +110,14 @@ public:
     void SetPointerToAllSquares(const TArray<TArray<ASquare*>>* Squares);
     // PS: UFUNCTION() для него не работает
 
+    /** Получение указателя на все Фигуры Игроков */
+    TArray<ASK_Character*>* GetPointerToAllPlayers();
+
     /** Получение указателя на все Шахматные фигуры */
-    TArray<AChessMan*>* GetPointerToAllChessMan();
+    TArray<AChessMan*>* GetPointerToAllChessMans();
 
     /** Получение указателя на все доступные Шахматные фигуры */
-    TArray<AChessMan*>* GetPointerToAllAvailableChessMan();
+    TArray<AChessMan*>* GetPointerToAllAvailableChessMans();
     //-------------------------------------------
 
 
@@ -112,24 +126,41 @@ private:
 
     /* ---   Re Generate   --- */
 
-    // Тег для определения клетки, созданной генератором
+    // Тег для определения Шахматных фигур, созданной генератором
     FName VerificationTag = "Generate";
 
     //
 
-    /** Удалить все клетки */
-    void DeleteAllSquares();
+    /** Удалить все Фигуры игроков */
+    void DeleteAllPlayers();
 
-    /** Получить все созданные клетки (проверка по Тегу) */
+    /** Получить все созданные Фигуры игроков (проверка по Тегу) */
+    TArray<ASK_Character*> GetAllPlayers();
+
+    /** Удалить все Шахматные фигуры */
+    void DeleteAllChessMans();
+
+    /** Получить все созданные Шахматные фигуры (проверка по Тегу) */
     TArray<AChessMan*> GetAllChessMan();
     //-------------------------------------------
 
 
 
-    /* ---   Generator   --- */
+    /* ---   Generator | Players   --- */
+
+    /** Запуск генерации Фигур игроков */
+    void CreateGeneratedPlayers();
+
+    /** Создать Шахматную фигуру в указанной позиции */
+    void CreatePlayer(const TSubclassOf<ASK_Character> Type, const FIndex2D& XY);
+    //-------------------------------------------
+
+
+
+    /* ---   Generator | ChessMan   --- */
 
     /** Запуск генерации Шахматных фигур */
-    void CreateGeneratedChessMan();
+    void CreateGeneratedChessMans();
 
     /** Создать Шахматную фигуру в указанной позиции */
     void CreateChessMan(const EChessManType Type, const FIndex2D& XY);
@@ -141,6 +172,9 @@ private:
 
     // Двумерный массив указателей на Клетки
     const TArray<TArray<ASquare*>>* PointerToAllSquares;
+
+    // Все Фигуры Игроков
+    TArray<ASK_Character*> AllPlayers;
 
     // Все Шахматные фигуры
     TArray<AChessMan*> AllChessMans;
