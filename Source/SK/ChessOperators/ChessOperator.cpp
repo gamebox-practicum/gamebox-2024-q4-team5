@@ -10,6 +10,9 @@
 // Interaction:
 #include "SK/ChessBoard/SquareGenerator.h"
 #include "SK/ChessMans/ChessManGenerator.h"
+
+// Test:
+//#include "HAL/ThreadManager.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -35,6 +38,7 @@ void AChessOperator::BeginPlay()
 {
     Super::BeginPlay();
 
+    OnPlayersMove.AddDynamic(this, &AChessOperator::PlayersMove);
 }
 
 void AChessOperator::OnConstruction(const FTransform& Transform)
@@ -51,9 +55,9 @@ void AChessOperator::OnConstruction(const FTransform& Transform)
 
 void AChessOperator::ReGenerate()
 {
-    CheckCurrentSquareGenerator();
+    UpdateCurrentSquareGenerator();
 
-    CheckCurrentChessManGenerator();
+    UpdateCurrentChessManGenerator();
 }
 //--------------------------------------------------------------------------------------
 
@@ -82,7 +86,22 @@ T* AChessOperator::GetFirstActor()
 
 /* ---   Generators | Square Generator   --- */
 
-void AChessOperator::CheckCurrentSquareGenerator()
+void AChessOperator::UpdateCurrentSquareGenerator()
+{
+    if (GetCurrentSquareGenerator())
+    {
+        CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
+
+        CurrentSquareGenerator->ReGenerate();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': Current Square Generator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+ASquareGenerator* AChessOperator::GetCurrentSquareGenerator()
 {
     if (!CurrentSquareGenerator)
     {
@@ -91,23 +110,20 @@ void AChessOperator::CheckCurrentSquareGenerator()
 
     if (CurrentSquareGenerator)
     {
-        UpdateSquareGeneratorData();
-        CurrentSquareGenerator->ReGenerate();
+        return CurrentSquareGenerator;
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Current Square Generator is NOT"), *GetNameSafe(this));
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentSquareGenerator is NOT"),
+            *GetNameSafe(this));
     }
+
+    return nullptr;
 }
 
 ASquareGenerator* AChessOperator::GetFirstSquareGenerator()
 {
     return GetFirstActor<ASquareGenerator>();
-}
-
-void AChessOperator::UpdateSquareGeneratorData()
-{
-    CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
 }
 //--------------------------------------------------------------------------------------
 
@@ -115,7 +131,23 @@ void AChessOperator::UpdateSquareGeneratorData()
 
 /* ---   Generators | ChessMan Generator   --- */
 
-void AChessOperator::CheckCurrentChessManGenerator()
+void AChessOperator::UpdateCurrentChessManGenerator()
+{
+    if (GetCurrentChessManGenerator())
+    {
+        CurrentChessManGenerator->PlayersTable = PlayersTable;
+        CurrentChessManGenerator->ChessMansTable = ChessMansTable;
+
+        CurrentChessManGenerator->ReGenerate();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+AChessManGenerator* AChessOperator::GetCurrentChessManGenerator()
 {
     if (!CurrentChessManGenerator)
     {
@@ -124,29 +156,46 @@ void AChessOperator::CheckCurrentChessManGenerator()
 
     if (CurrentChessManGenerator)
     {
-        UpdateChessManGeneratorData();
-        CurrentChessManGenerator->ReGenerate();
+        if (CurrentSquareGenerator)
+        {
+            CurrentChessManGenerator->SetPointerToAllSquares(
+                CurrentSquareGenerator->GetPointerToAllSquares());
+        }
+
+        return CurrentChessManGenerator;
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Current ChessMan Generator is NOT"), *GetNameSafe(this));
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
     }
+
+    return nullptr;
 }
 
 AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 {
     return GetFirstActor<AChessManGenerator>();
 }
+//--------------------------------------------------------------------------------------
 
-void AChessOperator::UpdateChessManGeneratorData()
+
+
+/* ---   Delegate   --- */
+
+void AChessOperator::PlayersMove(bool bIsPlayersMove)
 {
-    if (CurrentSquareGenerator)
+    if (!bIsPlayersMove
+        && GetCurrentChessManGenerator())
     {
-        CurrentChessManGenerator->SetPointerToAllSquares(
-            CurrentSquareGenerator->GetPointerToAllSquares());
+        CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-        CurrentChessManGenerator->PlayersTable = PlayersTable;
-        CurrentChessManGenerator->ChessMansTable = ChessMansTable;
+        OnPlayersMove.Broadcast(true);
+    }
+    else if (!CurrentChessManGenerator)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
     }
 }
 //--------------------------------------------------------------------------------------

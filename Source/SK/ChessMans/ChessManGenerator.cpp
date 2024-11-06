@@ -276,24 +276,24 @@ void AChessManGenerator::CreateGeneratedChessMans()
         // Создать Шахматную фигуру согласно данным
         for (auto& lData : lChessManData)
         {
-            CreateChessMan(lData->Type, lData->Position);
+            CreateChessMan(*lData);
 
             // Warning: Требуется проверка клетки на доступность (свободна ли она)
         }
     }
 }
 
-void AChessManGenerator::CreateChessMan(const EChessManType iType, const FIndex2D& iXY)
+void AChessManGenerator::CreateChessMan(const FChessManData& iData)
 {
     // Warning: Convert to Template
 
     // Поочерёдная проверка валидности указателей и индексов массива
     if (PointerToAllSquares
-        && PointerToAllSquares->IsValidIndex(iXY.X)
-        && (*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
+        && PointerToAllSquares->IsValidIndex(iData.Position.X)
+        && (*PointerToAllSquares)[iData.Position.X].IsValidIndex(iData.Position.Y))
     {
         // Получение указателя на указанную клетку
-        ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+        ASquare* lSquare = ((*PointerToAllSquares)[iData.Position.X])[iData.Position.Y];
 
         if (lSquare)
         {
@@ -302,13 +302,15 @@ void AChessManGenerator::CreateChessMan(const EChessManType iType, const FIndex2
 
             // Создать Шахматную фигуру
             AChessMan* lNewChessMan = GetWorld()->SpawnActor<AChessMan>(
-                SquareType[uint8(iType)].Get(), // Тип фигуры
+                SquareType[uint8(iData.Type)].Get(), // Тип фигуры
                 lSquare->GetActorLocation(),    // Локация клетки
                 FRotator::ZeroRotator);         // Без изменения ротации
 
             // Тег-маркировка Фигуры.
             // Необходим для удаления только Генерируемых Фигур
             lNewChessMan->Tags.Add(VerificationTag);
+
+            lNewChessMan->CurrentData = iData;
 
             AllChessMans.Add(lNewChessMan);
         }
@@ -318,15 +320,15 @@ void AChessManGenerator::CreateChessMan(const EChessManType iType, const FIndex2
         UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
             *GetNameSafe(this));
     }
-    else if (!PointerToAllSquares->IsValidIndex(iXY.X))
+    else if (!PointerToAllSquares->IsValidIndex(iData.Position.X))
     {
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
-            *GetNameSafe(this), iXY.X);
+            *GetNameSafe(this), iData.Position.X);
     }
-    else if (!(*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
+    else if (!(*PointerToAllSquares)[iData.Position.X].IsValidIndex(iData.Position.Y))
     {
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
-            *GetNameSafe(this), iXY.Y);
+            *GetNameSafe(this), iData.Position.Y);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -358,15 +360,19 @@ TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
 void AChessManGenerator::UpdateAllAvailableChessMan()
 {
     AllAvailableChessMan.Empty();
-    AChessMan* lChessMan = nullptr;
 
-    for (auto& lData : AllChessMans)
+    if (AllChessMans.IsValidIndex(0))
     {
-        lChessMan = GetAvailableChessMan(lData, PointerToAllSquares);
+        AChessMan* lChessMan = nullptr;
 
-        if (lChessMan)
+        for (auto& lData : AllChessMans)
         {
-            AllAvailableChessMan.Add(lChessMan);
+            lChessMan = GetAvailableChessMan(lData, PointerToAllSquares);
+
+            if (lChessMan)
+            {
+                AllAvailableChessMan.Add(lChessMan);
+            }
         }
     }
 }

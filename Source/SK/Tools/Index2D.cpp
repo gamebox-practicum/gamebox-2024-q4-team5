@@ -4,40 +4,53 @@
 
 /* ---   Constructors   --- */
 
+FIndex2D::FIndex2D(const FIndex2D& Second)
+{
+    *this = Second;
+}
+
 FIndex2D::FIndex2D(const int32& iX, const int32& iY) : X(iX), Y(iY) {}
 FIndex2D::FIndex2D(const int32& iScale) : FIndex2D(iScale, iScale) {}
 //--------------------------------------------------------------------------------------
 
 
 
+/* ---   Operators | =   --- */
+
+const FIndex2D& FIndex2D::operator=(const FIndex2D& Second)
+{
+    X = Second.X;
+    Y = Second.Y;
+
+    return *this;
+}
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Operators | +   --- */
 
-FIndex2D FIndex2D::operator+(const FIndex2D& Second) const
+const FIndex2D FIndex2D::operator+(const FIndex2D& Second) const
 {
     return FIndex2D(X + Second.X, Y + Second.Y);
 }
 
-FIndex2D FIndex2D::operator+=(const FIndex2D& Second) const
+FIndex2D& FIndex2D::operator+=(const FIndex2D& Second)
 {
-    *this + Second;
+    *this = *this + Second;
     return *this;
 }
 
-FIndex2D FIndex2D::operator+(const int32& Scale) const
+FIndex2D& FIndex2D::operator++()
 {
-    return FIndex2D(X + Scale, Y + Scale);
-}
-
-FIndex2D FIndex2D::operator++()
-{
-    *this + 1;
+    ++X; ++Y;
     return *this;
 }
 
 FIndex2D FIndex2D::operator++(int32)
 {
     FIndex2D tmp(*this);
-    operator++();
+    *this += 1;
     return tmp;
 }
 //--------------------------------------------------------------------------------------
@@ -46,32 +59,27 @@ FIndex2D FIndex2D::operator++(int32)
 
 /* ---   Operators | -   --- */
 
-FIndex2D FIndex2D::operator-(const FIndex2D& Second) const
+const FIndex2D FIndex2D::operator-(const FIndex2D& Second) const
 {
     return FIndex2D(X - Second.X, Y - Second.Y);
 }
 
-FIndex2D FIndex2D::operator-=(const FIndex2D& Second) const
+FIndex2D& FIndex2D::operator-=(const FIndex2D& Second)
 {
-    *this - Second;
+    *this = *this - Second;
     return *this;
 }
 
-FIndex2D FIndex2D::operator-(const int32& Scale) const
+FIndex2D& FIndex2D::operator--()
 {
-    return FIndex2D(X - Scale, Y - Scale);
-}
-
-FIndex2D FIndex2D::operator--()
-{
-    *this - 1;
+    --X; --Y;
     return *this;
 }
 
 FIndex2D FIndex2D::operator--(int32)
 {
     FIndex2D tmp(*this);
-    operator--();
+    *this -= 1;
     return tmp;
 }
 //--------------------------------------------------------------------------------------

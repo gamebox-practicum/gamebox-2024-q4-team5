@@ -19,6 +19,7 @@ class UCameraComponent;
 
 // Interaction:
 class ASquare;
+class AChessOperator;
 //--------------------------------------------------------------------------------------
 
 
@@ -118,6 +119,14 @@ public:
 
 
 
+    /* ---   Delegate   --- */
+
+    UFUNCTION()
+    void PlayersMove(bool bIsPlayersMove);
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Base   --- */
@@ -150,15 +159,31 @@ private:
     // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
     ASquare* CurrentSquare = nullptr;
 
+    // Новая локация к которой движемся
+    FVector NewLocation;
+
     // Флаг контроля перемещения
     bool bIsMovingToNewLocation = false;
 
-    // Новая локация к которой движемся
-    FVector NewLocation;
+    // Флаг разрешения хода Игрока
+    bool bIsMoveAllowed = true;
 
     //
 
     // Расчёт передвижения на каждый кадр
     void MovementForTick(const float& DeltaTime);
+    //-------------------------------------------
+
+
+
+    /* ---   Delegate   --- */
+
+    // Указатель на текущего Оператора
+    AChessOperator* CurrentChessOperator = nullptr;
+
+    //
+
+    // Подписаться на делегаты
+    void SubscribeToDelegates();
     //-------------------------------------------
 };

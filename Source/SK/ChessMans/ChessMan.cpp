@@ -86,10 +86,8 @@ void AChessMan::Cleaning()
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
-    if (CurrentSquare != ToSquare && !bIsMovingToNewLocation)
+    if (!bIsMovingToNewLocation)
     {
-        CurrentSquare = ToSquare;
-
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
 

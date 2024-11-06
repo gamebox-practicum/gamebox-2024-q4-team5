@@ -29,8 +29,6 @@ AChessMan* GetAvailableChessMan(
         // 
         TArray<FIndex2D> lSquaresIndex2D;
 
-
-
         switch (lData.Type)
         {
         case EChessManType::Pawn: // Пешка
@@ -66,7 +64,12 @@ AChessMan* GetAvailableChessMan(
         }
 
 
-        lData.AvailablePositions += lSquaresIndex2D;
+        if (lSquaresIndex2D.IsValidIndex(0))
+        {
+            lData.AvailablePositions += lSquaresIndex2D;
+
+            return iChessMan;
+        }
     }
 
     return nullptr;
@@ -89,17 +92,16 @@ TArray<FIndex2D> GetSquareForPawn(
     FSquareData lSquareData; // Данные Клетки
 
     // Ход вперёд
-    lNotChecked.Add(iPosition + FIndex2D { 1, 0 });
+    lNotChecked.Add(iPosition + FIndex2D { -1, 0 });
 
     // Длинный ход вперёд
     if (bFirstMove)
     {
-        lNotChecked.Add(iPosition + FIndex2D { 2, 0 });
+        lNotChecked.Add(iPosition + FIndex2D { -2, 0 });
     }
 
     // Проверка короткого и длинного хода вперёд
-    CheckPosition(
-        iPosition,
+    CheckPositions(
         lNotChecked,
         iAllSquares,
         lResult);
@@ -108,20 +110,17 @@ TArray<FIndex2D> GetSquareForPawn(
     lNotChecked.Empty(2);
 
     // Ход по диагонали
-    lNotChecked.Add(iPosition + FIndex2D { 1, 1 });
-    lNotChecked.Add(iPosition + FIndex2D { 1, -1 });
+    lNotChecked.Add(iPosition + FIndex2D { -1, 1 });
+    lNotChecked.Add(iPosition + FIndex2D { -1, -1 });
 
     // Проверка хода по диагонали (Индивидуально для Пешки)
     for (auto& lData : lNotChecked)
     {
-        if (CheckSquare(iPosition, iAllSquares, lSquareData))
+        if (CheckSquare(lData, iAllSquares, lSquareData))
         {
-            switch (lSquareData.WarringPartiesType)
+            if (lSquareData.WarringPartiesType == EWarringPartiesType::White)
             {
-            case EWarringPartiesType::White:
-                // Требуется добавить Важные ходы (Мат Игроку)
                 lResult.Add(lData);
-                break;
             }
         }
     }
@@ -135,7 +134,7 @@ TArray<FIndex2D> GetSquareForKnight(
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lNotChecked;
-    lNotChecked.SetNum(8);
+    lNotChecked.Reset(8);
     TArray<FIndex2D> lResult;
 
     // Просчёт ходов Коня
@@ -150,8 +149,7 @@ TArray<FIndex2D> GetSquareForKnight(
     lNotChecked.Add(iPosition + FIndex2D { -2, -1 });
 
     // Проверка ходов Коня
-    CheckPosition(
-        iPosition,
+    CheckPositions(
         lNotChecked,
         iAllSquares,
         lResult);
@@ -166,9 +164,10 @@ TArray<FIndex2D> GetSquareForBishop(
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
     FSquareData lSquareData; // Данные Клетки
+    FIndex2D i;
 
     // Проверка ходов Слона (+i, +i)
-    for (FIndex2D i = iPosition + 1;
+    for (i = iPosition + 1;
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         ++i)
@@ -177,7 +176,7 @@ TArray<FIndex2D> GetSquareForBishop(
     }
 
     // Проверка ходов Слона (-i, -i)
-    for (FIndex2D i = iPosition - 1;
+    for (i = iPosition - 1;
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         --i)
@@ -186,7 +185,7 @@ TArray<FIndex2D> GetSquareForBishop(
     }
 
     // Проверка ходов Слона (+i, -i)
-    for (FIndex2D i = iPosition + FIndex2D { 1, -1 };
+    for (i = iPosition + FIndex2D { 1, -1 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { 1, -1 })
@@ -195,7 +194,7 @@ TArray<FIndex2D> GetSquareForBishop(
     }
 
     // Проверка ходов Слона (-i, +i)
-    for (FIndex2D i = iPosition + FIndex2D { -1, 1 };
+    for (i = iPosition + FIndex2D { -1, 1 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { -1, 1 })
@@ -276,17 +275,16 @@ TArray<FIndex2D> GetSquareForQueen(
 
 /* ---   Functions | Tools   --- */
 
-void CheckPosition(
-    const FIndex2D& iPosition,
+void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
     const TArray<TArray<ASquare*>>* iAllSquares,
-    TArray<FIndex2D> oResult)
+    TArray<FIndex2D>& oResult)
 {
     FSquareData lSquareData; // Данные Клетки
 
     for (auto& lData : iNotChecked)
     {
-        if (CheckSquare(iPosition, iAllSquares, lSquareData))
+        if (CheckSquare(lData, iAllSquares, lSquareData))
         {
             switch (lSquareData.WarringPartiesType)
             {

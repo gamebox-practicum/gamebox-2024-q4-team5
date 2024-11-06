@@ -120,9 +120,6 @@ private:
 
     /* ---   Movement   --- */
 
-    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
-    ASquare* CurrentSquare = nullptr;
-
     // Флаг контроля перемещения
     bool bIsMovingToNewLocation = false;
 

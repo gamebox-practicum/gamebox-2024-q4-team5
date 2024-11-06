@@ -194,11 +194,10 @@ TArray<FIndex2D> GetSquareForQueen(
 
 @return oResult     -- Проверенный массив 2D-индексов свободных Клеток
 */
-void CheckPosition(
-    const FIndex2D& iPosition,
+void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
     const TArray<TArray<ASquare*>>* iAllSquares,
-    TArray<FIndex2D> oResult);
+    TArray<FIndex2D>& oResult);
 
 /** Проверка наличия Клетки по индексу
 @param  iPosition   -- Текущая позиция Пешки

@@ -90,7 +90,7 @@ public:
     /* ---   Data   --- */
 
     /** Установить и применить настройки по Данным клетки */
-    void SetData(FSquareData Data);
+    void SetData(const FSquareData& Data);
 
     /** Получить данные (неизменяемые) */
     const FSquareData& GetData();
@@ -109,6 +109,8 @@ private:
     void UpdateMaterialByType(int32& NumType);
 
     // Данные Клетки
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
     FSquareData SquareData;
     //-------------------------------------------
 };

@@ -80,7 +80,7 @@ public:
     /* ---   Generator | Players   --- */
 
     // Таблица данных местоположения фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator|ChessMan",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator",
         meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
     UDataTable* PlayersTable;
     //-------------------------------------------
@@ -90,7 +90,7 @@ public:
     /* ---   Generator | ChessMan   --- */
 
     // Таблица данных местоположения фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator|ChessMan",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator",
         meta = (RequiredAssetDataTags = "RowStructure=ChessManData"))
     UDataTable* ChessMansTable;
 
@@ -118,6 +118,9 @@ public:
 
     /** Получение указателя на все доступные Шахматные фигуры */
     TArray<AChessMan*>* GetPointerToAllAvailableChessMans();
+
+    /** Обновить данные о доступных Шахматных фигурах */
+    void UpdateAllAvailableChessMan();
     //-------------------------------------------
 
 
@@ -127,7 +130,7 @@ private:
     /* ---   Re Generate   --- */
 
     // Тег для определения Шахматных фигур, созданной генератором
-    FName VerificationTag = "Generate";
+    FName VerificationTag = FName(GetNameSafe(this));
 
     //
 
@@ -163,7 +166,7 @@ private:
     void CreateGeneratedChessMans();
 
     /** Создать Шахматную фигуру в указанной позиции */
-    void CreateChessMan(const EChessManType Type, const FIndex2D& XY);
+    void CreateChessMan(const FChessManData& Data);
     //-------------------------------------------
 
 
@@ -174,17 +177,18 @@ private:
     const TArray<TArray<ASquare*>>* PointerToAllSquares;
 
     // Все Фигуры Игроков
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
     TArray<ASK_Character*> AllPlayers;
 
     // Все Шахматные фигуры
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
     TArray<AChessMan*> AllChessMans;
 
     // Все доступные Шахматные фигуры (имеют вариант хода)
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
     TArray<AChessMan*> AllAvailableChessMan;
-
-    //
-
-    /** Обновить данные о доступных Шахматных фигурах */
-    void UpdateAllAvailableChessMan();
     //-------------------------------------------
 };

@@ -15,6 +15,14 @@
 
 
 
+/* ---   Delegate   --- */
+
+// Делегат хода Игроков
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayersMove, bool, bIsPlayersMove);
+// ----------------------------------------------------------------------------------------------------
+
+
+
 /* ---   Pre-declaration of classes and structures   --- */
 
 // UE:
@@ -33,6 +41,12 @@ class SK_API AChessOperator : public AActor
     GENERATED_BODY()
 
 public:
+
+    /* ---   Delegate   --- */
+    FOnPlayersMove OnPlayersMove; // Делегат хода Игроков
+    // ----------------------------------------------------------------------------------------------------
+
+
 
     /* ---   Constructors   --- */
 
@@ -76,7 +90,7 @@ public:
     /* ---   Generators | Square Generator   --- */
 
     // Количество клеток доски вдоль осей
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Square Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
     //-------------------------------------------
 
@@ -85,14 +99,22 @@ public:
     /* ---   Generators | ChessMan Generator   --- */
 
     // Таблица данных местоположения фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|ChessMan Generator",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
         meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
     UDataTable* PlayersTable;
 
     // Таблица данных местоположения фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|ChessMan Generator",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
         meta = (RequiredAssetDataTags = "RowStructure=ChessManData"))
     UDataTable* ChessMansTable;
+    //-------------------------------------------
+
+
+
+    /* ---   Delegate   --- */
+
+    UFUNCTION()
+    void PlayersMove(bool bIsPlayersMove);
     //-------------------------------------------
 
 
@@ -111,18 +133,20 @@ private:
     /* ---   Generators | Square Generator   --- */
 
     // Указатель на текущий Генератор Клеток
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
+        meta = (AllowPrivateAccess = true))
     ASquareGenerator* CurrentSquareGenerator;
 
     //
 
     /** Проверка указателя на текущий Генератор Клеток */
-    void CheckCurrentSquareGenerator();
+    void UpdateCurrentSquareGenerator();
 
-    /** Получить первый Генератор Клеток */
+    /** Проверка и получение указателя на текущий Генератор Клеток */
+    ASquareGenerator* GetCurrentSquareGenerator();
+
+    /** Получить первый (по порядку на карте) Генератор Клеток */
     ASquareGenerator* GetFirstSquareGenerator();
-
-    /** Обновить данные связанные с Генератором Клеток */
-    void UpdateSquareGeneratorData();
     //-------------------------------------------
 
 
@@ -130,17 +154,19 @@ private:
     /* ---   Generators | ChessMan Generator   --- */
 
     // Указатель на текущий Генератор Шахматных фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
+        meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator;
 
     //
 
-    /** Проверка указателя на текущий Генератор Шахматных фигур */
-    void CheckCurrentChessManGenerator();
+    /** Обновить данные текущего Генератора Шахматных фигур */
+    void UpdateCurrentChessManGenerator();
 
-    /** Получить первый Генератор Шахматных фигур */
+    /** Проверка и получение указателя на текущий Генератор Шахматных фигур */
+    AChessManGenerator* GetCurrentChessManGenerator();
+
+    /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
     AChessManGenerator* GetFirstChessManGenerator();
-
-    /** Обновить данные связанные с Генератором Шахматных фигур */
-    void UpdateChessManGeneratorData();
     //-------------------------------------------
 };

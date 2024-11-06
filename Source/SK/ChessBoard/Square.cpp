@@ -114,11 +114,10 @@ void ASquare::UpdateMaterialByType(int32& iNumType)
 
 /* ---   Data   --- */
 
-void ASquare::SetData(FSquareData iData)
+void ASquare::SetData(const FSquareData& iData)
 {
-
-
-    UpdateMaterialByType(iData.TypeBlockMaterial);
+    SquareData = iData;
+    UpdateMaterialByType(SquareData.TypeBlockMaterial);
 }
 
 const FSquareData& ASquare::GetData()

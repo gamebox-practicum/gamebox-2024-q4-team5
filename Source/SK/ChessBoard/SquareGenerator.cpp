@@ -108,15 +108,16 @@ TArray<ASquare*> ASquareGenerator::GetAllSquares()
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
-    // Сброс переменной
+    // Сброс массива
     TDArraySquares.Empty();
+    // Создание элементов массива X
     TDArraySquares.SetNum(NumberAlongAxes.X);
 
     for (int32 x = 0; x < NumberAlongAxes.X; ++x)
     {
         TArray<ASquare*>* lArraySquare = &TDArraySquares[x];
 
-        // Создание недостающего массива
+        // Создание недостающего массива Y
         lArraySquare->SetNum(NumberAlongAxes.Y);
 
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
@@ -211,8 +212,31 @@ int32 ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
 
 /* ---   Get Data   --- */
 
-const TArray<TArray<ASquare*>>* ASquareGenerator::GetPointerToAllSquares()
+TArray<TArray<ASquare*>>* ASquareGenerator::GetPointerToAllSquares()
 {
+    // Если массив пустой, то заполнить его из элементов, заранее созданных в Мире
+    if (!TDArraySquares.IsValidIndex(0))
+    {
+        TArray<ASquare*> lAllSquares = GetAllSquares();
+
+        // Создание элементов массива X
+        TDArraySquares.SetNum(NumberAlongAxes.X);
+
+        for (int32 x = 0; x < NumberAlongAxes.X; ++x)
+        {
+            TArray<ASquare*>* lArraySquare = &TDArraySquares[x];
+
+            // Создание недостающего массива Y
+            lArraySquare->Reset(NumberAlongAxes.Y);
+
+            for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
+            {
+                // Добавление Клетки в массив
+                lArraySquare->Add(lAllSquares[x * NumberAlongAxes.Y + y]);
+            }
+        }
+    }
+
     return &TDArraySquares;
 }
 //--------------------------------------------------------------------------------------
