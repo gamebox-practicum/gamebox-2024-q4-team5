@@ -31,6 +31,7 @@ AChessMan::AChessMan()
     // Статичный Меш Шахматной Фигуры
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
     ChessmanStaticMesh->SetupAttachment(RootComponent);
+    ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
@@ -79,6 +80,9 @@ void AChessMan::Cleaning()
 
 
 /* ---   Movement   --- */
+
+// Warning: Предварительный вариант.
+// В будущем планируется переделать в имитацию "переноса" рукой "Дилера"
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {

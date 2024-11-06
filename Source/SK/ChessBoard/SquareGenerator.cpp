@@ -46,7 +46,7 @@ void ASquareGenerator::OnConstruction(const FTransform& Transform)
 
 
 /* ---   Re Generate   --- */
-// PS: Следует переделать как шаблонные функции универсального Генератора
+// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void ASquareGenerator::ReGenerate()
 {
@@ -56,6 +56,8 @@ void ASquareGenerator::ReGenerate()
 
 void ASquareGenerator::DeleteAllSquares()
 {
+    // Warning: Convert to Template
+
     for (auto lSquare : GetAllSquares())
     {
         lSquare->Destroy();
@@ -65,6 +67,8 @@ void ASquareGenerator::DeleteAllSquares()
 
 TArray<ASquare*> ASquareGenerator::GetAllSquares()
 {
+    // Warning: Convert to Template
+
     TArray<ASquare*> lResult;
     TArray<AActor*> lResultActors;
 
@@ -100,7 +104,7 @@ TArray<ASquare*> ASquareGenerator::GetAllSquares()
 
 
 /* ---   Generator   --- */
-// PS: Следует переделать как шаблонные функции универсального Генератора
+// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
@@ -175,7 +179,7 @@ FVector ASquareGenerator::GetLocationForSquare(const FIndex2D& iXY) const
 
 
 
-/* ---   Generator : SquareData   --- */
+/* ---   Generator | SquareData   --- */
 
 void ASquareGenerator::SetSquareData(ASquare* iBlock, FSquareData iData)
 {

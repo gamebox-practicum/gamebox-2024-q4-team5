@@ -141,7 +141,7 @@ private:
 
 
 
-    /* ---   Generator : SquareData   --- */
+    /* ---   Generator | SquareData   --- */
 
     /** Загрузить данные в указанный блок */
     void SetSquareData(ASquare* Block, FSquareData Data);

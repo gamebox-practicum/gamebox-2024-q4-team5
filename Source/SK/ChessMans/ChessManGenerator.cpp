@@ -10,6 +10,7 @@
 // Interaction:
 #include "ChessMan.h"
 #include "SK/ChessBoard/Square.h"
+#include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -48,16 +49,72 @@ void AChessManGenerator::OnConstruction(const FTransform& Transform)
 
 
 /* ---   Re Generate   --- */
-// PS: Следует переделать как шаблонные функции универсального Генератора
+// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void AChessManGenerator::ReGenerate()
 {
-    DeleteAllSquares();
-    CreateGeneratedChessMan();
+    // Перезапуск Фигур Игроков
+    DeleteAllPlayers();
+    CreateGeneratedPlayers();
+
+    // Перезапуск Шахматных фигур по контролем ИИ
+    DeleteAllChessMans();
+    CreateGeneratedChessMans();
 }
 
-void AChessManGenerator::DeleteAllSquares()
+void AChessManGenerator::DeleteAllPlayers()
 {
+    // Warning: Convert to Template
+
+    // Удаление всех Фигур Игроков, созданных Генератором
+    for (auto lPlayers : GetAllPlayers())
+    {
+        lPlayers->Destroy();
+    }
+
+    // Очистка массивов
+    AllPlayers.Empty();
+}
+
+TArray<ASK_Character*> AChessManGenerator::GetAllPlayers()
+{
+    // Warning: Convert to Template
+
+    TArray<ASK_Character*> lResult;
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASK_Character::StaticClass(), lResultActors);
+
+    if (lResultActors.IsValidIndex(0))
+    {
+        bool bCheckTags = false;
+
+        for (AActor* lData : lResultActors)
+        {
+            ASK_Character* lCurrentPlayers = Cast<ASK_Character>(lData);
+
+            for (FName lTags : lCurrentPlayers->Tags)
+            {
+                if (lTags == VerificationTag)
+                {
+                    bCheckTags = true;
+                }
+            }
+
+            if (bCheckTags)
+            {
+                lResult.Add(lCurrentPlayers);
+            }
+        }
+    }
+
+    return lResult;
+}
+
+void AChessManGenerator::DeleteAllChessMans()
+{
+    // Warning: Convert to Template
+
     // Удаление всех Шахматных фигур, созданных Генератором
     for (auto lSquare : GetAllChessMan())
     {
@@ -71,6 +128,8 @@ void AChessManGenerator::DeleteAllSquares()
 
 TArray<AChessMan*> AChessManGenerator::GetAllChessMan()
 {
+    // Warning: Convert to Template
+
     TArray<AChessMan*> lResult;
     TArray<AActor*> lResultActors;
 
@@ -105,18 +164,111 @@ TArray<AChessMan*> AChessManGenerator::GetAllChessMan()
 
 
 
-/* ---   Generator   --- */
-// PS: Следует переделать как шаблонные функции универсального Генератора
+/* ---   Generator | Players   --- */
+// Warning: Следует переделать как шаблонные функции универсального Генератора
 
-void AChessManGenerator::CreateGeneratedChessMan()
+void AChessManGenerator::CreateGeneratedPlayers()
 {
+    // Warning: Convert to Template
+
+    if (PlayersTable)
+    {
+        // Массив данных, получаемых из DataTable
+        TArray<FPlayerData*> lPlayersData;
+
+        // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
+        FString lContext = "CreateGeneratedPlayers";
+
+        // Получить массив данных из DataTable
+        PlayersTable->GetAllRows<FPlayerData>(lContext, lPlayersData);
+
+        // Создать Шахматную фигуру согласно данным
+        for (auto lData : lPlayersData)
+        {
+            CreatePlayer(lData->Type, lData->Position);
+
+            // Warning: Требуется проверка клетки на доступность (свободна ли она)
+        }
+    }
+}
+
+void AChessManGenerator::CreatePlayer(const TSubclassOf<ASK_Character> iType, const FIndex2D& iXY)
+{
+    // Warning: Convert to Template
+
+    // Поочерёдная проверка валидности указателей и индексов массива
+    if (iType
+        && PointerToAllSquares
+        && PointerToAllSquares->IsValidIndex(iXY.X)
+        && (*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y)
+        && AllPlayers.Num() <= EAutoReceiveInput::Player7)
+    {
+        // Получение указателя на указанную клетку
+        const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+
+        if (lSquare)
+        {
+            // Создать Фигуру
+            ASK_Character* lNewPlayer = GetWorld()->SpawnActor<ASK_Character>(
+                iType.Get(),                 // Тип фигуры
+                lSquare->GetActorLocation(), // Локация клетки
+                FRotator::ZeroRotator);      // Без изменения ротации
+
+            // Тег-маркировка Фигуры.
+            // Необходим для удаления только Генерируемых Фигур
+            lNewPlayer->Tags.Add(VerificationTag);
+
+            AllPlayers.Add(lNewPlayer);
+
+            // Автоподхват Игрока
+            lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
+            // Warning: Данный способ дважды вызывает PossessedBy(*)
+        }
+    }
+    else if (!iType)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': iType is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (!PointerToAllSquares)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (!PointerToAllSquares->IsValidIndex(iXY.X))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
+            *GetNameSafe(this), iXY.X);
+    }
+    else if (!(*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
+            *GetNameSafe(this), iXY.Y);
+    }
+    else if (AllPlayers.Num() > EAutoReceiveInput::Player7)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': Player limit (8 Players)"),
+            *GetNameSafe(this));
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Generator | ChessMan   --- */
+// Warning: Следует переделать как шаблонные функции универсального Генератора
+
+void AChessManGenerator::CreateGeneratedChessMans()
+{
+    // Warning: Convert to Template
+
     if (ChessMansTable)
     {
         // Массив данных, получаемых из DataTable
         TArray<FChessManData*> lChessManData;
 
         // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
-        FString lContext = "";
+        FString lContext = "CreateGeneratedChessMans";
 
         // Получить массив данных из DataTable
         ChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
@@ -133,46 +285,45 @@ void AChessManGenerator::CreateGeneratedChessMan()
 
 void AChessManGenerator::CreateChessMan(const EChessManType iType, const FIndex2D& iXY)
 {
-    // Проверка валидности указателя и его индексов
-    if (PointerToAllSquares)
+    // Warning: Convert to Template
+
+    // Поочерёдная проверка валидности указателей и индексов массива
+    if (PointerToAllSquares
+        && PointerToAllSquares->IsValidIndex(iXY.X)
+        && (*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
     {
-        if (PointerToAllSquares->IsValidIndex(iXY.X))
+        // Получение указателя на указанную клетку
+        const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+
+        if (lSquare)
         {
-            if ((*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
-            {
-                // Получение указателя на указанную клетку
-                const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+            // Создать Шахматную фигуру
+            AChessMan* lNewChessMan = GetWorld()->SpawnActor<AChessMan>(
+                SquareType[uint8(iType)].Get(), // Тип фигуры
+                lSquare->GetActorLocation(),    // Локация клетки
+                FRotator::ZeroRotator);         // Без изменения ротации
 
-                if (lSquare)
-                {
-                    // Создать Шахматную фигуру
-                    AChessMan* lNewChessMan = GetWorld()->SpawnActor<AChessMan>(
-                        SquareType[uint8(iType)].Get(), // Тип фигуры
-                        lSquare->GetActorLocation(),    // Локация клетки
-                        FRotator::ZeroRotator);         // Без изменения ротации
+            // Тег-маркировка Фигуры.
+            // Необходим для удаления только Генерируемых Фигур
+            lNewChessMan->Tags.Add(VerificationTag);
 
-                    // Тег-маркировка Фигуры.
-                    // Необходим для удаления только Генерируемых Фигур
-                    lNewChessMan->Tags.Add(VerificationTag);
-
-                    AllChessMans.Add(lNewChessMan);
-                }
-            }
-            else
-            {
-                UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
-                    *GetNameSafe(this), iXY.Y);
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
-                *GetNameSafe(this), iXY.X);
+            AllChessMans.Add(lNewChessMan);
         }
     }
-    else
+    else if (!PointerToAllSquares)
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"), *GetNameSafe(this));
+        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (!PointerToAllSquares->IsValidIndex(iXY.X))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
+            *GetNameSafe(this), iXY.X);
+    }
+    else if (!(*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
+            *GetNameSafe(this), iXY.Y);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -186,12 +337,17 @@ void AChessManGenerator::SetPointerToAllSquares(const TArray<TArray<ASquare*>>* 
     PointerToAllSquares = iSquares;
 }
 
-TArray<AChessMan*>* AChessManGenerator::GetPointerToAllChessMan()
+TArray<ASK_Character*>* AChessManGenerator::GetPointerToAllPlayers()
+{
+    return &AllPlayers;
+}
+
+TArray<AChessMan*>* AChessManGenerator::GetPointerToAllChessMans()
 {
     return &AllChessMans;
 }
 
-TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMan()
+TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
 {
     return &AllAvailableChessMan;
 }

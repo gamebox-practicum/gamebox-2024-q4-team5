@@ -80,7 +80,7 @@ T* AChessOperator::GetFirstActor()
 
 
 
-/* ---   Generators : Square Generator   --- */
+/* ---   Generators | Square Generator   --- */
 
 void AChessOperator::CheckCurrentSquareGenerator()
 {
@@ -113,7 +113,7 @@ void AChessOperator::UpdateSquareGeneratorData()
 
 
 
-/* ---   Generators : ChessMan Generator   --- */
+/* ---   Generators | ChessMan Generator   --- */
 
 void AChessOperator::CheckCurrentChessManGenerator()
 {
@@ -145,6 +145,7 @@ void AChessOperator::UpdateChessManGeneratorData()
         CurrentChessManGenerator->SetPointerToAllSquares(
             CurrentSquareGenerator->GetPointerToAllSquares());
 
+        CurrentChessManGenerator->PlayersTable = PlayersTable;
         CurrentChessManGenerator->ChessMansTable = ChessMansTable;
     }
 }

@@ -73,7 +73,7 @@ public:
 
 
 
-    /* ---   Generators : Square Generator   --- */
+    /* ---   Generators | Square Generator   --- */
 
     // Количество клеток доски вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Square Generator")
@@ -82,7 +82,12 @@ public:
 
 
 
-    /* ---   Generators : ChessMan Generator   --- */
+    /* ---   Generators | ChessMan Generator   --- */
+
+    // Таблица данных местоположения фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|ChessMan Generator",
+        meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
+    UDataTable* PlayersTable;
 
     // Таблица данных местоположения фигур
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|ChessMan Generator",
@@ -103,7 +108,7 @@ private:
 
 
 
-    /* ---   Generators : Square Generator   --- */
+    /* ---   Generators | Square Generator   --- */
 
     // Указатель на текущий Генератор Клеток
     ASquareGenerator* CurrentSquareGenerator;
@@ -122,7 +127,7 @@ private:
 
 
 
-    /* ---   Generators : ChessMan Generator   --- */
+    /* ---   Generators | ChessMan Generator   --- */
 
     // Указатель на текущий Генератор Шахматных фигур
     AChessManGenerator* CurrentChessManGenerator;
