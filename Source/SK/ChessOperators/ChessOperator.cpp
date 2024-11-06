@@ -3,6 +3,9 @@
 // Base:
 #include "ChessOperator.h"
 
+// Tools:
+#include "SK/Tools/MyRandom.h"
+
 // UE:
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
@@ -10,9 +13,9 @@
 // Interaction:
 #include "SK/ChessBoard/SquareGenerator.h"
 #include "SK/ChessMans/ChessManGenerator.h"
-
-// Test:
-//#include "HAL/ThreadManager.h"
+#include "SK/ChessMans/ChessMan.h"
+#include "SK/ChessMans/ChessManStruct.h"
+#include "SK/ChessBoard/Square.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -190,6 +193,8 @@ void AChessOperator::PlayersMove(bool bIsPlayersMove)
     {
         CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
+        PlayPrimitiveAI();
+
         OnPlayersMove.Broadcast(true);
     }
     else if (!CurrentChessManGenerator)
@@ -197,5 +202,44 @@ void AChessOperator::PlayersMove(bool bIsPlayersMove)
         UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
             *GetNameSafe(this));
     }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Primitive AI   --- */
+
+void AChessOperator::PlayPrimitiveAI()
+{
+    // Получить массив из доступных Шахматных фигур
+    TArray<AChessMan*>* lAllChessMans = CurrentChessManGenerator->GetPointerToAllAvailableChessMans();
+
+    // Рандомный выбор Шахматной фигуры
+    int32 lNumber = GetRandom(lAllChessMans->Num() - 1);
+    AChessMan* lSelectedChessMan = (*lAllChessMans)[lNumber];
+
+    //UE_LOG(LogTemp, Error, TEXT("'%s': %d is %s"),
+    //    *GetNameSafe(this), lNumber, *GetNameSafe(lSelectedChessMan));
+
+
+
+    // Получить массив из доступных ходов данной Шахматной фигуры
+    TArray<FIndex2D>& lAllIndex2D = lSelectedChessMan->CurrentData.AvailablePositions;
+
+    // Рандомный выбор хода выбранной Шахматной фигуры
+    lNumber = GetRandom(lAllIndex2D.Num() - 1);
+    FIndex2D lSelectedIndex2D = lAllIndex2D[lNumber];
+
+
+
+    // Получить клетку, на которую пал ход
+    TArray<TArray<ASquare*>>* lAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
+    ASquare* lSelectedSquare = (*lAllSquares)[lSelectedIndex2D.X][lSelectedIndex2D.Y];
+
+    //UE_LOG(LogTemp, Error, TEXT("'%s': %d is %s"),
+    //    *GetNameSafe(this), lNumber, *GetNameSafe(lSelectedSquare));
+
+    // Переместить выбранную фигуру на выбранную клетку
+    lSelectedChessMan->MoveToSquare(lSelectedSquare);
 }
 //--------------------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 ASK_Character::ASK_Character()
 {
     // Установка вызова функции Tick() в каждом кадре.
-    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true; // Warning: Принудительно!
 
 
     /* ---   Components   --- */
