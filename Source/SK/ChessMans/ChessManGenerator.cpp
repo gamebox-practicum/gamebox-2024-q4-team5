@@ -67,13 +67,13 @@ void AChessManGenerator::DeleteAllPlayers()
     // Warning: Convert to Template
 
     // Удаление всех Фигур Игроков, созданных Генератором
-    for (auto lPlayers : GetAllPlayers())
+    for (auto& lPlayers : GetAllPlayers())
     {
         lPlayers->Destroy();
     }
 
     // Очистка массивов
-    AllPlayers.Empty();
+    AllPlayers.Empty(1);
 }
 
 TArray<ASK_Character*> AChessManGenerator::GetAllPlayers()
@@ -116,7 +116,7 @@ void AChessManGenerator::DeleteAllChessMans()
     // Warning: Convert to Template
 
     // Удаление всех Шахматных фигур, созданных Генератором
-    for (auto lSquare : GetAllChessMan())
+    for (auto& lSquare : GetAllChessMan())
     {
         lSquare->Destroy();
     }
@@ -183,7 +183,7 @@ void AChessManGenerator::CreateGeneratedPlayers()
         PlayersTable->GetAllRows<FPlayerData>(lContext, lPlayersData);
 
         // Создать Шахматную фигуру согласно данным
-        for (auto lData : lPlayersData)
+        for (auto& lData : lPlayersData)
         {
             CreatePlayer(lData->Type, lData->Position);
 
@@ -274,7 +274,7 @@ void AChessManGenerator::CreateGeneratedChessMans()
         ChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
 
         // Создать Шахматную фигуру согласно данным
-        for (auto lData : lChessManData)
+        for (auto& lData : lChessManData)
         {
             CreateChessMan(lData->Type, lData->Position);
 
@@ -293,10 +293,13 @@ void AChessManGenerator::CreateChessMan(const EChessManType iType, const FIndex2
         && (*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
     {
         // Получение указателя на указанную клетку
-        const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+        ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
 
         if (lSquare)
         {
+            // Указать, что Клетка занята
+            lSquare->OccupySquare(EWarringPartiesType::Black);
+
             // Создать Шахматную фигуру
             AChessMan* lNewChessMan = GetWorld()->SpawnActor<AChessMan>(
                 SquareType[uint8(iType)].Get(), // Тип фигуры
@@ -350,5 +353,21 @@ TArray<AChessMan*>* AChessManGenerator::GetPointerToAllChessMans()
 TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
 {
     return &AllAvailableChessMan;
+}
+
+void AChessManGenerator::UpdateAllAvailableChessMan()
+{
+    AllAvailableChessMan.Empty();
+    AChessMan* lChessMan = nullptr;
+
+    for (auto& lData : AllChessMans)
+    {
+        lChessMan = GetAvailableChessMan(lData, PointerToAllSquares);
+
+        if (lChessMan)
+        {
+            AllAvailableChessMan.Add(lChessMan);
+        }
+    }
 }
 //--------------------------------------------------------------------------------------

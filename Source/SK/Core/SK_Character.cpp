@@ -140,6 +140,10 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
 {
     if (CurrentSquare != ToSquare && !bIsMovingToNewLocation)
     {
+        // Освободить предыдущую клетку и занять новую
+        CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+        ToSquare->OccupySquare(EWarringPartiesType::White);
+
         CurrentSquare = ToSquare;
 
         NewLocation = ToSquare->GetActorLocation();

@@ -93,6 +93,8 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
 
+        CurrentData.Position = ToSquare->GetData().PositionNumber;
+
         bIsMovingToNewLocation = true;
     }
 }

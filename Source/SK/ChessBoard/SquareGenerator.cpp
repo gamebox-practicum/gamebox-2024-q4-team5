@@ -58,7 +58,7 @@ void ASquareGenerator::DeleteAllSquares()
 {
     // Warning: Convert to Template
 
-    for (auto lSquare : GetAllSquares())
+    for (auto& lSquare : GetAllSquares())
     {
         lSquare->Destroy();
     }
@@ -108,6 +108,7 @@ TArray<ASquare*> ASquareGenerator::GetAllSquares()
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
+    // Сброс переменной
     TDArraySquares.Empty();
     TDArraySquares.SetNum(NumberAlongAxes.X);
 
@@ -194,6 +195,7 @@ FSquareData ASquareGenerator::SquareDataGeneration(const FIndex2D& iXY)
 {
     FSquareData rData;
 
+    rData.PositionNumber = iXY;
     rData.TypeBlockMaterial = GetMaterialNumber(iXY);
 
     return rData;
