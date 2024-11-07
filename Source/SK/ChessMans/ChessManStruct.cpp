@@ -212,9 +212,10 @@ TArray<FIndex2D> GetSquareForRook(
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
     FSquareData lSquareData; // Данные Клетки
+    FIndex2D i;
 
-    // Проверка ходов Слона (+i, 0)
-    for (FIndex2D i = iPosition + FIndex2D { 1, 0 };
+    // Проверка ходов Ладьи (+i, 0)
+    for (i = iPosition + FIndex2D { 1, 0 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { 1, 0 })
@@ -222,8 +223,8 @@ TArray<FIndex2D> GetSquareForRook(
         lResult.Add(i);
     }
 
-    // Проверка ходов Слона (-i, 0)
-    for (FIndex2D i = iPosition - FIndex2D { -1, 0 };
+    // Проверка ходов Ладьи (-i, 0)
+    for (i = iPosition + FIndex2D { -1, 0 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { -1, 0 })
@@ -231,8 +232,8 @@ TArray<FIndex2D> GetSquareForRook(
         lResult.Add(i);
     }
 
-    // Проверка ходов Слона (0, +i)
-    for (FIndex2D i = iPosition + FIndex2D { 0, +1 };
+    // Проверка ходов Ладьи (0, +i)
+    for (i = iPosition + FIndex2D { 0, +1 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { 0, +1 })
@@ -240,8 +241,8 @@ TArray<FIndex2D> GetSquareForRook(
         lResult.Add(i);
     }
 
-    // Проверка ходов Слона (0, -i)
-    for (FIndex2D i = iPosition + FIndex2D { 0, -1 };
+    // Проверка ходов Ладьи (0, -i)
+    for (i = iPosition + FIndex2D { 0, -1 };
         CheckSquare(i, iAllSquares, lSquareData)
         && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
         i += FIndex2D { 0, -1 })

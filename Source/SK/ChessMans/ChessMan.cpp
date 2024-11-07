@@ -88,6 +88,13 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
     if (!bIsMovingToNewLocation)
     {
+        // Освободить предыдущую клетку и занять новую
+        if (CurrentSquare)
+            CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+        ToSquare->OccupySquare(EWarringPartiesType::Black);
+
+        CurrentSquare = ToSquare;
+
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
 
@@ -95,6 +102,11 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 
         bIsMovingToNewLocation = true;
     }
+}
+
+void AChessMan::SetCurrentSquare(ASquare* ToSquare)
+{
+    CurrentSquare = ToSquare;
 }
 
 void AChessMan::MovementForTick(const float& lDeltaTime)

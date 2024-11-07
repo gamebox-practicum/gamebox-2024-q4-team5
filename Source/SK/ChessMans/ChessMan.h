@@ -104,6 +104,9 @@ public:
 
     // Переместиться к указанной клетке
     void MoveToSquare(ASquare* ToSquare);
+
+    // Установить указатель на новую ячейку
+    void SetCurrentSquare(ASquare* ToSquare);
     //-------------------------------------------
 
 
@@ -119,6 +122,10 @@ private:
 
 
     /* ---   Movement   --- */
+
+    // Указатель на текущую ячейку (необходимо контроля передвижения)
+    UPROPERTY()
+    ASquare* CurrentSquare = nullptr;
 
     // Флаг контроля перемещения
     bool bIsMovingToNewLocation = false;

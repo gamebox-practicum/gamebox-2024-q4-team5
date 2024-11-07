@@ -311,6 +311,7 @@ void AChessManGenerator::CreateChessMan(const FChessManData& iData)
             lNewChessMan->Tags.Add(VerificationTag);
 
             lNewChessMan->CurrentData = iData;
+            lNewChessMan->SetCurrentSquare(lSquare);
 
             AllChessMans.Add(lNewChessMan);
         }
