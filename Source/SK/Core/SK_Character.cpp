@@ -6,9 +6,11 @@
 // UE:
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Interaction:
 #include "SK/ChessBoard/Square.h"
+#include "SK/ChessOperators/ChessOperator.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -18,7 +20,7 @@
 ASK_Character::ASK_Character()
 {
     // Установка вызова функции Tick() в каждом кадре.
-    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true; // Warning: Принудительно!
 
 
     /* ---   Components   --- */
@@ -61,6 +63,7 @@ void ASK_Character::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
+    SubscribeToDelegates();
 }
 
 void ASK_Character::Tick(float DeltaTime)
@@ -138,14 +141,33 @@ void ASK_Character::LookUpAtRate(float Rate)
 
 void ASK_Character::MoveToSquare(ASquare* ToSquare)
 {
-    if (CurrentSquare != ToSquare && !bIsMovingToNewLocation)
+    if (bIsMoveAllowed
+        && ToSquare
+        && CurrentSquare != ToSquare
+        && !bIsMovingToNewLocation)
     {
+        // Освободить предыдущую клетку и занять новую
+        if (CurrentSquare)
+            CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+        ToSquare->OccupySquare(EWarringPartiesType::White);
+
         CurrentSquare = ToSquare;
 
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
 
         bIsMovingToNewLocation = true;
+
+        if (CurrentChessOperator)
+        {
+            bIsMoveAllowed = false;
+            CurrentChessOperator->OnPlayersMove.Broadcast(false);
+        }
+    }
+    else if (!ToSquare)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': ToSquare is NOT"),
+            *GetNameSafe(this));
     }
 }
 
@@ -167,6 +189,36 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
             // Плавная интерполяция перемещения
             SetActorLocation(FMath::VInterpTo(lCurrentLocation, NewLocation, lDeltaTime, MovementSpeed));
         }
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Delegate   --- */
+
+void ASK_Character::PlayersMove(bool bIsPlayersMove)
+{
+    if (bIsPlayersMove)
+    {
+        bIsMoveAllowed = bIsPlayersMove;
+    }
+}
+
+void ASK_Character::SubscribeToDelegates()
+{
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChessOperator::StaticClass(), lResultActors);
+
+    if (lResultActors.IsValidIndex(0))
+    {
+        CurrentChessOperator = Cast<AChessOperator>(lResultActors[0]);
+    }
+
+    if (CurrentChessOperator)
+    {
+        CurrentChessOperator->OnPlayersMove.AddDynamic(this, &ASK_Character::PlayersMove);
     }
 }
 //--------------------------------------------------------------------------------------

@@ -3,6 +3,9 @@
 // Base:
 #include "ChessOperator.h"
 
+// Tools:
+#include "SK/Tools/MyRandom.h"
+
 // UE:
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
@@ -10,6 +13,9 @@
 // Interaction:
 #include "SK/ChessBoard/SquareGenerator.h"
 #include "SK/ChessMans/ChessManGenerator.h"
+#include "SK/ChessMans/ChessMan.h"
+#include "SK/ChessMans/ChessManStruct.h"
+#include "SK/ChessBoard/Square.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -35,6 +41,7 @@ void AChessOperator::BeginPlay()
 {
     Super::BeginPlay();
 
+    OnPlayersMove.AddDynamic(this, &AChessOperator::PlayersMove);
 }
 
 void AChessOperator::OnConstruction(const FTransform& Transform)
@@ -51,9 +58,9 @@ void AChessOperator::OnConstruction(const FTransform& Transform)
 
 void AChessOperator::ReGenerate()
 {
-    CheckCurrentSquareGenerator();
+    UpdateCurrentSquareGenerator();
 
-    CheckCurrentChessManGenerator();
+    UpdateCurrentChessManGenerator();
 }
 //--------------------------------------------------------------------------------------
 
@@ -82,7 +89,22 @@ T* AChessOperator::GetFirstActor()
 
 /* ---   Generators | Square Generator   --- */
 
-void AChessOperator::CheckCurrentSquareGenerator()
+void AChessOperator::UpdateCurrentSquareGenerator()
+{
+    if (GetCurrentSquareGenerator())
+    {
+        CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
+
+        CurrentSquareGenerator->ReGenerate();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': Current Square Generator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+ASquareGenerator* AChessOperator::GetCurrentSquareGenerator()
 {
     if (!CurrentSquareGenerator)
     {
@@ -91,23 +113,20 @@ void AChessOperator::CheckCurrentSquareGenerator()
 
     if (CurrentSquareGenerator)
     {
-        UpdateSquareGeneratorData();
-        CurrentSquareGenerator->ReGenerate();
+        return CurrentSquareGenerator;
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Current Square Generator is NOT"), *GetNameSafe(this));
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentSquareGenerator is NOT"),
+            *GetNameSafe(this));
     }
+
+    return nullptr;
 }
 
 ASquareGenerator* AChessOperator::GetFirstSquareGenerator()
 {
     return GetFirstActor<ASquareGenerator>();
-}
-
-void AChessOperator::UpdateSquareGeneratorData()
-{
-    CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
 }
 //--------------------------------------------------------------------------------------
 
@@ -115,7 +134,23 @@ void AChessOperator::UpdateSquareGeneratorData()
 
 /* ---   Generators | ChessMan Generator   --- */
 
-void AChessOperator::CheckCurrentChessManGenerator()
+void AChessOperator::UpdateCurrentChessManGenerator()
+{
+    if (GetCurrentChessManGenerator())
+    {
+        CurrentChessManGenerator->PlayersTable = PlayersTable;
+        CurrentChessManGenerator->ChessMansTable = ChessMansTable;
+
+        CurrentChessManGenerator->ReGenerate();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+AChessManGenerator* AChessOperator::GetCurrentChessManGenerator()
 {
     if (!CurrentChessManGenerator)
     {
@@ -124,29 +159,87 @@ void AChessOperator::CheckCurrentChessManGenerator()
 
     if (CurrentChessManGenerator)
     {
-        UpdateChessManGeneratorData();
-        CurrentChessManGenerator->ReGenerate();
+        if (CurrentSquareGenerator)
+        {
+            CurrentChessManGenerator->SetPointerToAllSquares(
+                CurrentSquareGenerator->GetPointerToAllSquares());
+        }
+
+        return CurrentChessManGenerator;
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Current ChessMan Generator is NOT"), *GetNameSafe(this));
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
     }
+
+    return nullptr;
 }
 
 AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 {
     return GetFirstActor<AChessManGenerator>();
 }
+//--------------------------------------------------------------------------------------
 
-void AChessOperator::UpdateChessManGeneratorData()
+
+
+/* ---   Delegate   --- */
+
+void AChessOperator::PlayersMove(bool bIsPlayersMove)
 {
-    if (CurrentSquareGenerator)
+    if (!bIsPlayersMove
+        && GetCurrentChessManGenerator())
     {
-        CurrentChessManGenerator->SetPointerToAllSquares(
-            CurrentSquareGenerator->GetPointerToAllSquares());
+        CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-        CurrentChessManGenerator->PlayersTable = PlayersTable;
-        CurrentChessManGenerator->ChessMansTable = ChessMansTable;
+        PlayPrimitiveAI();
+
+        OnPlayersMove.Broadcast(true);
     }
+    else if (!CurrentChessManGenerator)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Primitive AI   --- */
+
+void AChessOperator::PlayPrimitiveAI()
+{
+    // Получить массив из доступных Шахматных фигур
+    TArray<AChessMan*>* lAllChessMans = CurrentChessManGenerator->GetPointerToAllAvailableChessMans();
+
+    // Рандомный выбор Шахматной фигуры
+    int32 lNumber = GetRandom(lAllChessMans->Num() - 1);
+    AChessMan* lSelectedChessMan = (*lAllChessMans)[lNumber];
+
+    //UE_LOG(LogTemp, Error, TEXT("'%s': %d is %s"),
+    //    *GetNameSafe(this), lNumber, *GetNameSafe(lSelectedChessMan));
+
+
+
+    // Получить массив из доступных ходов данной Шахматной фигуры
+    TArray<FIndex2D>& lAllIndex2D = lSelectedChessMan->CurrentData.AvailablePositions;
+
+    // Рандомный выбор хода выбранной Шахматной фигуры
+    lNumber = GetRandom(lAllIndex2D.Num() - 1);
+    FIndex2D lSelectedIndex2D = lAllIndex2D[lNumber];
+
+
+
+    // Получить клетку, на которую пал ход
+    TArray<TArray<ASquare*>>* lAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
+    ASquare* lSelectedSquare = (*lAllSquares)[lSelectedIndex2D.X][lSelectedIndex2D.Y];
+
+    //UE_LOG(LogTemp, Error, TEXT("'%s': %d is %s"),
+    //    *GetNameSafe(this), lNumber, *GetNameSafe(lSelectedSquare));
+
+    // Переместить выбранную фигуру на выбранную клетку
+    lSelectedChessMan->MoveToSquare(lSelectedSquare);
 }
 //--------------------------------------------------------------------------------------

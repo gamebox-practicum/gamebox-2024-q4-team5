@@ -96,10 +96,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
     float MaxDeviation = 0.1f;
 
+    // Флаг первого хода данной фигуры (необходимо для типа Пешки)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
+    bool bFirstMove = true;
+
     //
 
     // Переместиться к указанной клетке
     void MoveToSquare(ASquare* ToSquare);
+
+    // Установить указатель на новую ячейку
+    void SetCurrentSquare(ASquare* ToSquare);
     //-------------------------------------------
 
 
@@ -116,7 +123,8 @@ private:
 
     /* ---   Movement   --- */
 
-    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
+    // Указатель на текущую ячейку (необходимо контроля передвижения)
+    UPROPERTY()
     ASquare* CurrentSquare = nullptr;
 
     // Флаг контроля перемещения

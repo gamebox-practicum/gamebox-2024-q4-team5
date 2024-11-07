@@ -83,11 +83,20 @@ public:
     // Материал клетки: Тип B
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
     UMaterialInterface* BlockMaterialsB;
+    //-------------------------------------------
 
-    //
 
-    // Установить и применить настройки по Данным клетки
-    void SetData(FSquareData Data);
+
+    /* ---   Data   --- */
+
+    /** Установить и применить настройки по Данным клетки */
+    void SetData(const FSquareData& Data);
+
+    /** Получить данные (неизменяемые) */
+    const FSquareData& GetData();
+
+    /** Занять Клетку определённым типом стороны */
+    void OccupySquare(const EWarringPartiesType& WarringPartiesType);
     //-------------------------------------------
 
 
@@ -97,6 +106,11 @@ private:
     /* ---   Generator   --- */
 
     // Установка материала по номеру
-    void SetMaterialByType(int32& NumType);
+    void UpdateMaterialByType(int32& NumType);
+
+    // Данные Клетки
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    FSquareData SquareData;
     //-------------------------------------------
 };

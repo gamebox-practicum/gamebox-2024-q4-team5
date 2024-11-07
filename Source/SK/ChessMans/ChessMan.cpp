@@ -15,7 +15,7 @@
 AChessMan::AChessMan()
 {
     // Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-    PrimaryActorTick.bCanEverTick = false; // Предварительно
+    PrimaryActorTick.bCanEverTick = true; // Warning: Принудительно!
 
 
 
@@ -86,15 +86,27 @@ void AChessMan::Cleaning()
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
-    if (CurrentSquare != ToSquare && !bIsMovingToNewLocation)
+    if (!bIsMovingToNewLocation)
     {
+        // Освободить предыдущую клетку и занять новую
+        if (CurrentSquare)
+            CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+        ToSquare->OccupySquare(EWarringPartiesType::Black);
+
         CurrentSquare = ToSquare;
 
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
 
+        CurrentData.Position = ToSquare->GetData().PositionNumber;
+
         bIsMovingToNewLocation = true;
     }
+}
+
+void AChessMan::SetCurrentSquare(ASquare* ToSquare)
+{
+    CurrentSquare = ToSquare;
 }
 
 void AChessMan::MovementForTick(const float& lDeltaTime)

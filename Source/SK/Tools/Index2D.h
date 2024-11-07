@@ -27,14 +27,36 @@ struct FIndex2D
 
     FIndex2D() {};
 
+    FIndex2D(const FIndex2D& Second);
+
     FIndex2D(const int32& iX, const int32& iY);
+    FIndex2D(const int32& iScale);
+    //-------------------------------------------
+
+
+    /* ---   Operators | =   --- */
+
+    const FIndex2D& operator=(const FIndex2D& other);
     //-------------------------------------------
 
 
 
-    /* ---   Operators   --- */
+    /* ---   Operators | +   --- */
 
-    FIndex2D operator-(const int32& Scale) const;
+    const FIndex2D operator+(const FIndex2D& Second) const;
+    FIndex2D& operator+=(const FIndex2D& Second);
+    FIndex2D& operator++(); // prefix
+    FIndex2D operator++(int32); // postfix
+    //-------------------------------------------
+
+
+
+    /* ---   Operators | -   --- */
+
+    const FIndex2D operator-(const FIndex2D& Second) const;
+    FIndex2D& operator-=(const FIndex2D& Second);
+    FIndex2D& operator--(); // prefix
+    FIndex2D operator--(int32); // postfix
     //-------------------------------------------
 
 

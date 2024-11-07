@@ -91,12 +91,7 @@ void ASquare::NotifyActorOnClicked(FKey ButtonReleased)
 
 /* ---   Generator   --- */
 
-void ASquare::SetData(FSquareData iData)
-{
-    SetMaterialByType(iData.TypeBlockMaterial);
-}
-
-void ASquare::SetMaterialByType(int32& iNumType)
+void ASquare::UpdateMaterialByType(int32& iNumType)
 {
     if (BlockMesh)
     {
@@ -109,8 +104,29 @@ void ASquare::SetMaterialByType(int32& iNumType)
             if (BlockMaterialsA)
                 BlockMesh->SetMaterial(0, BlockMaterialsA);
             else
-                UE_LOG(LogTemp, Error, TEXT("%s: SetMaterialByType: Materials is NOT"), *GetNameSafe(this));
+                UE_LOG(LogTemp, Error, TEXT("%s: UpdateMaterialByType: Materials is NOT"), *GetNameSafe(this));
         }
     }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Data   --- */
+
+void ASquare::SetData(const FSquareData& iData)
+{
+    SquareData = iData;
+    UpdateMaterialByType(SquareData.TypeBlockMaterial);
+}
+
+const FSquareData& ASquare::GetData()
+{
+    return SquareData;
+}
+
+void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
+{
+    SquareData.WarringPartiesType = iWarringPartiesType;
 }
 //--------------------------------------------------------------------------------------

@@ -92,7 +92,7 @@ public:
     /* ---   Get Data   --- */
 
     /** Получение всех клеток в виде двумерного массива */
-    const TArray<TArray<ASquare*>>* GetPointerToAllSquares();
+    TArray<TArray<ASquare*>>* GetPointerToAllSquares();
     // PS: UFUNCTION() для него не работает
     //-------------------------------------------
 
@@ -103,7 +103,7 @@ private:
     /* ---   Re Generate   --- */
 
     // Тег для определения клетки, созданной генератором
-    FName VerificationTag = "Generate";
+    FName VerificationTag = FName(GetNameSafe(this));
 
     //
 
@@ -143,6 +143,11 @@ private:
 
     /* ---   Generator | SquareData   --- */
 
+    // Все клетки в виде двумерного массива
+    TArray<TArray<ASquare*>> TDArraySquares;
+
+    //
+
     /** Загрузить данные в указанный блок */
     void SetSquareData(ASquare* Block, FSquareData Data);
 
@@ -151,13 +156,5 @@ private:
 
     /** Генерация номера материала по координатам */
     int32 GetMaterialNumber(const FIndex2D& XY);
-    //-------------------------------------------
-
-
-
-    /* ---   Get Data   --- */
-
-    // Все клетки в виде двумерного массива
-    TArray<TArray<ASquare*>> TDArraySquares;
     //-------------------------------------------
 };
