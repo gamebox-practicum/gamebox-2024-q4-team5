@@ -2,8 +2,7 @@
 #include <memory>
 #include <vector>
 
-//#include "ChessBoardInfo.h"
-#include "SK/Tools/Index2D.h"
+#include "FCellIndex.h"
 #include "UChessPieceInfo.generated.h"
 
 class UChessBoardInfo;
@@ -23,13 +22,17 @@ class SK_API  UChessPieceInfo: public UObject
     GENERATED_BODY()
 
 public:
+    FCellIndex CurrentCell;
+
     UPROPERTY(BlueprintReadWrite)
     PIECE_COLOR Color;
 
     /// возвращает точки в которые фигура может сходить в данный момент
     /// @param ChessBoardInfo
     /// @return
-    virtual std::unique_ptr<std::vector<FIndex2D>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo);
+    virtual std::unique_ptr<std::vector<FCellIndex>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo);
+
+    virtual int GetRelativeValue();
 
     virtual ~UChessPieceInfo() override{};
 };

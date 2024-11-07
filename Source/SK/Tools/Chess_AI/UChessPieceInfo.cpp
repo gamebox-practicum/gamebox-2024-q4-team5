@@ -1,8 +1,14 @@
 #include "UChessPieceInfo.h"
+#include "FCellIndex.h"
 
-#include <stdexcept>
-
-std::unique_ptr<std::vector<FIndex2D>> UChessPieceInfo::GetLegalMoves(UChessBoardInfo* ChessBoardInfo)
+std::unique_ptr<std::vector<FCellIndex>> UChessPieceInfo::GetLegalMoves(UChessBoardInfo* ChessBoardInfo)
 {
-    throw std::runtime_error("trying to get moves from an empty chess square");
+    //UCLASS does not support abstract functions, so it is empty
+    return nullptr;
+}
+
+int UChessPieceInfo::GetRelativeValue()
+{
+    //UCLASS does not support abstract functions, so it is empty
+    return 0;
 }

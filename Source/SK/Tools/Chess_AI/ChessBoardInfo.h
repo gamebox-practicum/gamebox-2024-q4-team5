@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FSquareInfo.h"
-#include "SK/Tools/Index2D.h"
+#include "UChessPieceInfo.h"
 #include "UObject/Object.h"
 #include "ChessBoardInfo.generated.h"
 
@@ -24,10 +24,13 @@ public:
     void Init(int sizeY, int sizeX);
 
     UFUNCTION(BlueprintCallable)
-    FSquareInfo Get(int Y, int X);
+    void Set(int Y, int X, UChessPieceInfo* value);
 
     UFUNCTION(BlueprintCallable)
-    void Set(int Y, int X, FSquareInfo value);
+    int GetSizeY(){return m_sizeY;}
+
+    UFUNCTION(BlueprintCallable)
+    int GetSizeX(){return m_sizeX;}
 
     FSquareInfo*& operator[] (int Y);
 

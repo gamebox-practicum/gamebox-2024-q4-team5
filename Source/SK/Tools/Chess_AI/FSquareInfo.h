@@ -1,15 +1,9 @@
 #pragma once
-#include "UChessPieceInfo.h"
-#include  "FSquareInfo.generated.h"
 
-USTRUCT(BlueprintType)
+class UChessPieceInfo;
 struct FSquareInfo
 {
-    GENERATED_BODY()
 public:
-    UPROPERTY(BlueprintReadWrite)
-    UChessPieceInfo* CurrentPiece;
+    UChessPieceInfo* CurrentPiece = nullptr;
 
-    UPROPERTY(BlueprintReadWrite)
-    bool IsEmpty = true;
 };

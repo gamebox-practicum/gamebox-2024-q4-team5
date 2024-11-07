@@ -14,14 +14,11 @@ void UChessBoardInfo::Init( int sizeY, int sizeX)
     }
 }
 
-FSquareInfo UChessBoardInfo::Get(int Y, int X)
+void UChessBoardInfo::Set(int Y, int X, UChessPieceInfo* value)
 {
-    return m_Board[Y][X];
-}
-
-void UChessBoardInfo::Set(int Y, int X, FSquareInfo value)
-{
-    m_Board[Y][X] = value;
+    m_Board[Y][X].CurrentPiece = value;
+    value->CurrentCell.Y = Y;
+    value->CurrentCell.X = X;
 }
 
 FSquareInfo*& UChessBoardInfo::operator[](int Y)
