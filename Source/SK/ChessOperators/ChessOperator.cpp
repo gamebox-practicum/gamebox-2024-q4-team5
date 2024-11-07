@@ -233,8 +233,8 @@ void AChessOperator::PlayPrimitiveAI()
 
 
     // Получить клетку, на которую пал ход
-    TArray<TArray<ASquare*>>* lAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
-    ASquare* lSelectedSquare = (*lAllSquares)[lSelectedIndex2D.X][lSelectedIndex2D.Y];
+    TArray<FSquareArray>* lAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
+    ASquare* lSelectedSquare = (*lAllSquares)[lSelectedIndex2D.X].SquareArray[lSelectedIndex2D.Y];
 
     //UE_LOG(LogTemp, Error, TEXT("'%s': %d is %s"),
     //    *GetNameSafe(this), lNumber, *GetNameSafe(lSelectedSquare));

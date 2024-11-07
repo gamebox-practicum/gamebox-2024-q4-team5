@@ -92,7 +92,7 @@ public:
     /* ---   Get Data   --- */
 
     /** Получение всех клеток в виде двумерного массива */
-    TArray<TArray<ASquare*>>* GetPointerToAllSquares();
+    TArray<FSquareArray>* GetPointerToAllSquares();
     // PS: UFUNCTION() для него не работает
     //-------------------------------------------
 
@@ -144,7 +144,9 @@ private:
     /* ---   Generator | SquareData   --- */
 
     // Все клетки в виде двумерного массива
-    TArray<TArray<ASquare*>> TDArraySquares;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    TArray<FSquareArray> TDArraySquares_Test;
 
     //
 

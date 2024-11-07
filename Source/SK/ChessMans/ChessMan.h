@@ -96,10 +96,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
     float MaxDeviation = 0.1f;
 
-    // Флаг первого хода данной фигуры (необходимо для типа Пешки)
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
-    bool bFirstMove = true;
-
     //
 
     // Переместиться к указанной клетке

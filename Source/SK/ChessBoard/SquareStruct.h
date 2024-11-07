@@ -12,6 +12,14 @@
 
 
 
+/* ---   Pre-declaration of classes and structures   --- */
+
+// Interaction:
+class ASquare;
+//--------------------------------------------------------------------------------------
+
+
+
 // Тип враждующих сторон
 UENUM(BlueprintType)
 enum struct EWarringPartiesType : uint8
@@ -52,5 +60,29 @@ struct FSquareData
     /* ---   Constructors   --- */
 
     FSquareData() {};
+    //-------------------------------------------
+};
+
+
+
+// Массив указателей на Клетки
+USTRUCT(BlueprintType)
+struct FSquareArray
+{
+    // PS: Необходим для создания двумерного массива.
+    // Не получилось преобразовать в шаблон, который бы поддерживался в UE
+
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        meta = (DisplayName = "Y"))
+    TArray<ASquare*> SquareArray;
+    //-------------------------------------------
+
+
+
+    /* ---   Constructors   --- */
+
+    FSquareArray() {};
     //-------------------------------------------
 };

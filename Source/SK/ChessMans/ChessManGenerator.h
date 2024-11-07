@@ -98,7 +98,8 @@ public:
     // 
     // PS: Массив НЕ динамический.
     // Количество элементов массива зависит от количества элементов в EChessManType
-    UPROPERTY(EditAnywhere, Category = "Settings|Generator")
+    UPROPERTY(EditAnywhere, Category = "Settings|Generator",
+        meta = (ArraySizeEnum = "EChessManType"))
     TSubclassOf<AChessMan> SquareType[EChessManType::NONE];
     //-------------------------------------------
 
@@ -107,7 +108,7 @@ public:
     /* ---   Data   --- */
 
     /** Сохранить двумерный массив указателей на Клетки */
-    void SetPointerToAllSquares(const TArray<TArray<ASquare*>>* Squares);
+    void SetPointerToAllSquares(const TArray<FSquareArray>* Squares);
     // PS: UFUNCTION() для него не работает
 
     /** Получение указателя на все Фигуры Игроков */
@@ -174,7 +175,7 @@ private:
     /* ---   Data   --- */
 
     // Двумерный массив указателей на Клетки
-    const TArray<TArray<ASquare*>>* PointerToAllSquares;
+    const TArray<FSquareArray>* PointerToAllSquares;
 
     // Все Фигуры Игроков
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",

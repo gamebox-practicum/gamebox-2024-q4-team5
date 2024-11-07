@@ -200,11 +200,11 @@ void AChessManGenerator::CreatePlayer(const TSubclassOf<ASK_Character> iType, co
     if (iType
         && PointerToAllSquares
         && PointerToAllSquares->IsValidIndex(iXY.X)
-        && (*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y)
+        && (*PointerToAllSquares)[iXY.X].SquareArray.IsValidIndex(iXY.Y)
         && AllPlayers.Num() <= EAutoReceiveInput::Player7)
     {
         // Получение указателя на указанную клетку
-        const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X])[iXY.Y];
+        const ASquare* lSquare = ((*PointerToAllSquares)[iXY.X]).SquareArray[iXY.Y];
 
         if (lSquare)
         {
@@ -240,7 +240,7 @@ void AChessManGenerator::CreatePlayer(const TSubclassOf<ASK_Character> iType, co
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
             *GetNameSafe(this), iXY.X);
     }
-    else if (!(*PointerToAllSquares)[iXY.X].IsValidIndex(iXY.Y))
+    else if (!(*PointerToAllSquares)[iXY.X].SquareArray.IsValidIndex(iXY.Y))
     {
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
             *GetNameSafe(this), iXY.Y);
@@ -290,10 +290,10 @@ void AChessManGenerator::CreateChessMan(const FChessManData& iData)
     // Поочерёдная проверка валидности указателей и индексов массива
     if (PointerToAllSquares
         && PointerToAllSquares->IsValidIndex(iData.Position.X)
-        && (*PointerToAllSquares)[iData.Position.X].IsValidIndex(iData.Position.Y))
+        && (*PointerToAllSquares)[iData.Position.X].SquareArray.IsValidIndex(iData.Position.Y))
     {
         // Получение указателя на указанную клетку
-        ASquare* lSquare = ((*PointerToAllSquares)[iData.Position.X])[iData.Position.Y];
+        ASquare* lSquare = ((*PointerToAllSquares)[iData.Position.X]).SquareArray[iData.Position.Y];
 
         if (lSquare)
         {
@@ -326,7 +326,7 @@ void AChessManGenerator::CreateChessMan(const FChessManData& iData)
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
             *GetNameSafe(this), iData.Position.X);
     }
-    else if (!(*PointerToAllSquares)[iData.Position.X].IsValidIndex(iData.Position.Y))
+    else if (!(*PointerToAllSquares)[iData.Position.X].SquareArray.IsValidIndex(iData.Position.Y))
     {
         UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [X, %d] is NOT"),
             *GetNameSafe(this), iData.Position.Y);
@@ -338,7 +338,7 @@ void AChessManGenerator::CreateChessMan(const FChessManData& iData)
 
 /* ---   Data   --- */
 
-void AChessManGenerator::SetPointerToAllSquares(const TArray<TArray<ASquare*>>* iSquares)
+void AChessManGenerator::SetPointerToAllSquares(const TArray<FSquareArray>* iSquares)
 {
     PointerToAllSquares = iSquares;
 }

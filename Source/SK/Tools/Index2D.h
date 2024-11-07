@@ -20,6 +20,7 @@ struct FIndex2D
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
     int32 Y = 0;
+    //-------------------------------------------
 
 
 

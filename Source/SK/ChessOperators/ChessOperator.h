@@ -31,6 +31,7 @@ class UDataTable;
 // Interaction:
 class ASquareGenerator;
 class AChessManGenerator;
+class ASquare;
 //--------------------------------------------------------------------------------------
 
 

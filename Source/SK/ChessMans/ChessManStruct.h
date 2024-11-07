@@ -46,7 +46,7 @@ enum struct EChessManType : uint8
     Queen,
 
     // Базовый без эффектов
-    NONE	// Всегда в конце для строгого назначения количества элементов массива
+    NONE UMETA(Hidden)// Всегда в конце для строгого назначения количества элементов массива
 };
 
 
@@ -123,7 +123,7 @@ struct FChessManData : public FTableRowBase
 */
 AChessMan* GetAvailableChessMan(
     AChessMan* ChessMan,
-    const TArray<TArray<ASquare*>>* AllSquares);
+    const TArray<FSquareArray>* AllSquares);
 //--------------------------------------------------------------------------------------
 
 
@@ -131,16 +131,14 @@ AChessMan* GetAvailableChessMan(
 /* ---   Functions | Get Square For ChessMan   --- */
 
 /** Получить индексы всех Клеток для данной Пешки
-@param  bFirstMove  -- Флаг первого хода Пешки
 @param  iPosition   -- Текущая позиция Пешки
 @param  iAllSquares -- Указатель на двумерный Массив Клеток
 
 @return Массив свободных индексов всех Клеток для данной Пешки.
 */
 TArray<FIndex2D> GetSquareForPawn(
-    const bool bFirstMove,
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares);
+    const TArray<FSquareArray>* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Коня
 @param  iPosition   -- Текущая позиция Коня
@@ -150,7 +148,7 @@ TArray<FIndex2D> GetSquareForPawn(
 */
 TArray<FIndex2D> GetSquareForKnight(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares);
+    const TArray<FSquareArray>* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Слона
 @param  iPosition   -- Текущая позиция Слона
@@ -160,7 +158,7 @@ TArray<FIndex2D> GetSquareForKnight(
 */
 TArray<FIndex2D> GetSquareForBishop(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares);
+    const TArray<FSquareArray>* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Ладьи
 @param  iPosition   -- Текущая позиция Ладьи
@@ -170,7 +168,7 @@ TArray<FIndex2D> GetSquareForBishop(
 */
 TArray<FIndex2D> GetSquareForRook(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares);
+    const TArray<FSquareArray>* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Ферзя
 @param  iPosition   -- Текущая позиция Ферзя
@@ -180,7 +178,7 @@ TArray<FIndex2D> GetSquareForRook(
 */
 TArray<FIndex2D> GetSquareForQueen(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares);
+    const TArray<FSquareArray>* iAllSquares);
 //--------------------------------------------------------------------------------------
 
 
@@ -196,7 +194,7 @@ TArray<FIndex2D> GetSquareForQueen(
 */
 void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
-    const TArray<TArray<ASquare*>>* iAllSquares,
+    const TArray<FSquareArray>* iAllSquares,
     TArray<FIndex2D>& oResult);
 
 /** Проверка наличия Клетки по индексу
@@ -208,6 +206,6 @@ void CheckPositions(
 */
 bool CheckSquare(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares,
+    const TArray<FSquareArray>* iAllSquares,
     FSquareData& oSquareData);
 //--------------------------------------------------------------------------------------

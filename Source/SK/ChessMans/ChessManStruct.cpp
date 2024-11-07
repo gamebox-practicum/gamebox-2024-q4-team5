@@ -15,7 +15,7 @@
 
 AChessMan* GetAvailableChessMan(
     AChessMan* iChessMan,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Поочерёдная проверка валидности указателей
     if (iChessMan
@@ -33,7 +33,6 @@ AChessMan* GetAvailableChessMan(
         {
         case EChessManType::Pawn: // Пешка
             lSquaresIndex2D = GetSquareForPawn(
-                iChessMan->bFirstMove,
                 lData.Position,
                 iAllSquares);
             break;
@@ -82,9 +81,8 @@ AChessMan* GetAvailableChessMan(
 // PS: Local Functions
 
 TArray<FIndex2D> GetSquareForPawn(
-    const bool bFirstMove,
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lNotChecked;
@@ -93,12 +91,6 @@ TArray<FIndex2D> GetSquareForPawn(
 
     // Ход вперёд
     lNotChecked.Add(iPosition + FIndex2D { -1, 0 });
-
-    // Длинный ход вперёд
-    if (bFirstMove)
-    {
-        lNotChecked.Add(iPosition + FIndex2D { -2, 0 });
-    }
 
     // Проверка короткого и длинного хода вперёд
     CheckPositions(
@@ -130,7 +122,7 @@ TArray<FIndex2D> GetSquareForPawn(
 
 TArray<FIndex2D> GetSquareForKnight(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lNotChecked;
@@ -159,7 +151,7 @@ TArray<FIndex2D> GetSquareForKnight(
 
 TArray<FIndex2D> GetSquareForBishop(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
@@ -207,7 +199,7 @@ TArray<FIndex2D> GetSquareForBishop(
 
 TArray<FIndex2D> GetSquareForRook(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
@@ -255,7 +247,7 @@ TArray<FIndex2D> GetSquareForRook(
 
 TArray<FIndex2D> GetSquareForQueen(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares)
+    const TArray<FSquareArray>* iAllSquares)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
@@ -278,7 +270,7 @@ TArray<FIndex2D> GetSquareForQueen(
 
 void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
-    const TArray<TArray<ASquare*>>* iAllSquares,
+    const TArray<FSquareArray>* iAllSquares,
     TArray<FIndex2D>& oResult)
 {
     FSquareData lSquareData; // Данные Клетки
@@ -301,13 +293,13 @@ void CheckPositions(
 
 bool CheckSquare(
     const FIndex2D& iPosition,
-    const TArray<TArray<ASquare*>>* iAllSquares,
+    const TArray<FSquareArray>* iAllSquares,
     FSquareData& oSquareData)
 {
     if (iAllSquares->IsValidIndex(iPosition.X)
-        && (*iAllSquares)[iPosition.X].IsValidIndex(iPosition.Y))
+        && (*iAllSquares)[iPosition.X].SquareArray.IsValidIndex(iPosition.Y))
     {
-        ASquare* lSquare = ((*iAllSquares)[iPosition.X])[iPosition.Y];
+        ASquare* lSquare = ((*iAllSquares)[iPosition.X]).SquareArray[iPosition.Y];
 
         if (lSquare)
         {
