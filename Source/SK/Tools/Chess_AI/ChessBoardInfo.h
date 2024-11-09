@@ -19,6 +19,8 @@ private:
     FSquareInfo** m_Board = nullptr;
     int m_sizeX;
     int m_sizeY;
+
+    void Clear();
 public:
     UFUNCTION(BlueprintCallable)
     void Init(int sizeY, int sizeX);
@@ -39,6 +41,12 @@ public:
     virtual ~UChessBoardInfo() override;
 
     bool IsValidCell(FCellIndex cell);
+
+    ///is used to prevent the collector from deleting objects
+    UPROPERTY()
+    TArray<UChessPieceInfo*> whitePieces;
+    UPROPERTY()
+    TArray<UChessPieceInfo*> blackPieces;
 };
 
 inline bool UChessBoardInfo::IsValidCell(FCellIndex cell)

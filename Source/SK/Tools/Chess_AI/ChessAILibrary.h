@@ -55,5 +55,9 @@ class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
     static void UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo,
     std::vector<UChessPieceInfo*>& DefensiveFigures);
 
+    template<typename T>
+    static void CopyTArrayToVector(TArray<T>& Array, std::vector<T>& vector);
+
     //static FChessPieceStep GetBestStep(UChessPieceInfo* Piece, UChessBoardInfo* ChessBoardInfo, int& score);
 };
+

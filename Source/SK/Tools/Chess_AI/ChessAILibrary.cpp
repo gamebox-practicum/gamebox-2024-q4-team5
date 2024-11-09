@@ -3,18 +3,24 @@
 
 #include "ChessAILibrary.h"
 
+#include <iterator>
 #include <stdexcept>
 
 FChessPieceStep UChessAILibrary::GetNextStep(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth)
 {
     std::vector<UChessPieceInfo*> whitePieces;
     std::vector<UChessPieceInfo*> blackPieces;
+    //std::copy(ChessBoardInfo->whitePieces.begin(), ChessBoardInfo->whitePieces.end(), std::back_inserter(whitePieces));
+    //std::copy(ChessBoardInfo->blackPieces.begin(), ChessBoardInfo->blackPieces.end(), std::back_inserter(blackPieces));
+    CopyTArrayToVector(ChessBoardInfo->whitePieces, whitePieces);
+    CopyTArrayToVector(ChessBoardInfo->blackPieces, blackPieces);
 
-    GetPieces(ChessBoardInfo, whitePieces, blackPieces);
+    //GetPieces(ChessBoardInfo, whitePieces, blackPieces);
 
     ///testing: if there are no figures in any team, return UNABLE_MOVE
         if((whitePieces.size()) <=0 || (whitePieces.size() <= 0))
         {
+            UE_LOG(LogTemp, Warning, TEXT("ChessBoardInfo->whitePieces.Num() %d"), ChessBoardInfo->whitePieces.Num());
             return UNABLE_MOVE;
         }
     ///
@@ -47,7 +53,7 @@ void UChessAILibrary::LogChessBoard(UChessBoardInfo* ChessBoardInfo)
                 str+= " ";
             }
         }
-        UE_LOG(LogTemp, Warning, TEXT("The vector value is: %s"), *str);
+        UE_LOG(LogTemp, Warning, TEXT("%s"), *str);
     }
 
     UE_LOG(LogTemp, Warning, TEXT("---------------------"));
@@ -63,6 +69,18 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = nullptr;
     ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, piece);
     //(*ChessBoardInfo)[Step.NewPosition].CurrentPiece = piece;
+
+    if(Step.AttackedPiece)
+    {
+        if(Step.AttackedPiece->Color == PIECE_COLOR::WHITE)
+        {
+            ChessBoardInfo->whitePieces.Remove(Step.AttackedPiece);
+        }
+        if(Step.AttackedPiece->Color == PIECE_COLOR::BLACK)
+        {
+            ChessBoardInfo->blackPieces.Remove(Step.AttackedPiece);
+        }
+    }
 }
 
 void UChessAILibrary::GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth,
@@ -116,9 +134,13 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
 
     for (auto figure : AttackingFigures)
     {
-        auto tmp = (figure->GetLegalMoves(ChessBoardInfo));
-        auto tmp2 = tmp.get();
-        auto steps = *(tmp2);
+        //on application ending check
+        if(!IsValid(figure) || !IsValid(ChessBoardInfo))
+        {
+            return Result;
+        }
+
+        auto steps = *((figure->GetLegalMoves(ChessBoardInfo)).get());
         for (auto step : steps)
         {
             int currentScore = step.GetStepScore();
@@ -138,7 +160,7 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
                 UndoStep(step, ChessBoardInfo, DefensiveFigures);
             }
 
-            if(currentScore > BestScore)
+            if((currentScore > BestScore) || ((currentScore == BestScore) && FMath::RandBool()) )
             {
                 BestScore = currentScore;
                 Result = step;
@@ -188,6 +210,15 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
     {
         ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, Step.AttackedPiece);
         DefensiveFigures.push_back(Step.AttackedPiece);
+    }
+}
+
+template <typename T>
+void UChessAILibrary::CopyTArrayToVector(TArray<T>& Array, std::vector<T>& vector)
+{
+    for (auto Element : Array)
+    {
+        vector.push_back(Element);
     }
 }
 
