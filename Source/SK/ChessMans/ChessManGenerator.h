@@ -4,7 +4,7 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "SK/ChessOperators/ChessGenerator.h"
 
 // Tools:
 #include "SK/Tools/Index2D.h"
@@ -32,7 +32,7 @@ class AChessMan;
 
 
 UCLASS()
-class SK_API AChessManGenerator : public AActor
+class SK_API AChessManGenerator : public AChessGenerator
 {
     GENERATED_BODY()
 
@@ -100,7 +100,7 @@ public:
     // Количество элементов массива зависит от количества элементов в EChessManType
     UPROPERTY(EditAnywhere, Category = "Settings|Generator",
         meta = (ArraySizeEnum = "EChessManType"))
-    TSubclassOf<AChessMan> SquareType[EChessManType::NONE];
+    TSubclassOf<AChessMan> ChessManType[EChessManType::NONE];
     //-------------------------------------------
 
 
@@ -108,7 +108,7 @@ public:
     /* ---   Data   --- */
 
     /** Сохранить двумерный массив указателей на Клетки */
-    void SetPointerToAllSquares(const TArray<FSquareArray>* Squares);
+    void SetPointerToAllSquares(FSquareArray2D* Squares);
     // PS: UFUNCTION() для него не работает
 
     /** Получение указателя на все Фигуры Игроков */
@@ -138,14 +138,8 @@ private:
     /** Удалить все Фигуры игроков */
     void DeleteAllPlayers();
 
-    /** Получить все созданные Фигуры игроков (проверка по Тегу) */
-    TArray<ASK_Character*> GetAllPlayers();
-
     /** Удалить все Шахматные фигуры */
     void DeleteAllChessMans();
-
-    /** Получить все созданные Шахматные фигуры (проверка по Тегу) */
-    TArray<AChessMan*> GetAllChessMan();
     //-------------------------------------------
 
 
@@ -175,7 +169,7 @@ private:
     /* ---   Data   --- */
 
     // Двумерный массив указателей на Клетки
-    const TArray<FSquareArray>* PointerToAllSquares;
+    FSquareArray2D* PointerToAllSquares;
 
     // Все Фигуры Игроков
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",

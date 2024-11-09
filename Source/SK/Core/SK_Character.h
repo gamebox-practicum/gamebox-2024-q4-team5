@@ -119,10 +119,10 @@ public:
 
 
 
-    /* ---   Delegate   --- */
+    /* ---   Player Moves Sequence   --- */
 
     UFUNCTION()
-    void PlayersMove(bool bIsPlayersMove);
+    void PlayerMovesSequence(bool bIsPlayersMove);
     //-------------------------------------------
 
 
@@ -176,7 +176,7 @@ private:
 
 
 
-    /* ---   Delegate   --- */
+    /* ---   Player Moves Sequence   --- */
 
     // Указатель на текущего Оператора
     AChessOperator* CurrentChessOperator = nullptr;

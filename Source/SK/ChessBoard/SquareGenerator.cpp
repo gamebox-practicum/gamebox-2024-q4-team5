@@ -56,48 +56,11 @@ void ASquareGenerator::ReGenerate()
 
 void ASquareGenerator::DeleteAllSquares()
 {
-    // Warning: Convert to Template
-
-    for (auto& lSquare : GetAllSquares())
+    for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
     {
         lSquare->Destroy();
     }
     BlockSize = FVector::ZeroVector;
-}
-
-TArray<ASquare*> ASquareGenerator::GetAllSquares()
-{
-    // Warning: Convert to Template
-
-    TArray<ASquare*> lResult;
-    TArray<AActor*> lResultActors;
-
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASquare::StaticClass(), lResultActors);
-
-    if (lResultActors.IsValidIndex(0))
-    {
-        bool bCheckTags = false;
-
-        for (AActor* lData : lResultActors)
-        {
-            ASquare* lCurrentSquare = Cast<ASquare>(lData);
-
-            for (FName lTags : lCurrentSquare->Tags)
-            {
-                if (lTags == VerificationTag)
-                {
-                    bCheckTags = true;
-                }
-            }
-
-            if (bCheckTags)
-            {
-                lResult.Add(lCurrentSquare);
-            }
-        }
-    }
-
-    return lResult;
 }
 //--------------------------------------------------------------------------------------
 
@@ -112,19 +75,14 @@ void ASquareGenerator::CreateGeneratedSquares()
     TDArraySquares_Test.Empty();
 
     // Создание элементов массива X
-    TDArraySquares_Test.SetNum(NumberAlongAxes.X);
+    TDArraySquares_Test.SetNum(NumberAlongAxes);
 
     for (int32 x = 0; x < NumberAlongAxes.X; ++x)
     {
-        TArray<ASquare*>* lArraySquare = &TDArraySquares_Test[x].SquareArray;
-
-        // Создание недостающего массива Y
-        lArraySquare->SetNum(NumberAlongAxes.Y);
-
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
         {
-            // Создание Клетки и добавление её в массив
-            (*lArraySquare)[y] = CreateSquare(FIndex2D(x, y));
+            // Создание Клетки и добавление её в массив по соответствующему индексу
+            TDArraySquares_Test.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
         }
     }
 }
@@ -189,7 +147,6 @@ void ASquareGenerator::SetSquareData(ASquare* iBlock, FSquareData iData)
     if (iBlock)
     {
         iBlock->SetData(iData);
-        // Предварительно
     }
 }
 
@@ -213,31 +170,8 @@ int32 ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
 
 /* ---   Get Data   --- */
 
-TArray<FSquareArray>* ASquareGenerator::GetPointerToAllSquares()
+FSquareArray2D* ASquareGenerator::GetPointerToAllSquares()
 {
-    // Если массив пустой, то заполнить его из элементов, заранее созданных в Мире
-    if (!TDArraySquares_Test.IsValidIndex(0))
-    {
-        TArray<ASquare*> lAllSquares = GetAllSquares();
-
-        // Создание элементов массива X
-        TDArraySquares_Test.SetNum(NumberAlongAxes.X);
-
-        for (int32 x = 0; x < NumberAlongAxes.X; ++x)
-        {
-            TArray<ASquare*>* lArraySquare = &TDArraySquares_Test[x].SquareArray;
-
-            // Создание недостающего массива Y
-            lArraySquare->Reset(NumberAlongAxes.Y);
-
-            for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
-            {
-                // Добавление Клетки в массив
-                lArraySquare->Add(lAllSquares[x * NumberAlongAxes.Y + y]);
-            }
-        }
-    }
-
     return &TDArraySquares_Test;
 }
 //--------------------------------------------------------------------------------------

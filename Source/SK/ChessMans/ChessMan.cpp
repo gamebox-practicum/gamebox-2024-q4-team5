@@ -86,7 +86,7 @@ void AChessMan::Cleaning()
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
-    if (!bIsMovingToNewLocation)
+    if (!bIsMovingToNewLocation && ToSquare)
     {
         // Освободить предыдущую клетку и занять новую
         if (CurrentSquare)

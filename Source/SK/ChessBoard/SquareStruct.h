@@ -74,9 +74,7 @@ struct FSquareArray
 
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,
-        meta = (DisplayName = "Y"))
-    TArray<ASquare*> SquareArray;
+    friend struct FSquareArray2D;
     //-------------------------------------------
 
 
@@ -84,5 +82,84 @@ struct FSquareArray
     /* ---   Constructors   --- */
 
     FSquareArray() {};
+    //-------------------------------------------
+
+
+
+private:
+
+    /* ---   Data   --- */
+
+    // Ось Y
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        meta = (AllowPrivateAccess = true, DisplayName = "Y"))
+    TArray<ASquare*> SquareArray;
+    //-------------------------------------------
+};
+
+
+
+// 2D-массив указателей на Клетки
+USTRUCT(BlueprintType)
+struct FSquareArray2D
+{
+    // PS: Необходим для создания двумерного массива.
+    // Не получилось преобразовать в шаблон, который бы поддерживался в UE
+
+    GENERATED_BODY()
+    //-------------------------------------------
+
+
+
+    /* ---   Constructors   --- */
+
+    FSquareArray2D() {};
+    //-------------------------------------------
+
+
+
+    /* ---   Functions   --- */
+
+    /** Проверка валидности индекса массива */
+    bool IsValidIndex(const int32& X, const int32& Y) const;
+    /** Проверка валидности индекса массива */
+    bool IsValidIndex(const FIndex2D& XY) const;
+
+    /** Очистка массива  */
+    void Empty();
+    /** Проверка на пустой ли массив  */
+    bool IsEmpty() const;
+
+    /** Изменить размер массива на заданное количество элементов */
+    void SetNum(const int32& X, const int32& Y);
+    /** Изменить размер массива на заданное количество элементов */
+    void SetNum(const FIndex2D& XY);
+
+    /** Получить массив с конкретным индексом X */
+    TArray<ASquare*> GetArrayByX(const int32& X) const;
+    /** Получить массив с конкретным индексом Y */
+    TArray<ASquare*> GetArrayByY(const int32& Y) const;
+
+    /** Получить элемент по Индексу */
+    ASquare* GetByIndex(const int32& X, const int32& Y) const;
+    /** Получить элемент по Двумерному Индексу */
+    ASquare* GetByIndex(const FIndex2D& XY) const;
+
+    /** Записать элемент по Индексу */
+    bool SetByIndex(ASquare* Square, const int32& X, const int32& Y);
+    /** Записать элемент по Двумерному Индексу */
+    bool SetByIndex(ASquare* Square, const FIndex2D& XY);
+    //-------------------------------------------
+
+
+
+private:
+
+    /* ---   Data   --- */
+
+    // Ось X
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        meta = (AllowPrivateAccess = true, DisplayName = "X"))
+    TArray<FSquareArray> SquareArray;
     //-------------------------------------------
 };

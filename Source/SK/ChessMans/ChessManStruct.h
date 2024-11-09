@@ -123,7 +123,7 @@ struct FChessManData : public FTableRowBase
 */
 AChessMan* GetAvailableChessMan(
     AChessMan* ChessMan,
-    const TArray<FSquareArray>* AllSquares);
+    const FSquareArray2D* AllSquares);
 //--------------------------------------------------------------------------------------
 
 
@@ -138,7 +138,7 @@ AChessMan* GetAvailableChessMan(
 */
 TArray<FIndex2D> GetSquareForPawn(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares);
+    const FSquareArray2D* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Коня
 @param  iPosition   -- Текущая позиция Коня
@@ -148,7 +148,7 @@ TArray<FIndex2D> GetSquareForPawn(
 */
 TArray<FIndex2D> GetSquareForKnight(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares);
+    const FSquareArray2D* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Слона
 @param  iPosition   -- Текущая позиция Слона
@@ -158,7 +158,7 @@ TArray<FIndex2D> GetSquareForKnight(
 */
 TArray<FIndex2D> GetSquareForBishop(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares);
+    const FSquareArray2D* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Ладьи
 @param  iPosition   -- Текущая позиция Ладьи
@@ -168,7 +168,7 @@ TArray<FIndex2D> GetSquareForBishop(
 */
 TArray<FIndex2D> GetSquareForRook(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares);
+    const FSquareArray2D* iAllSquares);
 
 /** Получить индексы всех Клеток для данного Ферзя
 @param  iPosition   -- Текущая позиция Ферзя
@@ -178,7 +178,7 @@ TArray<FIndex2D> GetSquareForRook(
 */
 TArray<FIndex2D> GetSquareForQueen(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares);
+    const FSquareArray2D* iAllSquares);
 //--------------------------------------------------------------------------------------
 
 
@@ -194,7 +194,7 @@ TArray<FIndex2D> GetSquareForQueen(
 */
 void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
-    const TArray<FSquareArray>* iAllSquares,
+    const FSquareArray2D* iAllSquares,
     TArray<FIndex2D>& oResult);
 
 /** Проверка наличия Клетки по индексу
@@ -206,6 +206,6 @@ void CheckPositions(
 */
 bool CheckSquare(
     const FIndex2D& iPosition,
-    const TArray<FSquareArray>* iAllSquares,
+    const FSquareArray2D* iAllSquares,
     FSquareData& oSquareData);
 //--------------------------------------------------------------------------------------

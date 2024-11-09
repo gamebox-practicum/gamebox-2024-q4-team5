@@ -157,12 +157,7 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         NewLocation.Z = GetActorLocation().Z;
 
         bIsMovingToNewLocation = true;
-
-        if (CurrentChessOperator)
-        {
-            bIsMoveAllowed = false;
-            CurrentChessOperator->OnPlayersMove.Broadcast(false);
-        }
+        bIsMoveAllowed = false;
     }
     else if (!ToSquare)
     {
@@ -183,6 +178,11 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
         {
             SetActorLocation(NewLocation);
             bIsMovingToNewLocation = false;
+
+            if (CurrentChessOperator)
+            {
+                CurrentChessOperator->OnPlayersMove.Broadcast(false);
+            }
         }
         else
         {
@@ -195,9 +195,9 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
 
 
 
-/* ---   Delegate   --- */
+/* ---   Player Moves Sequence   --- */
 
-void ASK_Character::PlayersMove(bool bIsPlayersMove)
+void ASK_Character::PlayerMovesSequence(bool bIsPlayersMove)
 {
     if (bIsPlayersMove)
     {
@@ -218,7 +218,7 @@ void ASK_Character::SubscribeToDelegates()
 
     if (CurrentChessOperator)
     {
-        CurrentChessOperator->OnPlayersMove.AddDynamic(this, &ASK_Character::PlayersMove);
+        CurrentChessOperator->OnPlayersMove.AddDynamic(this, &ASK_Character::PlayerMovesSequence);
     }
 }
 //--------------------------------------------------------------------------------------

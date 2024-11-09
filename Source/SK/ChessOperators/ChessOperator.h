@@ -9,6 +9,9 @@
 // Tools:
 #include "SK/Tools/Index2D.h"
 
+// Structs:
+#include "SK/ChessBoard/SquareStruct.h"
+
 // Generated:
 #include "ChessOperator.generated.h"
 //--------------------------------------------------------------------------------------
@@ -31,7 +34,7 @@ class UDataTable;
 // Interaction:
 class ASquareGenerator;
 class AChessManGenerator;
-class ASquare;
+class AChessMan;
 //--------------------------------------------------------------------------------------
 
 
@@ -112,10 +115,17 @@ public:
 
 
 
-    /* ---   Delegate   --- */
+    /* ---   Player Moves Sequence   --- */
 
+    // Время таймера в секундах
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Moves Sequence")
+    float MoveLimitTime = 20.f;
+
+    //
+
+    /** Функция делегата */
     UFUNCTION()
-    void PlayersMove(bool bIsPlayersMove);
+    void PlayerMovesSequence(bool bIsPlayersMove);
     //-------------------------------------------
 
 
@@ -175,9 +185,34 @@ private:
 
     /* ---   Primitive AI   --- */
 
+    // Массив из Шахматных фигур, доступных для хода
+    TArray<AChessMan*>* PointerToAllAvailableChessMans;
 
+    // Двумерный массив указателей на Клетки
+    FSquareArray2D* PointerToAllSquares;
+
+    //
+
+    /** Инициализация данных для Примитивного ИИ */
+    void PrimitiveAI_Init();
 
     /** Запустить ход Примитивного ИИ */
     void PlayPrimitiveAI();
+    //-------------------------------------------
+
+
+
+    /* ---   Player Moves Sequence   --- */
+
+    // Таймер для режима Мячей
+    FTimerHandle Timer_MovesSequence;
+
+    //
+
+    /** Инициализация таймера */
+    void TimerInit_MovesSequence();
+
+    /** Реакция таймера: Ход Оператора */
+    void TimerAction_OperatorMove();
     //-------------------------------------------
 };

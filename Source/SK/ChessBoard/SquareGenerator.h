@@ -4,7 +4,7 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "SK/ChessOperators/ChessGenerator.h"
 
 // Tools:
 #include "SK/Tools/Index2D.h"
@@ -27,7 +27,7 @@ class ASquare;
 
 
 UCLASS()
-class SK_API ASquareGenerator : public AActor
+class SK_API ASquareGenerator : public AChessGenerator
 {
     GENERATED_BODY()
 
@@ -92,7 +92,7 @@ public:
     /* ---   Get Data   --- */
 
     /** Получение всех клеток в виде двумерного массива */
-    TArray<FSquareArray>* GetPointerToAllSquares();
+    FSquareArray2D* GetPointerToAllSquares();
     // PS: UFUNCTION() для него не работает
     //-------------------------------------------
 
@@ -109,9 +109,6 @@ private:
 
     /** Удалить все клетки */
     void DeleteAllSquares();
-
-    /** Получить все созданные клетки (проверка по Тегу) */
-    TArray<ASquare*> GetAllSquares();
     //-------------------------------------------
 
 
@@ -144,9 +141,9 @@ private:
     /* ---   Generator | SquareData   --- */
 
     // Все клетки в виде двумерного массива
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
-    TArray<FSquareArray> TDArraySquares_Test;
+    FSquareArray2D TDArraySquares_Test;
 
     //
 
