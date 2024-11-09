@@ -65,6 +65,22 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     //(*ChessBoardInfo)[Step.NewPosition].CurrentPiece = piece;
 }
 
+void UChessAILibrary::GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth,
+    const FOnStepCalculatedSignature& OnProcessRequestComplete)
+{
+    AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask,
+        [ChessBoardInfo, CurrentStepColor, depth, OnProcessRequestComplete] ()
+    {
+        FChessPieceStep result = GetNextStep(ChessBoardInfo, CurrentStepColor, depth);
+
+        AsyncTask(ENamedThreads::GameThread,
+            [OnProcessRequestComplete, result] ()
+        {
+            OnProcessRequestComplete.ExecuteIfBound(result);
+        });
+    });
+}
+
 void UChessAILibrary::GetPieces(UChessBoardInfo* ChessBoardInfo, std::vector<UChessPieceInfo*>& WhitePieces,
                                 std::vector<UChessPieceInfo*>& BlackPieces)
 {

@@ -9,6 +9,9 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ChessAILibrary.generated.h"
 
+
+UDELEGATE()
+    DECLARE_DYNAMIC_DELEGATE_OneParam(FOnStepCalculatedSignature, FChessPieceStep, Response);
 /**
  *
  */
@@ -29,6 +32,10 @@ class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
 
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ChessAI")
     static bool IsUnableMove(FChessPieceStep Step){return Step == UNABLE_MOVE;}
+
+    UFUNCTION(BlueprintCallable, Category = "ChessAI", meta = (AutoCreateRefTerm = "OnProcessRequestComplete"))
+    static void GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth,
+        const FOnStepCalculatedSignature& OnProcessRequestComplete);
 
     ///Utils---------------
 

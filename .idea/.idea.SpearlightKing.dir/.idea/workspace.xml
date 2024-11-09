@@ -12,10 +12,7 @@
       <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +133,7 @@
       <updated>1730713539783</updated>
       <workItem from="1730713542344" duration="156000" />
       <workItem from="1730713771131" duration="13414000" />
-      <workItem from="1730829544094" duration="48613000" />
+      <workItem from="1730829544094" duration="52535000" />
     </task>
     <servers />
   </component>
