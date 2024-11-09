@@ -19,9 +19,16 @@ class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
 
     ///TODO: предотвратить удаление UChessBoardInfo и UChessPieceInfo during garbage collection
     UFUNCTION(BlueprintCallable, Category = "ChessAI")
-    static FChessPieceStep GetNextStep(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor);
+    static FChessPieceStep GetNextStep(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth);
 
+    UFUNCTION(BlueprintCallable, Category = "ChessAI")
+    static void LogChessBoard(UChessBoardInfo* ChessBoardInfo);
 
+    UFUNCTION(BlueprintCallable, Category = "ChessAI")
+    static void DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo);
+
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ChessAI")
+    static bool IsUnableMove(FChessPieceStep Step){return Step == UNABLE_MOVE;}
 
     ///Utils---------------
 
@@ -35,5 +42,11 @@ class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
         int depth,
         int& TotalScore);
 
-    static FChessPieceStep GetBestStep(UChessPieceInfo* Piece, UChessBoardInfo* ChessBoardInfo, int& score);
+    static void DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo,
+    std::vector<UChessPieceInfo*>& DefensiveFigures);
+
+    static void UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo,
+    std::vector<UChessPieceInfo*>& DefensiveFigures);
+
+    //static FChessPieceStep GetBestStep(UChessPieceInfo* Piece, UChessBoardInfo* ChessBoardInfo, int& score);
 };

@@ -26,6 +26,11 @@ FSquareInfo*& UChessBoardInfo::operator[](int Y)
     return m_Board[Y];
 }
 
+FSquareInfo& UChessBoardInfo::operator[](FCellIndex cell)
+{
+    return  (*this)[cell.Y][cell.X];
+}
+
 UChessBoardInfo::~UChessBoardInfo()
 {
     if(m_Board == nullptr)

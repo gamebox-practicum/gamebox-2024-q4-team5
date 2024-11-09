@@ -34,5 +34,18 @@ public:
 
     FSquareInfo*& operator[] (int Y);
 
+    FSquareInfo& operator[] (FCellIndex cell);
+
     virtual ~UChessBoardInfo() override;
+
+    bool IsValidCell(FCellIndex cell);
 };
+
+inline bool UChessBoardInfo::IsValidCell(FCellIndex cell)
+{
+    if(cell.Y < m_sizeY && cell.Y >= 0 && cell.X < m_sizeX && cell.X >= 0)
+    {
+        return true;
+    }
+    return false;
+}
