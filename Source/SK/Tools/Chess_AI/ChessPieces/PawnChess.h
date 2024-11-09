@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SK/Tools/Chess_AI/UChessPieceInfo.h"
-#include "King.generated.h"
+#include "PawnChess.generated.h"
 
 /**
  *
  */
 UCLASS()
-class SK_API UKing : public UChessPieceInfo
+class SK_API UPawnChess : public UChessPieceInfo
 {
     GENERATED_BODY()
 public:
@@ -19,4 +19,8 @@ public:
     virtual std::unique_ptr<std::vector<FChessPieceStep>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo) override;
 
     virtual FString GetLogView() override;
+
+private:
+    void PushAttackStepIfValid(UChessBoardInfo* ChessBoardInfo, std::vector<FChessPieceStep>* result,
+                               FCellIndex attackTarget);
 };

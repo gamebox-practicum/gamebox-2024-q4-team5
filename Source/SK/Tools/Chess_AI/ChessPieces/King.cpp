@@ -23,3 +23,12 @@ std::unique_ptr<std::vector<FChessPieceStep>> UKing::GetLegalMoves(UChessBoardIn
     }
     return result;
 }
+
+FString UKing::GetLogView()
+{
+    if(Color == PIECE_COLOR::WHITE)
+    {
+        return "K";
+    }
+    return "k";
+}

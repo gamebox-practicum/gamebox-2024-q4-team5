@@ -37,13 +37,14 @@ void UChessAILibrary::LogChessBoard(UChessBoardInfo* ChessBoardInfo)
         FString str = "";
         for( int x = 0; x < ChessBoardInfo-> GetSizeX(); x++)
         {
-            if((*ChessBoardInfo)[y][x].CurrentPiece)
+            auto piece = (*ChessBoardInfo)[y][x].CurrentPiece;
+            if(piece)
             {
-                str+= "8";
+                str+= piece->GetLogView();
             }
             else
             {
-                str+= "O";
+                str+= " ";
             }
         }
         UE_LOG(LogTemp, Warning, TEXT("The vector value is: %s"), *str);

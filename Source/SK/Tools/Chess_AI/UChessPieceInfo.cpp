@@ -16,8 +16,20 @@ int UChessPieceInfo::GetRelativeValue()
     return 0;
 }
 
+FString UChessPieceInfo::GetLogView()
+{
+    //UCLASS does not support abstract functions, so it is empty
+    return "none";
+}
+
+bool UChessPieceInfo::CanJumpOver(UChessBoardInfo* ChessBoardInfo, FCellIndex cell)
+{
+    return ChessBoardInfo->IsValidCell(cell) &&
+        (!(*ChessBoardInfo)[cell].CurrentPiece);
+}
+
 void UChessPieceInfo::PushStepIfValid(UChessBoardInfo* ChessBoardInfo, FCellIndex Target,
-    std::vector<FChessPieceStep>* Result)
+                                      std::vector<FChessPieceStep>* Result)
 {
     if(ChessBoardInfo->IsValidCell(Target))
     {

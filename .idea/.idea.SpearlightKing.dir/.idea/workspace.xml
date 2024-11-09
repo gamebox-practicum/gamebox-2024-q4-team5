@@ -9,16 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FCellIndex.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FCellIndex.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FChessPieceStep.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FChessPieceStep.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FChessPieceStep.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/FChessPieceStep.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessPieces/King.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" afterDir="false" />
     </list>
@@ -141,7 +136,7 @@
       <updated>1730713539783</updated>
       <workItem from="1730713542344" duration="156000" />
       <workItem from="1730713771131" duration="13414000" />
-      <workItem from="1730829544094" duration="38214000" />
+      <workItem from="1730829544094" duration="48613000" />
     </task>
     <servers />
   </component>

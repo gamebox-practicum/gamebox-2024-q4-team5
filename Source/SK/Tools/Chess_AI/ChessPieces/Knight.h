@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SK/Tools/Chess_AI/UChessPieceInfo.h"
-#include "King.generated.h"
+#include "Knight.generated.h"
 
 /**
  *
  */
 UCLASS()
-class SK_API UKing : public UChessPieceInfo
+class SK_API UKnight : public UChessPieceInfo
 {
     GENERATED_BODY()
 public:

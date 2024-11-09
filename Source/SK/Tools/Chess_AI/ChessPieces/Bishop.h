@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "SK/Tools/Chess_AI/UChessPieceInfo.h"
-#include "King.generated.h"
+#include "Bishop.generated.h"
 
 /**
  *
  */
 UCLASS()
-class SK_API UKing : public UChessPieceInfo
+class SK_API UBishop : public UChessPieceInfo
 {
     GENERATED_BODY()
 public:
     virtual int GetRelativeValue() override;
 
-    virtual std::unique_ptr<std::vector<FChessPieceStep>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo) override;
-
     virtual FString GetLogView() override;
+
+    virtual std::unique_ptr<std::vector<FChessPieceStep>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo) override;
 };

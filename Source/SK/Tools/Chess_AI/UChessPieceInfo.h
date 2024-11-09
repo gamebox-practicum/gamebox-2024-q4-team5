@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "FCellIndex.h"
@@ -37,9 +38,13 @@ public:
 
     virtual ~UChessPieceInfo() override{};
 
+    virtual FString GetLogView();
+
 protected:
     void PushStepIfValid(UChessBoardInfo* ChessBoardInfo, FCellIndex Target,
     std::vector<FChessPieceStep>* Result);
+
+    bool CanJumpOver(UChessBoardInfo* ChessBoardInfo, FCellIndex cell);
 };
 
 
