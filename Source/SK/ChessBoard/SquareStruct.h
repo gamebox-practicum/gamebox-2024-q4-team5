@@ -135,6 +135,9 @@ struct FSquareArray2D
     /** Изменить размер массива на заданное количество элементов */
     void SetNum(const FIndex2D& XY);
 
+    /** Изменить размер массива на заданное количество элементов */
+    FIndex2D Num() const;
+
     /** Получить массив с конкретным индексом X */
     TArray<ASquare*> GetArrayByX(const int32& X) const;
     /** Получить массив с конкретным индексом Y */
@@ -160,6 +163,6 @@ private:
     // Ось X
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
         meta = (AllowPrivateAccess = true, DisplayName = "X"))
-    TArray<FSquareArray> SquareArray;
+    TArray<FSquareArray> Square2DArray;
     //-------------------------------------------
 };

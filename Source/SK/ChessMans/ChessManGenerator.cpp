@@ -86,6 +86,51 @@ void AChessManGenerator::DeleteAllChessMans()
     AllChessMans.Empty();
     AllAvailableChessMan.Empty();
 }
+
+template<class T>
+inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>& iType, const FIndex2D& iXY)
+{
+    // Поочерёдная проверка валидности указателей и индексов массива
+    if (iType
+        && PointerToAllSquares
+        && PointerToAllSquares->IsValidIndex(iXY))
+    {
+        // Получение указателя на указанную клетку
+        const ASquare* lSquare = PointerToAllSquares->GetByIndex(iXY);
+
+        if (lSquare)
+        {
+            // Создать Фигуру
+            T* lNewActor = GetWorld()->SpawnActor<T>(
+                iType.Get(),                 // Тип фигуры
+                lSquare->GetActorLocation(), // Локация клетки
+                FRotator::ZeroRotator);      // Без изменения ротации
+
+            // Тег-маркировка Фигуры.
+            // Необходим для удаления только Генерируемых Фигур
+            lNewActor->Tags.Add(VerificationTag);
+
+            return lNewActor;
+        }
+    }
+    else if (!iType)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': iType is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (!PointerToAllSquares)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (!PointerToAllSquares->IsValidIndex(iXY))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, %d] is NOT"),
+            *GetNameSafe(this), iXY.X, iXY.Y);
+    }
+
+    return nullptr;
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -109,62 +154,23 @@ void AChessManGenerator::CreateGeneratedPlayers()
         // Создать Шахматную фигуру согласно данным
         for (auto& lData : lPlayersData)
         {
-            CreatePlayer(lData->Type, lData->Position);
+            if (AllPlayers.Num() <= EAutoReceiveInput::Player7)
+            {
+                // Создание Персонажа
+                ASK_Character* lNewPlayer = CreateFigureOnChessboard<ASK_Character>(lData->Type, lData->Position);
+
+                if (lNewPlayer)
+                {
+                    // Добавление в массив Игроков
+                    AllPlayers.Add(lNewPlayer);
+
+                    // Автоподхват Игрока
+                    lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
+                }
+            }
 
             // Warning: Требуется проверка клетки на доступность (свободна ли она)
         }
-    }
-}
-
-void AChessManGenerator::CreatePlayer(const TSubclassOf<ASK_Character> iType, const FIndex2D& iXY)
-{
-    // Поочерёдная проверка валидности указателей и индексов массива
-    if (iType
-        && PointerToAllSquares
-        && PointerToAllSquares->IsValidIndex(iXY)
-        && AllPlayers.Num() <= EAutoReceiveInput::Player7)
-    {
-        // Получение указателя на указанную клетку
-        const ASquare* lSquare = PointerToAllSquares->GetByIndex(iXY);
-
-        if (lSquare)
-        {
-            // Создать Фигуру
-            ASK_Character* lNewPlayer = GetWorld()->SpawnActor<ASK_Character>(
-                iType.Get(),                 // Тип фигуры
-                lSquare->GetActorLocation(), // Локация клетки
-                FRotator::ZeroRotator);      // Без изменения ротации
-
-            // Тег-маркировка Фигуры.
-            // Необходим для удаления только Генерируемых Фигур
-            lNewPlayer->Tags.Add(VerificationTag);
-
-            AllPlayers.Add(lNewPlayer);
-
-            // Автоподхват Игрока
-            lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
-            // Warning: Данный способ дважды вызывает PossessedBy(*)
-        }
-    }
-    else if (!iType)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': iType is NOT"),
-            *GetNameSafe(this));
-    }
-    else if (!PointerToAllSquares)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
-            *GetNameSafe(this));
-    }
-    else if (!PointerToAllSquares->IsValidIndex(iXY))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, %d] is NOT"),
-            *GetNameSafe(this), iXY.X, iXY.Y);
-    }
-    else if (AllPlayers.Num() > EAutoReceiveInput::Player7)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("'%s': Player limit (8 Players)"),
-            *GetNameSafe(this));
     }
 }
 //--------------------------------------------------------------------------------------
@@ -190,63 +196,19 @@ void AChessManGenerator::CreateGeneratedChessMans()
         // Создать Шахматную фигуру согласно данным
         for (auto& lData : lChessManData)
         {
-            CreateChessMan(*lData);
+            // Создание Вражеской фигуры
+            AChessMan* lNewChessMan = CreateFigureOnChessboard<AChessMan>(ChessManType[uint8(lData->Type)], lData->Position);
+
+            if (lNewChessMan)
+            {
+                lNewChessMan->CurrentData = *lData;
+                lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
+
+                AllChessMans.Add(lNewChessMan);
+            }
 
             // Warning: Требуется проверка клетки на доступность (свободна ли она)
         }
-    }
-}
-
-void AChessManGenerator::CreateChessMan(const FChessManData& iData)
-{
-    // Поочерёдная проверка валидности указателей и индексов массива
-    if (ChessManType[uint8(iData.Type)]
-        && PointerToAllSquares
-        && PointerToAllSquares->IsValidIndex(iData.Position))
-    {
-        // Получение указателя на указанную клетку
-        ASquare* lSquare = PointerToAllSquares->GetByIndex(iData.Position);
-
-        if (lSquare)
-        {
-            // Указать, что Клетка занята
-            lSquare->OccupySquare(EWarringPartiesType::Black);
-
-            // Создать Шахматную фигуру
-            AChessMan* lNewChessMan = GetWorld()->SpawnActor<AChessMan>(
-                ChessManType[uint8(iData.Type)].Get(), // Тип фигуры
-                lSquare->GetActorLocation(),         // Локация клетки
-                FRotator::ZeroRotator);              // Без изменения ротации
-
-            // Тег-маркировка Фигуры.
-            // Необходим для удаления только Генерируемых Фигур
-            lNewChessMan->Tags.Add(VerificationTag);
-
-            lNewChessMan->CurrentData = iData;
-            lNewChessMan->SetCurrentSquare(lSquare);
-
-            AllChessMans.Add(lNewChessMan);
-        }
-    }
-    else if (!ChessManType[uint8(iData.Type)])
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': ChessManType [%d] is NOT"),
-            *GetNameSafe(this), iData.Type);
-    }
-    else if (!PointerToAllSquares)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': Pointer To AllSquares is NOT"),
-            *GetNameSafe(this));
-    }
-    else if (!PointerToAllSquares->IsValidIndex(iData.Position.X))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, Y] is NOT"),
-            *GetNameSafe(this), iData.Position.X);
-    }
-    else if (!PointerToAllSquares->IsValidIndex(iData.Position))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("'%s': PointerToAllSquares [%d, %d] is NOT"),
-            *GetNameSafe(this), iData.Position.X, iData.Position.Y);
     }
 }
 //--------------------------------------------------------------------------------------

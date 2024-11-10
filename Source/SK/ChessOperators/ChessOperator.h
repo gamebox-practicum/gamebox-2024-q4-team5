@@ -35,6 +35,7 @@ class UDataTable;
 class ASquareGenerator;
 class AChessManGenerator;
 class AChessMan;
+class ASK_Character;
 //--------------------------------------------------------------------------------------
 
 
@@ -126,6 +127,9 @@ public:
     /** Функция делегата */
     UFUNCTION()
     void PlayerMovesSequence(bool bIsPlayersMove);
+
+    /** Останов таймера: Последовательность ходов */
+    void StopTimer_MovesSequence();
     //-------------------------------------------
 
 
@@ -185,8 +189,14 @@ private:
 
     /* ---   Primitive AI   --- */
 
+    // Массив из всех Шахматных фигур
+    TArray<AChessMan*>* PointerToAllChessMans;
+
     // Массив из Шахматных фигур, доступных для хода
     TArray<AChessMan*>* PointerToAllAvailableChessMans;
+
+    // Массив из всех игроков
+    TArray<ASK_Character*>* AllPlayers;
 
     // Двумерный массив указателей на Клетки
     FSquareArray2D* PointerToAllSquares;
@@ -209,10 +219,10 @@ private:
 
     //
 
-    /** Инициализация таймера */
+    /** Инициализация таймера: Последовательность ходов */
     void TimerInit_MovesSequence();
 
     /** Реакция таймера: Ход Оператора */
-    void TimerAction_OperatorMove();
+    void TimerAction_OperatorMove() const;
     //-------------------------------------------
 };

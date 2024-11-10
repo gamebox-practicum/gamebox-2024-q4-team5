@@ -11,11 +11,12 @@
 #include "Engine/DataTable.h"
 
 // Interaction:
+#include "SK/Core/SK_Character.h"
 #include "SK/ChessBoard/SquareGenerator.h"
+#include "SK/ChessBoard/Square.h"
 #include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessMans/ChessManStruct.h"
-#include "SK/ChessBoard/Square.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -192,24 +193,32 @@ AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 
 void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
 {
-    if (!bIsPlayersMove
-        && GetCurrentChessManGenerator())
+    if (!bIsPlayersMove)
     {
-        CurrentChessManGenerator->UpdateAllAvailableChessMan();
+        if (GetCurrentChessManGenerator())
+        {
+            CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-        PlayPrimitiveAI();
+            PlayPrimitiveAI();
+        }
+        else if (!CurrentChessManGenerator)
+        {
+            UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+                *GetNameSafe(this));
+        }
 
+        // Передача хода игроку при любом случае срабатывания логики
         OnPlayersMove.Broadcast(true);
-    }
-    else if (!CurrentChessManGenerator)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
-            *GetNameSafe(this));
     }
     else
     {
         TimerInit_MovesSequence();
     }
+}
+
+void AChessOperator::StopTimer_MovesSequence()
+{
+    GetWorldTimerManager().ClearTimer(Timer_MovesSequence);
 }
 
 void AChessOperator::TimerInit_MovesSequence()
@@ -222,7 +231,7 @@ void AChessOperator::TimerInit_MovesSequence()
         false);
 }
 
-void AChessOperator::TimerAction_OperatorMove()
+void AChessOperator::TimerAction_OperatorMove() const
 {
     OnPlayersMove.Broadcast(false);
 }
@@ -234,8 +243,14 @@ void AChessOperator::TimerAction_OperatorMove()
 
 void AChessOperator::PrimitiveAI_Init()
 {
+    // Получить массив из всех Шахматных фигур
+    PointerToAllChessMans = CurrentChessManGenerator->GetPointerToAllChessMans();
+
     // Получить массив из доступных Шахматных фигур
     PointerToAllAvailableChessMans = CurrentChessManGenerator->GetPointerToAllAvailableChessMans();
+
+    // Получить все фигуры игроков/игрока
+    AllPlayers = CurrentChessManGenerator->GetPointerToAllPlayers();
 
     // Получить Двумерный массив указателей на Клетки
     PointerToAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
@@ -243,69 +258,67 @@ void AChessOperator::PrimitiveAI_Init()
 
 void AChessOperator::PlayPrimitiveAI()
 {
-    // Рандомный индекс массива
-    int32 lRandomNumber;
-
-    // Рандомно выбранная Шахматная фигура
-    AChessMan* lSelectedChessMan = nullptr;
-
-    // Массив из доступных ходов данной Шахматной фигуры
-    TArray<FIndex2D>* lAllIndex2D = nullptr;
-
-    // Текущая локация Игрока (без оси Z)
-    FVector2D lPlayerLocation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
-
-    // Проверяемая выбранная позиция
-    FVector2D lSelectedLocation;
-
-    // Клетка, на которую пал ход
-    ASquare* lSelectedSquare = nullptr;
-
-    // Расстояние между игроком и выбранной локацией
-    float F1 = 0.f;
-    // Расстояние между игроком и проверяемой локацией
-    float F2 = 0.f;
-
-    float test = 0.f;
-
-    // Счётчик для выхода из цикла (дабы не завис)
-    uint8 Counter = 3;
-
-    do
+    if (PointerToAllAvailableChessMans->Num())
     {
-        // Получение рандомного значения индекса из массива доступных Шахматных фигур
-        lRandomNumber = GetRandom(PointerToAllAvailableChessMans->Num() - 1);
+        // Рандомный индекс массива
+        int32 lRandomNumber;
 
-        // Получение указателя на выбранную Шахматную фигуру
-        lSelectedChessMan = (*PointerToAllAvailableChessMans)[lRandomNumber];
+        // Рандомно выбранная Шахматная фигура
+        AChessMan* lSelectedChessMan = nullptr;
 
-        // Получение массива доступных ходов выбранной Шахматной фигуры
-        lAllIndex2D = &lSelectedChessMan->CurrentData.AvailablePositions;
+        // Массив из доступных ходов данной Шахматной фигуры
+        TArray<FIndex2D>* lAllIndex2D = nullptr;
 
-        // Предварительно ровна расстоянию между игроком и выбранной Шахматной фигурой
-        F1 = (lPlayerLocation - FVector2D(lSelectedChessMan->GetActorLocation())).Size();
+        // Текущая локация Игрока (без оси Z)
+        FVector2D lPlayerLocation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
 
-        // Предварительный сброс
-        F2 = 0.f;
+        // Проверяемая выбранная позиция
+        FVector2D lSelectedLocation;
 
-        // Получение хода, ближайшего к игроку с проверкой текущей позиции
-        for (auto& Data : *lAllIndex2D)
+        // Клетка, на которую пал ход
+        ASquare* lSelectedSquare = nullptr;
+
+        // Расстояние между игроком и выбранной локацией
+        float F1 = 0.f;
+        // Расстояние между игроком и проверяемой локацией
+        float F2 = 0.f;
+
+        // Счётчик для выхода из цикла (дабы не завис)
+        uint8 Counter = 3;
+
+        do
         {
-            // Расчёт расстояния между игроком и проверяемой локацией
-            F2 = (lPlayerLocation - FVector2D(PointerToAllSquares->GetByIndex(Data)->GetActorLocation())).Size();
+            // Получение рандомного значения индекса из массива доступных Шахматных фигур
+            lRandomNumber = GetRandom(PointerToAllAvailableChessMans->Num() - 1);
 
-            if (F1 > F2)
+            // Получение указателя на выбранную Шахматную фигуру
+            lSelectedChessMan = (*PointerToAllAvailableChessMans)[lRandomNumber];
+
+            // Получение массива доступных ходов выбранной Шахматной фигуры
+            lAllIndex2D = &lSelectedChessMan->CurrentData.AvailablePositions;
+
+            // Предварительно ровна расстоянию между игроком и выбранной Шахматной фигурой
+            F1 = (lPlayerLocation - FVector2D(lSelectedChessMan->GetActorLocation())).Size();
+
+            // Получение хода, ближайшего к игроку с проверкой текущей позиции
+            for (auto& Data : *lAllIndex2D)
             {
-                lSelectedSquare = PointerToAllSquares->GetByIndex(Data);
-                F1 = (lPlayerLocation - FVector2D(lSelectedSquare->GetActorLocation())).Size();
+                // Расчёт расстояния между игроком и проверяемой локацией
+                F2 = (lPlayerLocation - FVector2D(PointerToAllSquares->GetByIndex(Data)->GetActorLocation())).Size();
+
+                if (F1 > F2)
+                {
+                    lSelectedSquare = PointerToAllSquares->GetByIndex(Data);
+                    F1 = (lPlayerLocation - FVector2D(lSelectedSquare->GetActorLocation())).Size();
+                }
             }
-        }
 
-        --Counter;
+            --Counter;
 
-    } while (F1 == (lPlayerLocation - FVector2D(lSelectedChessMan->GetActorLocation())).Size() && Counter);
+        } while (F1 == (lPlayerLocation - FVector2D(lSelectedChessMan->GetActorLocation())).Size() && Counter);
 
-    // Переместить выбранную фигуру на выбранную клетку
-    lSelectedChessMan->MoveToSquare(lSelectedSquare);
+        // Переместить выбранную фигуру на выбранную клетку
+        lSelectedChessMan->MoveToSquare(lSelectedSquare);
+    }
 }
 //--------------------------------------------------------------------------------------
