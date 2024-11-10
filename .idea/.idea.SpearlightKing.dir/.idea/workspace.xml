@@ -7,15 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/TestAI/TestAI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Maps/Test1.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessBoardInfo.h" afterDir="false" />
-    </list>
+    <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -137,6 +129,7 @@
       <workItem from="1730713542344" duration="156000" />
       <workItem from="1730713771131" duration="13414000" />
       <workItem from="1730829544094" duration="58396000" />
+      <workItem from="1731184846643" duration="56000" />
     </task>
     <servers />
   </component>
