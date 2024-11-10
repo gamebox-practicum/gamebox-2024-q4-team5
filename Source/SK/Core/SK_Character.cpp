@@ -49,7 +49,7 @@ ASK_Character::ASK_Character()
     // Статичный Меш Шахматной Фигуры
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
     ChessmanStaticMesh->SetupAttachment(GetCapsuleComponent());
-    ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+    ChessmanStaticMesh->SetGenerateOverlapEvents(false);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------

@@ -33,6 +33,11 @@ bool FIndex2D::operator==(const FIndex2D& Second)
 {
     return X == Second.X && Y == Second.Y;
 }
+
+bool FIndex2D::operator!=(const FIndex2D& Second)
+{
+    return X != Second.X || Y != Second.Y;
+}
 //--------------------------------------------------------------------------------------
 
 

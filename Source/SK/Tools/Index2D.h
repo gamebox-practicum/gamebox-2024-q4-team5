@@ -39,6 +39,7 @@ struct FIndex2D
 
     const FIndex2D& operator=(const FIndex2D& Second);
     bool operator==(const FIndex2D& Second);
+    bool operator!=(const FIndex2D& Second);
     //-------------------------------------------
 
 

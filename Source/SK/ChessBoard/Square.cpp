@@ -5,7 +5,7 @@
 
 // UE:
 #include "Kismet/GameplayStatics.h"
-
+#include "Components/BoxComponent.h"
 // Interaction:
 #include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ void ASquare::BeginPlay()
 {
     Super::BeginPlay();
 
+    AddComponentByClass(UBoxComponent::StaticClass(), false, FTransform(), false);
 }
 //--------------------------------------------------------------------------------------
 
@@ -72,17 +73,21 @@ void ASquare::NotifyActorOnClicked(FKey ButtonReleased)
 {
     Super::NotifyActorOnClicked(ButtonReleased);
 
-    // Предварительное присвоение
-    ASK_Character* lCharacter = Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn());
-    // Warning: Потребуется переделать, если переделывать на Multiplayer
+    // Проверка разрешения на ход игроку
+    if (GetData().WarringPartiesType == EWarringPartiesType::NONE)
+    {
+        // Предварительное присвоение
+        ASK_Character* lCharacter = Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn());
+        // Warning: Потребуется переделать, если переделывать на Multiplayer
 
-    if (lCharacter)
-    {
-        lCharacter->MoveToSquare(this);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': lCharacter is NOT"), *GetNameSafe(this));
+        if (lCharacter)
+        {
+            lCharacter->MoveToSquare(this);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("'%s': lCharacter is NOT"), *GetNameSafe(this));
+        }
     }
 }
 //--------------------------------------------------------------------------------------

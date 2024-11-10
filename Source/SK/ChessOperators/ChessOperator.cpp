@@ -103,6 +103,7 @@ void AChessOperator::UpdateCurrentSquareGenerator()
     if (GetCurrentSquareGenerator())
     {
         CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
+        CurrentSquareGenerator->SquareComponentTable = SquareComponentTable;
 
         CurrentSquareGenerator->ReGenerate();
     }

@@ -98,6 +98,11 @@ public:
     // Количество клеток доски вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
+
+    // Таблица данных местоположения фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator",
+        meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
+    UDataTable* SquareComponentTable;
     //-------------------------------------------
 
 

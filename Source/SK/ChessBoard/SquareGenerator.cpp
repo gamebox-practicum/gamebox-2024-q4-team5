@@ -5,9 +5,11 @@
 
 // UE:
 #include "Kismet/GameplayStatics.h"
+#include "Engine/DataTable.h"
 
 // Interaction:
 #include "Square.h"
+#include "SquareComponent.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -50,10 +52,24 @@ void ASquareGenerator::OnConstruction(const FTransform& Transform)
 
 void ASquareGenerator::ReGenerate()
 {
-    //if (NumberAlongAxes == TDArraySquares_Test.Num())
+    if (SquareType)
     {
-        DeleteAllSquares();
-        CreateGeneratedSquares();
+        if (NumberAlongAxes != TDArraySquares.Num())
+        {
+            DeleteAllSquares();
+            CreateGeneratedSquares();
+        }
+        else
+        {
+            DeleteAllSquareComponents();
+        }
+
+        CreateGeneratedSquareComponents();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': SquareType is NOT"),
+            *GetNameSafe(this));
     }
 }
 
@@ -65,6 +81,19 @@ void ASquareGenerator::DeleteAllSquares()
     }
     BlockSize = FVector::ZeroVector;
 }
+
+void ASquareGenerator::DeleteAllSquareComponents()
+{
+    UActorComponent* lComponent = nullptr;
+
+    for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
+    {
+        lComponent = lSquare->GetComponentByClass(USquareComponent::StaticClass());
+
+        if (lComponent)
+            lComponent->DestroyComponent();
+    }
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -75,17 +104,17 @@ void ASquareGenerator::DeleteAllSquares()
 void ASquareGenerator::CreateGeneratedSquares()
 {
     // Сброс массива
-    TDArraySquares_Test.Empty();
+    TDArraySquares.Empty();
 
     // Создание элементов массива X
-    TDArraySquares_Test.SetNum(NumberAlongAxes);
+    TDArraySquares.SetNum(NumberAlongAxes);
 
     for (int32 x = 0; x < NumberAlongAxes.X; ++x)
     {
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
         {
             // Создание Клетки и добавление её в массив по соответствующему индексу
-            TDArraySquares_Test.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
+            TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
         }
     }
 }
@@ -96,7 +125,7 @@ ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
 
     if (BlockSize.IsZero())
     {
-        lSquare = GetWorld()->SpawnActor<ASquare>(BlockType.Get(), FTransform());
+        lSquare = GetWorld()->SpawnActor<ASquare>(SquareType.Get(), FTransform());
 
         GetSquareSize(lSquare);
 
@@ -104,7 +133,7 @@ ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
     }
     else
     {
-        lSquare = GetWorld()->SpawnActor<ASquare>(BlockType.Get(), GetLocationForSquare(iXY), FRotator::ZeroRotator);
+        lSquare = GetWorld()->SpawnActor<ASquare>(SquareType.Get(), GetLocationForSquare(iXY), FRotator::ZeroRotator);
     }
 
     // Тег-маркировка Клетки.
@@ -175,6 +204,54 @@ int32 ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
 
 FSquareArray2D* ASquareGenerator::GetPointerToAllSquares()
 {
-    return &TDArraySquares_Test;
+    return &TDArraySquares;
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Square Components   --- */
+
+void ASquareGenerator::CreateGeneratedSquareComponents()
+{
+    if (SquareComponentTable)
+    {
+        // Массив данных, получаемых из DataTable
+        TArray<FSquareComponentData*> lSquareComponentData;
+
+        // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
+        FString lContext = "CreateGeneratedSquareComponents";
+
+        // Получить массив данных из DataTable
+        SquareComponentTable->GetAllRows<FSquareComponentData>(lContext, lSquareComponentData);
+
+        // Указатель на создаваемый компонент
+        USquareComponent* lNewComponent = nullptr;
+
+        // Указатель на выбранную клетку
+        ASquare* lCurrentSquare = nullptr;
+
+        // Создать компонент в указанной клетке
+        for (auto& lData : lSquareComponentData)
+        {
+            lCurrentSquare = TDArraySquares.GetByIndex(lData->Position);
+
+            // Создаём компонент и получаем на него указатель
+            lNewComponent = Cast<USquareComponent>(
+                lCurrentSquare->AddComponentByClass(
+                    lData->Type,
+                    false,
+                    FTransform(),
+                    false));
+
+            // "Верификация" и сохранение компонента
+            if (lNewComponent)
+            {
+                lCurrentSquare->AddInstanceComponent(lNewComponent);
+                lNewComponent->RegisterComponent();
+                lNewComponent->ComponentTags.Add(VerificationTag);
+            }
+        }
+    }
 }
 //--------------------------------------------------------------------------------------

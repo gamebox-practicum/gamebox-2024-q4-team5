@@ -20,8 +20,12 @@
 
 /* ---   Pre-declaration of classes and structures   --- */
 
+// UE:
+class UDataTable;
+
 // Interaction:
 class ASquare;
+class USquareComponent;
 //--------------------------------------------------------------------------------------
 
 
@@ -76,7 +80,7 @@ public:
 
     // Тип генерируемого блока
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
-    TSubclassOf<ASquare> BlockType;
+    TSubclassOf<ASquare> SquareType;
 
     // Зазор между блоками и высота построения (ось Z)
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
@@ -93,7 +97,16 @@ public:
 
     /** Получение всех клеток в виде двумерного массива */
     FSquareArray2D* GetPointerToAllSquares();
-    // PS: UFUNCTION() для него не работает
+    //-------------------------------------------
+
+
+
+    /* ---   Square Components   --- */
+
+    // Таблица данных местоположения фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Square Components",
+        meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
+    UDataTable* SquareComponentTable;
     //-------------------------------------------
 
 
@@ -109,6 +122,9 @@ private:
 
     /** Удалить все клетки */
     void DeleteAllSquares();
+
+    /** Удалить все Компоненты Клеток */
+    void DeleteAllSquareComponents();
     //-------------------------------------------
 
 
@@ -123,7 +139,7 @@ private:
 
     //
 
-    /** Запуск генерации блоков */
+    /** Запуск генерации Клеток */
     void CreateGeneratedSquares();
 
     /** Создать блок в указанной позиции */
@@ -143,7 +159,7 @@ private:
     // Все клетки в виде двумерного массива
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
-    FSquareArray2D TDArraySquares_Test;
+    FSquareArray2D TDArraySquares;
 
     //
 
@@ -155,5 +171,13 @@ private:
 
     /** Генерация номера материала по координатам */
     int32 GetMaterialNumber(const FIndex2D& XY);
+    //-------------------------------------------
+
+
+
+    /* ---   Square Components   --- */
+
+    /** Запуск генерации Компонентов Клеток */
+    void CreateGeneratedSquareComponents();
     //-------------------------------------------
 };
