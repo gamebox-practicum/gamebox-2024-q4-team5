@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
+// Tools:
+#include "SK/Tools/Index2D.h"
+
 // Generated:
 #include "SK_Character.generated.h"
 //--------------------------------------------------------------------------------------
@@ -115,6 +118,9 @@ public:
 
     // Переместиться к указанной клетке
     void MoveToSquare(ASquare* ToSquare);
+
+    // Получить текущую ползицию на Шахматной доске
+    FIndex2D GetCurrentPosition();
     //-------------------------------------------
 
 

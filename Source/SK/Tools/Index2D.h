@@ -37,7 +37,8 @@ struct FIndex2D
 
     /* ---   Operators | =   --- */
 
-    const FIndex2D& operator=(const FIndex2D& other);
+    const FIndex2D& operator=(const FIndex2D& Second);
+    bool operator==(const FIndex2D& Second);
     //-------------------------------------------
 
 

@@ -28,6 +28,11 @@ const FIndex2D& FIndex2D::operator=(const FIndex2D& Second)
 
     return *this;
 }
+
+bool FIndex2D::operator==(const FIndex2D& Second)
+{
+    return X == Second.X && Y == Second.Y;
+}
 //--------------------------------------------------------------------------------------
 
 

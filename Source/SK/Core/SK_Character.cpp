@@ -158,12 +158,22 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
 
         bIsMovingToNewLocation = true;
         bIsMoveAllowed = false;
+
+        if (CurrentChessOperator)
+        {
+            CurrentChessOperator->StopTimer_MovesSequence();
+        }
     }
     else if (!ToSquare)
     {
         UE_LOG(LogTemp, Error, TEXT("'%s': ToSquare is NOT"),
             *GetNameSafe(this));
     }
+}
+
+FIndex2D ASK_Character::GetCurrentPosition()
+{
+    return CurrentSquare->GetData().PositionNumber;
 }
 
 void ASK_Character::MovementForTick(const float& lDeltaTime)

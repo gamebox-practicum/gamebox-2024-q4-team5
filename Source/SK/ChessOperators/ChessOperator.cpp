@@ -11,7 +11,9 @@
 #include "Engine/DataTable.h"
 
 // Interaction:
+#include "SK/Core/SK_Character.h"
 #include "SK/ChessBoard/SquareGenerator.h"
+#include "SK/ChessBoard/Square.h"
 #include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessMans/ChessManStruct.h"
@@ -194,24 +196,31 @@ AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 
 void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
 {
-    if (!bIsPlayersMove
-        && GetCurrentChessManGenerator())
+    if (!bIsPlayersMove)
     {
-        CurrentChessManGenerator->UpdateAllAvailableChessMan();
+        if (GetCurrentChessManGenerator())
+        {
+            CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-        PlayPrimitiveAI();
+            PlayPrimitiveAI();
+        }
+        else if (!CurrentChessManGenerator)
+        {
+            UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+                *GetNameSafe(this));
+        }
 
         //OnPlayersMove.Broadcast(true);
-    }
-    else if (!CurrentChessManGenerator)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
-            *GetNameSafe(this));
     }
     else
     {
         TimerInit_MovesSequence();
     }
+}
+
+void AChessOperator::StopTimer_MovesSequence()
+{
+    GetWorldTimerManager().ClearTimer(Timer_MovesSequence);
 }
 
 void AChessOperator::TimerInit_MovesSequence()
@@ -224,7 +233,7 @@ void AChessOperator::TimerInit_MovesSequence()
         false);
 }
 
-void AChessOperator::TimerAction_OperatorMove()
+void AChessOperator::TimerAction_OperatorMove() const
 {
     OnPlayersMove.Broadcast(false);
 }
@@ -236,8 +245,14 @@ void AChessOperator::TimerAction_OperatorMove()
 
 void AChessOperator::PrimitiveAI_Init()
 {
+    // Получить массив из всех Шахматных фигур
+    PointerToAllChessMans = CurrentChessManGenerator->GetPointerToAllChessMans();
+
     // Получить массив из доступных Шахматных фигур
     PointerToAllAvailableChessMans = CurrentChessManGenerator->GetPointerToAllAvailableChessMans();
+
+    // Получить все фигуры игроков/игрока
+    AllPlayers = CurrentChessManGenerator->GetPointerToAllPlayers();
 
     // Получить Двумерный массив указателей на Клетки
     PointerToAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();

@@ -50,8 +50,11 @@ void ASquareGenerator::OnConstruction(const FTransform& Transform)
 
 void ASquareGenerator::ReGenerate()
 {
-    DeleteAllSquares();
-    CreateGeneratedSquares();
+    //if (NumberAlongAxes == TDArraySquares_Test.Num())
+    {
+        DeleteAllSquares();
+        CreateGeneratedSquares();
+    }
 }
 
 void ASquareGenerator::DeleteAllSquares()

@@ -140,6 +140,9 @@ private:
 
     /** Удалить все Шахматные фигуры */
     void DeleteAllChessMans();
+
+    template<class T>
+    T* CreateFigureOnChessboard(const TSubclassOf<AActor>& Type, const FIndex2D& XY);
     //-------------------------------------------
 
 
@@ -148,9 +151,6 @@ private:
 
     /** Запуск генерации Фигур игроков */
     void CreateGeneratedPlayers();
-
-    /** Создать Шахматную фигуру в указанной позиции */
-    void CreatePlayer(const TSubclassOf<ASK_Character> Type, const FIndex2D& XY);
     //-------------------------------------------
 
 
@@ -159,9 +159,6 @@ private:
 
     /** Запуск генерации Шахматных фигур */
     void CreateGeneratedChessMans();
-
-    /** Создать Шахматную фигуру в указанной позиции */
-    void CreateChessMan(const FChessManData& Data);
     //-------------------------------------------
 
 
