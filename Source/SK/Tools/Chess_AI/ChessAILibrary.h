@@ -19,8 +19,7 @@ UCLASS()
 class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
-
-    ///TODO: предотвратить удаление UChessBoardInfo и UChessPieceInfo during garbage collection
+public:
     UFUNCTION(BlueprintCallable, Category = "ChessAI")
     static FChessPieceStep GetNextStep(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth);
 
@@ -39,7 +38,7 @@ class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
 
     ///Utils---------------
 
-
+private:
     static void GetPieces(UChessBoardInfo* ChessBoardInfo, std::vector<UChessPieceInfo*>& WhitePieces,
         std::vector<UChessPieceInfo*>& BlackPieces);
 

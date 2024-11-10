@@ -19,6 +19,7 @@
 #include "SK/ChessMans/ChessManStruct.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/Tools/SKUtils.h"
+#include "SK/Tools/Chess_AI/ChessAILibrary.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 //--------------------------------------------------------------------------------------
 
@@ -209,8 +210,6 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
             UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
                 *GetNameSafe(this));
         }
-
-        //OnPlayersMove.Broadcast(true);
     }
     else
     {
@@ -237,6 +236,7 @@ void AChessOperator::TimerAction_OperatorMove() const
 {
     OnPlayersMove.Broadcast(false);
 }
+
 //--------------------------------------------------------------------------------------
 
 
@@ -269,9 +269,8 @@ void AChessOperator::PlayPrimitiveAI()
     ChessBoardInfo->Init(CurrentSquareGenerator->NumberAlongAxes.Y, CurrentSquareGenerator->NumberAlongAxes.X);
 
     //размещаем все фигуры
-    auto figures = *PointerToAllAvailableChessMans;
 
-    for(auto figure : figures)
+    for(auto figure : *PointerToAllChessMans)
     {
         auto chessPiece = SKUtils::ConstructChessPiece(figure->CurrentData.Type,
             PIECE_COLOR::BLACK, this);
@@ -281,8 +280,40 @@ void AChessOperator::PlayPrimitiveAI()
         }
     }
 
+    //! сейчас считает только одну белую фигуру.
+    // нужна либо список AChessMan* белих фигур (аналогично PointerToAllChessMans)
+    // либо переменная с типом фигуры в SK_Character.h
+    if(AllPlayers->Num() > 0)
+    {
+        auto chessPiece = SKUtils::ConstructChessPiece(EChessManType::King,
+            PIECE_COLOR::WHITE, this);
+        if(chessPiece)
+        {
+            auto pos = (*AllPlayers)[0]->GetCurrentPosition();
+            ChessBoardInfo->Set(pos.Y, pos.X, chessPiece);
+        }
+    }
+
+    FOnStepCalculatedSignature OnStepCalculated;
+    OnStepCalculated.BindDynamic(this, &AChessOperator::OnBlackStepCalculated);
+    UChessAILibrary::GetNextStepAsync(ChessBoardInfo, PIECE_COLOR::BLACK, 6, OnStepCalculated);
+
+}
+
+void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
+{
+    //поиск фигуры по индексу клетки
+    auto figure = (*PointerToAllChessMans).FindByPredicate([Step](AChessMan* m)
+    {
+        return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
+            (m->CurrentData.Position.X == Step.PreviousPosition.X);
+    });
 
     // Переместить выбранную фигуру на выбранную клетку
-    //lSelectedChessMan->MoveToSquare(lSelectedSquare);
+    ASquare* target = PointerToAllSquares->
+        GetByIndex(FIndex2D{Step.NewPosition.X, Step.NewPosition.Y});
+    (*figure)->MoveToSquare(target);
+
+    OnPlayersMove.Broadcast(true);
 }
 //--------------------------------------------------------------------------------------

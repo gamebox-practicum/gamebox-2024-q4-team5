@@ -9,9 +9,10 @@
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/ChessMans/ChessManStruct.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessMans/ChessManStruct.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +136,8 @@
       <workItem from="1730713771131" duration="13414000" />
       <workItem from="1730829544094" duration="58396000" />
       <workItem from="1731184846643" duration="56000" />
-      <workItem from="1731234488713" duration="7595000" />
+      <workItem from="1731234488713" duration="7822000" />
+      <workItem from="1731256887515" duration="3338000" />
     </task>
     <servers />
   </component>

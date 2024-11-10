@@ -230,4 +230,7 @@ private:
     // юпроперти предотвращающая удаление даныых, использующихся в другом потоке, гк
     UPROPERTY()
     UChessBoardInfo* ChessBoardInfo;
+
+    UFUNCTION()
+    void OnBlackStepCalculated(FChessPieceStep Step);
 };

@@ -10,8 +10,6 @@ FChessPieceStep UChessAILibrary::GetNextStep(UChessBoardInfo* ChessBoardInfo, PI
 {
     std::vector<UChessPieceInfo*> whitePieces;
     std::vector<UChessPieceInfo*> blackPieces;
-    //std::copy(ChessBoardInfo->whitePieces.begin(), ChessBoardInfo->whitePieces.end(), std::back_inserter(whitePieces));
-    //std::copy(ChessBoardInfo->blackPieces.begin(), ChessBoardInfo->blackPieces.end(), std::back_inserter(blackPieces));
     CopyTArrayToVector(ChessBoardInfo->whitePieces, whitePieces);
     CopyTArrayToVector(ChessBoardInfo->blackPieces, blackPieces);
 
@@ -20,7 +18,6 @@ FChessPieceStep UChessAILibrary::GetNextStep(UChessBoardInfo* ChessBoardInfo, PI
     ///testing: if there are no figures in any team, return UNABLE_MOVE
         if((whitePieces.size()) <=0 || (whitePieces.size() <= 0))
         {
-            UE_LOG(LogTemp, Warning, TEXT("ChessBoardInfo->whitePieces.Num() %d"), ChessBoardInfo->whitePieces.Num());
             return UNABLE_MOVE;
         }
     ///
