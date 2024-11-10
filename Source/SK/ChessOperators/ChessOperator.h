@@ -1,4 +1,4 @@
-// 
+//
 
 #pragma once
 
@@ -11,6 +11,7 @@
 
 // Structs:
 #include "SK/ChessBoard/SquareStruct.h"
+#include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 
 // Generated:
 #include "ChessOperator.generated.h"
@@ -215,4 +216,8 @@ private:
     /** Реакция таймера: Ход Оператора */
     void TimerAction_OperatorMove();
     //-------------------------------------------
+
+    // юпроперти предотвращающая удаление даныых, использующихся в другом потоке, гк
+    UPROPERTY()
+    UChessBoardInfo* ChessBoardInfo;
 };
