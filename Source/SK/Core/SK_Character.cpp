@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 // Interaction:
+#include "SK_PlayerController.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessOperators/ChessOperator.h"
 //--------------------------------------------------------------------------------------
@@ -71,6 +72,11 @@ void ASK_Character::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     MovementForTick(DeltaTime);
+}
+
+void ASK_Character::PossessedBy(AController* NewController)
+{
+    CurrentPlayerController = Cast<ASK_PlayerController>(NewController);
 }
 
 void ASK_Character::Cleaning()
@@ -163,6 +169,8 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         {
             CurrentChessOperator->StopTimer_MovesSequence();
         }
+
+        EnableMouse(false);
     }
     else if (!ToSquare)
     {
@@ -201,6 +209,15 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
         }
     }
 }
+
+void ASK_Character::EnableMouse(bool bEnabled)
+{
+    if (CurrentPlayerController)
+    {
+        CurrentPlayerController->bEnableClickEvents = bEnabled;
+        CurrentPlayerController->bEnableTouchEvents = bEnabled;
+    }
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -212,6 +229,12 @@ void ASK_Character::PlayerMovesSequence(bool bIsPlayersMove)
     if (bIsPlayersMove)
     {
         bIsMoveAllowed = bIsPlayersMove;
+
+        EnableMouse(true);
+    }
+    else
+    {
+        EnableMouse(false);
     }
 }
 

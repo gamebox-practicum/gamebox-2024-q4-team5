@@ -34,7 +34,7 @@ struct FSquareComponentData : public FTableRowBase
 {
     GENERATED_BODY()
 
-    // Тип Компонентаа
+    // Тип Компонента
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<USquareComponent> Type = nullptr;
 

@@ -4,7 +4,9 @@
 #include "ChessMan.h"
 
 // Interaction:
+#include "ChessManGenerator.h"
 #include "SK/ChessBoard/Square.h"
+#include "SK/ChessBoard/SquareComponent.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -79,6 +81,38 @@ void AChessMan::Cleaning()
 
 
 
+/* ---   Interaction   --- */
+
+void AChessMan::NotifyActorBeginCursorOver()
+{
+    Super::NotifyActorBeginCursorOver();
+
+    if (ChessmanSkeletalMesh)
+        ChessmanSkeletalMesh->SetRenderCustomDepth(true);
+    if (ChessmanStaticMesh)
+        ChessmanStaticMesh->SetRenderCustomDepth(true);
+}
+
+void AChessMan::NotifyActorEndCursorOver()
+{
+    Super::NotifyActorEndCursorOver();
+
+    if (ChessmanSkeletalMesh)
+        ChessmanSkeletalMesh->SetRenderCustomDepth(false);
+    if (ChessmanStaticMesh)
+        ChessmanStaticMesh->SetRenderCustomDepth(false);
+}
+
+void AChessMan::NotifyActorOnClicked(FKey ButtonReleased)
+{
+    Super::NotifyActorOnClicked(ButtonReleased);
+
+    ChessManDeath();
+}
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Movement   --- */
 
 // Warning: Предварительный вариант.
@@ -106,6 +140,11 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 
 void AChessMan::SetCurrentSquare(ASquare* ToSquare)
 {
+    // Освободить предыдущую клетку и занять новую
+    if (CurrentSquare)
+        CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+    ToSquare->OccupySquare(EWarringPartiesType::Black);
+
     CurrentSquare = ToSquare;
 }
 
@@ -127,6 +166,40 @@ void AChessMan::MovementForTick(const float& lDeltaTime)
             // Плавная интерполяция перемещения
             SetActorLocation(FMath::VInterpTo(lCurrentLocation, NewLocation, lDeltaTime, MovementSpeed));
         }
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Death   --- */
+
+void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* Generator)
+{
+    CurrentChessManGenerator = Generator;
+}
+
+void AChessMan::ChessManDeath()
+{
+    Destroy();
+
+    // Указатель на создаваемый компонент
+    USquareComponent* lNewComponent = nullptr;
+
+    for (auto& lSquareComponent : SquareComponentsTypes)
+    {
+        // Создаём компонент, который всё остальное сделает сам
+        lNewComponent = Cast<USquareComponent>(
+            CurrentSquare->AddComponentByClass(
+                lSquareComponent.Get(),
+                false,
+                FTransform(),
+                false));
+    }
+
+    if (CurrentChessManGenerator)
+    {
+        CurrentChessManGenerator->UpdateAllChessMan();
     }
 }
 //--------------------------------------------------------------------------------------

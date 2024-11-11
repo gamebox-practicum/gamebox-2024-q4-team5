@@ -203,6 +203,7 @@ void AChessManGenerator::CreateGeneratedChessMans()
             {
                 lNewChessMan->CurrentData = *lData;
                 lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
+                lNewChessMan->SetCurrentChessManGenerator(this);
 
                 AllChessMans.Add(lNewChessMan);
             }
@@ -235,6 +236,17 @@ TArray<AChessMan*>* AChessManGenerator::GetPointerToAllChessMans()
 TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
 {
     return &AllAvailableChessMan;
+}
+
+void AChessManGenerator::UpdateAllChessMan()
+{
+    for (int32 i = 0; i < AllChessMans.Num(); ++i)
+    {
+        if (!AllChessMans[i])
+        {
+            AllChessMans.RemoveAt(i);
+        }
+    };
 }
 
 void AChessManGenerator::UpdateAllAvailableChessMan()

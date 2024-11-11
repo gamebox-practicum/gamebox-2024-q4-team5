@@ -18,7 +18,9 @@
 /* ---   Pre-declaration of classes and structures   --- */
 
 // Interaction:
+class AChessManGenerator;
 class ASquare;
+class USquareComponent;
 //--------------------------------------------------------------------------------------
 
 
@@ -76,6 +78,20 @@ public:
 
 
 
+    /* ---   Interaction   --- */
+
+    /** Событие, когда на него наводят курсор мыши с помощью интерактивного интерфейса */
+    virtual void NotifyActorBeginCursorOver() override;
+
+    /** Событие, когда с него убирают курсор мыши с помощью интерактивного интерфейса */
+    virtual void NotifyActorEndCursorOver() override;
+
+    /** Событие, когда этот субъект находится под мышкой при нажатии клавиши реагирования с помощью интерактивного интерфейса */
+    virtual void NotifyActorOnClicked(FKey ButtonReleased) override;
+    //-------------------------------------------
+
+
+
     /* ---   Type   --- */
 
     // Текущая информация о данной Фигуре
@@ -98,11 +114,25 @@ public:
 
     //
 
-    // Переместиться к указанной клетке
+    /** Переместиться к указанной Клетке */
     void MoveToSquare(ASquare* ToSquare);
 
-    // Установить указатель на новую ячейку
+    /** Установить указатель на новую Клетку */
     void SetCurrentSquare(ASquare* ToSquare);
+    //-------------------------------------------
+
+
+
+    /* ---   Death   --- */
+
+    // Массив Типов Компонентов Клетки, создаваемые при смерти данной Шахматной фигуры
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Death")
+    TArray<TSubclassOf<USquareComponent>> SquareComponentsTypes;
+
+    //
+
+    /** Записать Указатель на "родительский" Генератор Шахматных фигур */
+    void SetCurrentChessManGenerator(AChessManGenerator* Generator);
     //-------------------------------------------
 
 
@@ -111,7 +141,7 @@ private:
 
     /* ---   Base   --- */
 
-    /* Очистка от неиспользуемых компонентов */
+    /** Очистка от неиспользуемых компонентов */
     void Cleaning();
     //-------------------------------------------
 
@@ -131,7 +161,19 @@ private:
 
     //
 
-    // Расчёт передвижения на каждый кадр
+    /** Расчёт передвижения на каждый кадр */
     void MovementForTick(const float& DeltaTime);
+    //-------------------------------------------
+
+
+    /* ---   Death   --- */
+
+    // Указатель на "родительский" Генератор Шахматных фигур
+    AChessManGenerator* CurrentChessManGenerator = nullptr;
+
+    //
+
+    /** Смерть шахматной фигуры */
+    void ChessManDeath();
     //-------------------------------------------
 };

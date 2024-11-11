@@ -46,8 +46,6 @@ ASquare::ASquare()
 void ASquare::BeginPlay()
 {
     Super::BeginPlay();
-
-    AddComponentByClass(UBoxComponent::StaticClass(), false, FTransform(), false);
 }
 //--------------------------------------------------------------------------------------
 
@@ -59,7 +57,11 @@ void ASquare::NotifyActorBeginCursorOver()
 {
     Super::NotifyActorBeginCursorOver();
 
-    BlockMesh->SetRenderCustomDepth(true);
+    // Контроль выделения (свечения) от типа Клетки
+    if (SquareData.WarringPartiesType != EWarringPartiesType::Corpse)
+    {
+        BlockMesh->SetRenderCustomDepth(true);
+    }
 }
 
 void ASquare::NotifyActorEndCursorOver()
@@ -133,5 +135,15 @@ const FSquareData& ASquare::GetData()
 void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
 {
     SquareData.WarringPartiesType = iWarringPartiesType;
+
+    // Контроль цвета выделения от типа Клетки
+    if (SquareData.WarringPartiesType == EWarringPartiesType::Black)
+    {
+        BlockMesh->SetCustomDepthStencilValue(1);
+    }
+    else
+    {
+        BlockMesh->SetCustomDepthStencilValue(0);
+    }
 }
 //--------------------------------------------------------------------------------------

@@ -20,7 +20,6 @@ USquareComponent::USquareComponent()
     PrimaryComponentTick.bCanEverTick = false; // Предварительно
 
     bAutoActivate = true;
-    bWantsInitializeComponent = true;
 }
 //--------------------------------------------------------------------------------------
 

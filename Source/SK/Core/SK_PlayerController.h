@@ -15,7 +15,7 @@
 UCLASS()
 class SK_API ASK_PlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
 

@@ -120,6 +120,9 @@ public:
     /** Получение указателя на все доступные Шахматные фигуры */
     TArray<AChessMan*>* GetPointerToAllAvailableChessMans();
 
+    /** Обновить данные о всех Шахматных фигурах */
+    void UpdateAllChessMan();
+
     /** Обновить данные о доступных Шахматных фигурах */
     void UpdateAllAvailableChessMan();
     //-------------------------------------------

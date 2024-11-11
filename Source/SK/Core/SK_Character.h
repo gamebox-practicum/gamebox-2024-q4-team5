@@ -23,6 +23,7 @@ class UCameraComponent;
 // Interaction:
 class ASquare;
 class AChessOperator;
+class ASK_PlayerController;
 //--------------------------------------------------------------------------------------
 
 
@@ -86,6 +87,9 @@ public:
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
+
+    /** Вызывается, когда эта пешка захвачена */
+    virtual void PossessedBy(AController* NewController) override;
     //-------------------------------------------
 
 
@@ -145,6 +149,11 @@ private:
 
     /* ---   Input Action   --- */
 
+    // Текущий контроллер игрока
+    ASK_PlayerController* CurrentPlayerController;
+
+    //
+
     /** Перемещение вперёд/назад */
     void MoveForward(float Val);
 
@@ -176,8 +185,11 @@ private:
 
     //
 
-    // Расчёт передвижения на каждый кадр
+    /**	Расчёт передвижения на каждый кадр */
     void MovementForTick(const float& DeltaTime);
+
+    /**	Управление мышью */
+    void EnableMouse(bool bEnabled);
     //-------------------------------------------
 
 
@@ -189,7 +201,7 @@ private:
 
     //
 
-    // Подписаться на делегаты
+    /**	Подписаться на делегаты */
     void SubscribeToDelegates();
     //-------------------------------------------
 };
