@@ -261,6 +261,15 @@ void AChessOperator::PrimitiveAI_Init()
 
 void AChessOperator::PlayPrimitiveAI()
 {
+    //почему то может вызваться повторно до завершения рассчетов
+    if(StepIsCalculatedNow)
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("AChessOperator::PlayPrimitiveAI:: the function is called again before the calculation is completed"));
+        return;
+    }
+    StepIsCalculatedNow = true;
+
     if(!IsValid(ChessBoardInfo))
     {
         ChessBoardInfo = NewObject<UChessBoardInfo>(this);
@@ -273,6 +282,15 @@ void AChessOperator::PlayPrimitiveAI()
 
     for(auto figure : *PointerToAllChessMans)
     {
+        //figure почему то может быть невалидной
+        if(!IsValid(figure))
+        {
+            UE_LOG(LogTemp, Error, TEXT("AChessOperator::PlayPrimitiveAI:: 'figure' is invalid"));
+            //StepIsCalculatedNow = false;
+            //OnPlayersMove.Broadcast(true);
+            //return;
+            continue;
+        }
         auto chessPiece = SKUtils::ConstructChessPiece(figure->CurrentData.Type,
             PIECE_COLOR::BLACK, this);
         if(chessPiece)
@@ -297,22 +315,56 @@ void AChessOperator::PlayPrimitiveAI()
 
     FOnStepCalculatedSignature OnStepCalculated;
     OnStepCalculated.BindDynamic(this, &AChessOperator::OnBlackStepCalculated);
-    UChessAILibrary::GetNextStepAsync(ChessBoardInfo, PIECE_COLOR::BLACK, 6, OnStepCalculated);
+    UChessAILibrary::GetNextStepAsync(ChessBoardInfo, PIECE_COLOR::BLACK, 5, OnStepCalculated);
 
 }
 
 void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
 {
+    StepIsCalculatedNow = false;
+
     //поиск фигуры по индексу клетки
     auto figure = (*PointerToAllChessMans).FindByPredicate([Step](AChessMan* m)
     {
+        if(IsValid(m))
+        {
         return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
             (m->CurrentData.Position.X == Step.PreviousPosition.X);
+        }
+        return false;
     });
 
+    //фигуры почему то иногда двигаются/умирают во время рассчета хода
+    if(!figure)
+    {
+        UE_LOG(LogTemp, Error,
+           TEXT("AChessOperator::PlayPrimitiveAI:: figures moved/removed while calculated"));
+        OnPlayersMove.Broadcast(true);
+        return;
+    }
+
+    //индекс почему то иногда выходит за пределы массива PointerToAllSquares
+    //(ее размер всегда равен CurrentSquareGenerator->NumberAlongAxes?)
+    if(!(PointerToAllSquares->IsValidIndex(Step.NewPosition.X, Step.NewPosition.Y)))
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("AChessOperator::PlayPrimitiveAI:: invalid PointerToAllSquares index:{%d, %d}"),
+            Step.NewPosition.X, Step.NewPosition.Y);
+        OnPlayersMove.Broadcast(true);
+        return;
+    }
+
     // Переместить выбранную фигуру на выбранную клетку
+
     ASquare* target = PointerToAllSquares->
         GetByIndex(FIndex2D{Step.NewPosition.X, Step.NewPosition.Y});
+    //на всякий случай
+    if(!IsValid(target))
+    {
+        UE_LOG(LogTemp, Error, TEXT("AChessOperator::PlayPrimitiveAI:: invalid target square"));
+        OnPlayersMove.Broadcast(true);
+        return;
+    }
     (*figure)->MoveToSquare(target);
 
     OnPlayersMove.Broadcast(true);

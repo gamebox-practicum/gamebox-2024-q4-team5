@@ -238,4 +238,7 @@ private:
 
     UFUNCTION()
     void OnBlackStepCalculated(FChessPieceStep Step);
+
+    //для запрета вызова рассчета хода если не рассчитался предыдущий
+    bool StepIsCalculatedNow = false;
 };

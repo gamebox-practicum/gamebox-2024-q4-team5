@@ -11,8 +11,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,6 +136,7 @@
       <workItem from="1731184846643" duration="56000" />
       <workItem from="1731234488713" duration="7822000" />
       <workItem from="1731256887515" duration="3338000" />
+      <workItem from="1731351093693" duration="7810000" />
     </task>
     <servers />
   </component>
