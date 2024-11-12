@@ -48,8 +48,6 @@ void AChessOperator::BeginPlay()
 
     PrimitiveAI_Init();
 
-    //TimerInit_MovesSequence(); // Первый ход ограничен по времени
-
     OperatorDataPreInit();
 
     OnPlayersMove.AddDynamic(this, &AChessOperator::PlayerMovesSequence);
@@ -230,8 +228,6 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
     {
         CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-        PlayingAttackSound();
-
         if (!bIsPlayersMove)
         {
             if (bSkipOperatorTurn)
@@ -254,6 +250,7 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
         else
         {
             TimerInit_MovesSequence();
+            PlayingAttackSound();
         }
     }
     else if (!CurrentChessManGenerator)
@@ -313,6 +310,8 @@ void AChessOperator::ToNextStage()
     {
         Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventWinningGame();
     }
+
+    PlayingAttackSound();
 }
 //--------------------------------------------------------------------------------------
 
@@ -328,7 +327,7 @@ void AChessOperator::PlayingAttackSound()
         {
             for (auto& lData : *CurrentChessManGenerator->GetPointerToAttackingChessMans())
             {
-                if (lData.AttackPosition != (*AllPlayers)[0]->GetCurrentPosition())
+                if (lData.AttackPosition == (*AllPlayers)[0]->GetCurrentPosition())
                 {
                     UGameplayStatics::PlaySoundAtLocation(
                         GetWorld(),

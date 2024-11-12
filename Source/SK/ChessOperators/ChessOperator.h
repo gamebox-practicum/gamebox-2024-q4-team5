@@ -292,6 +292,9 @@ private:
     void TimerAction_PlayersMove() const;
     //-------------------------------------------
 
+
+
+
     // юпроперти предотвращающая удаление даныых, использующихся в другом потоке, гк
     UPROPERTY()
     UChessBoardInfo* ChessBoardInfo;

@@ -74,9 +74,6 @@ public:
 
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-    /** Событие, когда уничтожается данный актор */
-    virtual void Destroyed() override;
     //-------------------------------------------
 
 
