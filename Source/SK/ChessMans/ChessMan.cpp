@@ -65,6 +65,27 @@ void AChessMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AChessMan::Destroyed()
+{
+    if (CurrentChessManGenerator)
+    {
+        CurrentChessManGenerator->RemoveChessMan(this);
+    }
+
+    for (auto& lSquareComponent : SquareComponentsTypes)
+    {
+        // Создаём компонент, который всё остальное сделает сам
+        Cast<USquareComponent>(
+            CurrentSquare->AddComponentByClass(
+                lSquareComponent.Get(),
+                false,
+                FTransform(),
+                false));
+    }
+
+    Super::Destroyed();
+}
+
 void AChessMan::Cleaning()
 {
     if (ChessmanSkeletalMesh && !(ChessmanSkeletalMesh->SkeletalMesh))
@@ -174,32 +195,13 @@ void AChessMan::MovementForTick(const float& lDeltaTime)
 
 /* ---   Death   --- */
 
-void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* Generator)
+void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 {
-    CurrentChessManGenerator = Generator;
+    CurrentChessManGenerator = iGenerator;
 }
 
 void AChessMan::ChessManDeath()
 {
     Destroy();
-
-    // Указатель на создаваемый компонент
-    USquareComponent* lNewComponent = nullptr;
-
-    for (auto& lSquareComponent : SquareComponentsTypes)
-    {
-        // Создаём компонент, который всё остальное сделает сам
-        lNewComponent = Cast<USquareComponent>(
-            CurrentSquare->AddComponentByClass(
-                lSquareComponent.Get(),
-                false,
-                FTransform(),
-                false));
-    }
-
-    if (CurrentChessManGenerator)
-    {
-        CurrentChessManGenerator->UpdateAllChessMan();
-    }
 }
 //--------------------------------------------------------------------------------------

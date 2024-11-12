@@ -124,7 +124,7 @@ public:
     TArray<FAttackingChessMansData>* GetPointerToAttackingChessMans();
 
     /** Обновить данные о всех Шахматных фигурах */
-    void UpdateAllChessMan();
+    void RemoveChessMan(AChessMan* ChessMan);
 
     /** Обновить данные о доступных Шахматных фигурах */
     void UpdateAllAvailableChessMan();

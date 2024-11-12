@@ -215,6 +215,11 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
 
                 AllChessMans.Add(lNewChessMan);
             }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("'%s': lNewChessMan is InValid: '%s'"),
+                    *GetNameSafe(this), *GetNameSafe(lNewChessMan));
+            }
 
             // Warning: Требуется проверка клетки на доступность (свободна ли она)
         }
@@ -251,15 +256,9 @@ TArray<FAttackingChessMansData>* AChessManGenerator::GetPointerToAttackingChessM
     return &AttackingChessMans;
 }
 
-void AChessManGenerator::UpdateAllChessMan()
+void AChessManGenerator::RemoveChessMan(AChessMan* ChessMan)
 {
-    for (int32 i = 0; i < AllChessMans.Num(); ++i)
-    {
-        if (!AllChessMans[i])
-        {
-            AllChessMans.RemoveAt(i);
-        }
-    };
+    AllChessMans.RemoveSwap(ChessMan);
 }
 
 void AChessManGenerator::UpdateAllAvailableChessMan()

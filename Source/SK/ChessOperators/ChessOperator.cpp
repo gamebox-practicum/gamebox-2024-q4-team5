@@ -440,6 +440,11 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
                 return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
                     (m->CurrentData.Position.X == Step.PreviousPosition.X);
             }
+            else
+            {
+                UE_LOG(LogTemp, Warning,
+                    TEXT("AChessOperator::PlayPrimitiveAI:: 'm' is InValid"));
+            }
             return false;
         });
 
