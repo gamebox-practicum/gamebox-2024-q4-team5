@@ -47,18 +47,21 @@ void ASK_PlayerController::Tick(float DeltaSeconds)
 
 void ASK_PlayerController::SetMouseToCenter()
 {
-    if (!IsPaused())
+    if (GetPawn())
     {
-        if (GetMousePosition(MousePositionX, MousePositionY))
+        if (!IsPaused())
         {
-            GetViewportSize(SizeCenterX, SizeCenterY);
-
-            SizeCenterX /= 2;
-            SizeCenterY /= 2;
-
-            if (MousePositionX != SizeCenterX || MousePositionY != SizeCenterY)
+            if (GetMousePosition(MousePositionX, MousePositionY))
             {
-                SetMouseLocation(SizeCenterX, SizeCenterY);
+                GetViewportSize(SizeCenterX, SizeCenterY);
+
+                SizeCenterX /= 2;
+                SizeCenterY /= 2;
+
+                if (MousePositionX != SizeCenterX || MousePositionY != SizeCenterY)
+                {
+                    SetMouseLocation(SizeCenterX, SizeCenterY);
+                }
             }
         }
     }

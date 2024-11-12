@@ -48,7 +48,7 @@ void AChessOperator::BeginPlay()
 
     PrimitiveAI_Init();
 
-    TimerInit_MovesSequence(); // Первый ход ограничен по времени
+    //TimerInit_MovesSequence(); // Первый ход ограничен по времени
 
     OperatorDataPreInit();
 
