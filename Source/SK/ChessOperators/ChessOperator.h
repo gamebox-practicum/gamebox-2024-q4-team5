@@ -156,6 +156,15 @@ public:
 
 
 
+    /* ---   Attack   --- */
+
+    // Воспроизводимый звук при Атаке
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Attack")
+    USoundBase* WalkingSound = nullptr;
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Delegate   --- */
@@ -230,6 +239,14 @@ private:
 
     /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
     AChessManGenerator* GetFirstChessManGenerator();
+    //-------------------------------------------
+
+
+
+    /* ---   Attack   --- */
+
+    /** Запуск звука атаки */
+    void PlayingAttackSound();
     //-------------------------------------------
 
 

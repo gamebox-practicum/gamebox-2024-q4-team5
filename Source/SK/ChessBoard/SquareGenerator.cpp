@@ -207,7 +207,7 @@ void ASquareGenerator::CreatStageTrigger()
             // Передача указателя на Оператор
             lTrigger->SetPointerToOperator(CurrentOperator);
 
-            // Передача расчитанного размера
+            // Передача рассчитанного размера
             lTrigger->SetActorScale3D(GetScaleForStageTrigger());
 
             // Тег-маркировка Клетки.

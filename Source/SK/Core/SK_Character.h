@@ -90,6 +90,9 @@ public:
 
     /** Вызывается, когда эта пешка захвачена */
     virtual void PossessedBy(AController* NewController) override;
+
+    /**	Событие, когда этот субъект перекрывается с другим */
+    virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
     //-------------------------------------------
 
 

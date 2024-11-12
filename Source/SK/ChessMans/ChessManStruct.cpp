@@ -15,18 +15,21 @@
 
 AChessMan* GetAvailableChessMan(
     AChessMan* iChessMan,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Поочерёдная проверка валидности указателей
     if (iChessMan
         && iAllSquares
         && iChessMan->CurrentData.Type < EChessManType::NONE)
     {
+        int32 lCheckAttacking = oAttackingChessMans.Num();
+
         // Напрямую получить и подготовить данные Шахматной фигуры через ссылку (&)
         FChessManData& lData = iChessMan->CurrentData;
         lData.AvailablePositions.Empty();
 
-        // 
+        // Массив доступных ходов
         TArray<FIndex2D> lSquaresIndex2D;
 
         switch (lData.Type)
@@ -34,31 +37,36 @@ AChessMan* GetAvailableChessMan(
         case EChessManType::Pawn: // Пешка
             lSquaresIndex2D = GetSquareForPawn(
                 lData.Position,
-                iAllSquares);
+                iAllSquares,
+                oAttackingChessMans);
             break;
 
         case EChessManType::Knight: // Конь
             lSquaresIndex2D = GetSquareForKnight(
                 lData.Position,
-                iAllSquares);
+                iAllSquares,
+                oAttackingChessMans);
             break;
 
         case EChessManType::Bishop: // Слон
             lSquaresIndex2D = GetSquareForBishop(
                 lData.Position,
-                iAllSquares);
+                iAllSquares,
+                oAttackingChessMans);
             break;
 
         case EChessManType::Rook: // Ладья
             lSquaresIndex2D = GetSquareForRook(
                 lData.Position,
-                iAllSquares);
+                iAllSquares,
+                oAttackingChessMans);
             break;
 
         case EChessManType::Queen: // Ферзь (Королева)
             lSquaresIndex2D = GetSquareForQueen(
                 lData.Position,
-                iAllSquares);
+                iAllSquares,
+                oAttackingChessMans);
             break;
         }
 
@@ -66,6 +74,15 @@ AChessMan* GetAvailableChessMan(
         if (lSquaresIndex2D.IsValidIndex(0))
         {
             lData.AvailablePositions += lSquaresIndex2D;
+
+            // Если были добавлены позиции аттаки, то заполнить указатели на текущую Шахматную фигуру
+            if (lCheckAttacking != oAttackingChessMans.Num())
+            {
+                for (int32 i = lCheckAttacking; i < oAttackingChessMans.Num(); ++i)
+                {
+                    oAttackingChessMans[i].ChessMan = iChessMan;
+                }
+            }
 
             return iChessMan;
         }
@@ -82,7 +99,8 @@ AChessMan* GetAvailableChessMan(
 
 TArray<FIndex2D> GetSquareForPawn(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lNotChecked;
@@ -96,7 +114,8 @@ TArray<FIndex2D> GetSquareForPawn(
     CheckPositions(
         lNotChecked,
         iAllSquares,
-        lResult);
+        lResult,
+        oAttackingChessMans);
 
     // Сброс переменной
     lNotChecked.Empty(2);
@@ -113,6 +132,7 @@ TArray<FIndex2D> GetSquareForPawn(
             if (lSquareData.WarringPartiesType == EWarringPartiesType::White)
             {
                 lResult.Add(dPosition);
+                oAttackingChessMans.Add(FAttackingChessMansData(nullptr, dPosition));
             }
         }
     }
@@ -122,7 +142,8 @@ TArray<FIndex2D> GetSquareForPawn(
 
 TArray<FIndex2D> GetSquareForKnight(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lNotChecked;
@@ -144,14 +165,16 @@ TArray<FIndex2D> GetSquareForKnight(
     CheckPositions(
         lNotChecked,
         iAllSquares,
-        lResult);
+        lResult,
+        oAttackingChessMans);
 
     return lResult;
 }
 
 TArray<FIndex2D> GetSquareForBishop(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
@@ -167,16 +190,38 @@ TArray<FIndex2D> GetSquareForBishop(
         FIndex2D { -1, 1 }
     };
 
+    // Флаг выхода из цикла проверки конкретного направления
+    bool bCheckDirection = false;
 
+    // Выбор проверяемого направления по порядку
     for (auto& lDirection : lCheckedDirections)
     {
-        // Проверка ходов Слона
+        bCheckDirection = false;
+
+        // Проверка ходов Слона в текущем направлении
         for (i = iPosition + lDirection;
-            CheckSquare(i, iAllSquares, lSquareData)
-            && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
+            CheckSquare(i, iAllSquares, lSquareData);
             i += lDirection)
         {
-            lResult.Add(i);
+            switch (lSquareData.WarringPartiesType)
+            {
+            case EWarringPartiesType::White:
+                oAttackingChessMans.Add(FAttackingChessMansData(nullptr, i));
+                bCheckDirection = true;
+
+            case EWarringPartiesType::NONE:
+                lResult.Add(i);
+                break;
+
+            default:
+
+                bCheckDirection = true;
+                break;
+            }
+
+            // Выход из цикла
+            if (bCheckDirection)
+                break;
         }
     }
 
@@ -185,7 +230,8 @@ TArray<FIndex2D> GetSquareForBishop(
 
 TArray<FIndex2D> GetSquareForRook(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
@@ -201,16 +247,38 @@ TArray<FIndex2D> GetSquareForRook(
         FIndex2D { 0, -1 }
     };
 
+    // Флаг выхода из цикла проверки конкретного направления
+    bool bCheckDirection = false;
 
+    // Выбор проверяемого направления по порядку
     for (auto& lDirection : lCheckedDirections)
     {
-        // Проверка ходов Слона
+        bCheckDirection = false;
+
+        // Проверка ходов Ладьи в текущем направлении
         for (i = iPosition + lDirection;
-            CheckSquare(i, iAllSquares, lSquareData)
-            && lSquareData.WarringPartiesType <= EWarringPartiesType::White;
+            CheckSquare(i, iAllSquares, lSquareData);
             i += lDirection)
         {
-            lResult.Add(i);
+            switch (lSquareData.WarringPartiesType)
+            {
+            case EWarringPartiesType::White:
+                oAttackingChessMans.Add(FAttackingChessMansData(nullptr, i));
+                bCheckDirection = true;
+
+            case EWarringPartiesType::NONE:
+                lResult.Add(i);
+                break;
+
+            default:
+
+                bCheckDirection = true;
+                break;
+            }
+
+            // Выход из цикла
+            if (bCheckDirection)
+                break;
         }
     }
 
@@ -219,18 +287,21 @@ TArray<FIndex2D> GetSquareForRook(
 
 TArray<FIndex2D> GetSquareForQueen(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares)
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
     TArray<FIndex2D> lResult;
 
     lResult = GetSquareForBishop(
         iPosition,
-        iAllSquares);
+        iAllSquares,
+        oAttackingChessMans);
 
     lResult += GetSquareForRook(
         iPosition,
-        iAllSquares);
+        iAllSquares,
+        oAttackingChessMans);
 
     return lResult;
 }
@@ -243,7 +314,8 @@ TArray<FIndex2D> GetSquareForQueen(
 void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
     const FSquareArray2D* iAllSquares,
-    TArray<FIndex2D>& oResult)
+    TArray<FIndex2D>& oResult,
+    TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     FSquareData lSquareData; // Данные Клетки
 
@@ -254,7 +326,7 @@ void CheckPositions(
             switch (lSquareData.WarringPartiesType)
             {
             case EWarringPartiesType::White:
-                // Требуется добавить Важные ходы (Мат Игроку)
+                oAttackingChessMans.Add(FAttackingChessMansData(nullptr, dPosition));
             case EWarringPartiesType::NONE:
                 oResult.Add(dPosition);
                 break;

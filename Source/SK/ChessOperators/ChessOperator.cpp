@@ -12,6 +12,7 @@
 
 // Interaction:
 #include "SK/Core/SK_Character.h"
+#include "SK/Core/SK_GameMode.h"
 #include "SK/ChessBoard/SquareGenerator.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessMans/ChessManGenerator.h"
@@ -225,12 +226,14 @@ AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 
 void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
 {
-    if (!bIsPlayersMove)
+    if (GetCurrentChessManGenerator())
     {
-        if (GetCurrentChessManGenerator())
-        {
-            CurrentChessManGenerator->UpdateAllAvailableChessMan();
+        CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
+        PlayingAttackSound();
+
+        if (!bIsPlayersMove)
+        {
             if (bSkipOperatorTurn)
             {
                 bSkipOperatorTurn = false;
@@ -248,15 +251,15 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
                 PlayPrimitiveAI();
             }
         }
-        else if (!CurrentChessManGenerator)
+        else
         {
-            UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
-                *GetNameSafe(this));
+            TimerInit_MovesSequence();
         }
     }
-    else
+    else if (!CurrentChessManGenerator)
     {
-        TimerInit_MovesSequence();
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+            *GetNameSafe(this));
     }
 }
 
@@ -308,8 +311,39 @@ void AChessOperator::ToNextStage()
     }
     else
     {
-        // Warning: Требуется заменить на триггер завершения Уровня
-        UE_LOG(LogTemp, Warning, TEXT("'%s': EndGame"),
+        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventWinningGame();
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Attack   --- */
+
+void AChessOperator::PlayingAttackSound()
+{
+    if (WalkingSound)
+    {
+        if (CurrentChessManGenerator->GetPointerToAttackingChessMans()->Num())
+        {
+            for (auto& lData : *CurrentChessManGenerator->GetPointerToAttackingChessMans())
+            {
+                if (lData.AttackPosition != (*AllPlayers)[0]->GetCurrentPosition())
+                {
+                    UGameplayStatics::PlaySoundAtLocation(
+                        GetWorld(),
+                        WalkingSound,
+                        (*AllPlayers)[0]->GetActorLocation(),
+                        1.f,  // Default
+                        1.f,  // Default
+                        0.f); // Default
+                }
+            }
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': WalkingSound is NOT"),
             *GetNameSafe(this));
     }
 }

@@ -10,7 +10,9 @@
 
 // Interaction:
 #include "SK_PlayerController.h"
+#include "SK/Core/SK_GameMode.h"
 #include "SK/ChessBoard/Square.h"
+#include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessOperators/ChessOperator.h"
 //--------------------------------------------------------------------------------------
 
@@ -77,6 +79,18 @@ void ASK_Character::Tick(float DeltaTime)
 void ASK_Character::PossessedBy(AController* NewController)
 {
     CurrentPlayerController = Cast<ASK_PlayerController>(NewController);
+}
+
+void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+    Super::NotifyActorBeginOverlap(OtherActor);
+
+    if (Cast<AChessMan>(OtherActor))
+    {
+        Destroy();
+
+        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventLosingGame();
+    }
 }
 
 void ASK_Character::Cleaning()

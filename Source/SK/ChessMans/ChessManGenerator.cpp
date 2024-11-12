@@ -109,7 +109,7 @@ inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>
                 iType.Get(),                 // Тип фигуры
                 lSquare->GetActorLocation(), // Локация клетки
                 FRotator::ZeroRotator,       // Без изменения ротации
-                lSpawnParameters);      
+                lSpawnParameters);
 
             if (lNewActor)
             {
@@ -246,6 +246,11 @@ TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
     return &AllAvailableChessMan;
 }
 
+TArray<FAttackingChessMansData>* AChessManGenerator::GetPointerToAttackingChessMans()
+{
+    return &AttackingChessMans;
+}
+
 void AChessManGenerator::UpdateAllChessMan()
 {
     for (int32 i = 0; i < AllChessMans.Num(); ++i)
@@ -260,6 +265,7 @@ void AChessManGenerator::UpdateAllChessMan()
 void AChessManGenerator::UpdateAllAvailableChessMan()
 {
     AllAvailableChessMan.Empty();
+    AttackingChessMans.Empty();
 
     if (AllChessMans.IsValidIndex(0))
     {
@@ -267,7 +273,7 @@ void AChessManGenerator::UpdateAllAvailableChessMan()
 
         for (auto& lData : AllChessMans)
         {
-            lChessMan = GetAvailableChessMan(lData, PointerToAllSquares);
+            lChessMan = GetAvailableChessMan(lData, PointerToAllSquares, AttackingChessMans);
 
             if (lChessMan)
             {

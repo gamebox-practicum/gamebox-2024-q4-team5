@@ -120,6 +120,9 @@ public:
     /** Получение указателя на все доступные Шахматные фигуры */
     TArray<AChessMan*>* GetPointerToAllAvailableChessMans();
 
+    /** Получение указателя на все Атакующие фигуры */
+    TArray<FAttackingChessMansData>* GetPointerToAttackingChessMans();
+
     /** Обновить данные о всех Шахматных фигурах */
     void UpdateAllChessMan();
 
@@ -176,7 +179,7 @@ private:
 
     /* ---   Data   --- */
 
-    // Двумерный массив указателей на Клетки
+    // Указатель на Двумерный массив указателей на Клетки
     FSquareArray2D* PointerToAllSquares;
 
     // Все Фигуры Игроков
@@ -193,5 +196,10 @@ private:
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     TArray<AChessMan*> AllAvailableChessMan;
+
+    // Все Атакующие фигуры
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    TArray<FAttackingChessMansData> AttackingChessMans;
     //-------------------------------------------
 };

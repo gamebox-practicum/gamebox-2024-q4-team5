@@ -105,9 +105,34 @@ struct FChessManData : public FTableRowBase
     /* ---   Constructors   --- */
 
     FChessManData() {};
+    //-------------------------------------------
+};
 
-    FChessManData(EChessManType iType, FIndex2D iPosition)
-        : Type(iType), Position(iPosition) {};
+
+
+// Данные об Атакующих Шахматных фигурах
+USTRUCT(BlueprintType)
+struct FAttackingChessMansData
+{
+    GENERATED_BODY()
+
+    // Тип Фигуры
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    AChessMan* ChessMan = nullptr;
+
+    // Позиция на доске
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FIndex2D AttackPosition = { 0,0 };
+    //-------------------------------------------
+
+
+
+    /* ---   Constructors   --- */
+
+    FAttackingChessMansData() {};
+
+    FAttackingChessMansData(AChessMan* iChessMan, const FIndex2D& iAttackPosition)
+        : ChessMan(iChessMan), AttackPosition(iAttackPosition) {};
     //-------------------------------------------
 };
 //--------------------------------------------------------------------------------------
@@ -125,7 +150,8 @@ struct FChessManData : public FTableRowBase
 */
 AChessMan* GetAvailableChessMan(
     AChessMan* ChessMan,
-    const FSquareArray2D* AllSquares);
+    const FSquareArray2D* AllSquares,
+    TArray<FAttackingChessMansData>& AttackingChessMans);
 //--------------------------------------------------------------------------------------
 
 
@@ -140,7 +166,8 @@ AChessMan* GetAvailableChessMan(
 */
 TArray<FIndex2D> GetSquareForPawn(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares);
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Получить индексы всех Клеток для данного Коня
 @param  iPosition   -- Текущая позиция Коня
@@ -150,7 +177,8 @@ TArray<FIndex2D> GetSquareForPawn(
 */
 TArray<FIndex2D> GetSquareForKnight(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares);
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Получить индексы всех Клеток для данного Слона
 @param  iPosition   -- Текущая позиция Слона
@@ -160,7 +188,8 @@ TArray<FIndex2D> GetSquareForKnight(
 */
 TArray<FIndex2D> GetSquareForBishop(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares);
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Получить индексы всех Клеток для данного Ладьи
 @param  iPosition   -- Текущая позиция Ладьи
@@ -170,7 +199,8 @@ TArray<FIndex2D> GetSquareForBishop(
 */
 TArray<FIndex2D> GetSquareForRook(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares);
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Получить индексы всех Клеток для данного Ферзя
 @param  iPosition   -- Текущая позиция Ферзя
@@ -180,7 +210,8 @@ TArray<FIndex2D> GetSquareForRook(
 */
 TArray<FIndex2D> GetSquareForQueen(
     const FIndex2D& iPosition,
-    const FSquareArray2D* iAllSquares);
+    const FSquareArray2D* iAllSquares,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 //--------------------------------------------------------------------------------------
 
 
@@ -197,7 +228,8 @@ TArray<FIndex2D> GetSquareForQueen(
 void CheckPositions(
     const TArray<FIndex2D>& iNotChecked,
     const FSquareArray2D* iAllSquares,
-    TArray<FIndex2D>& oResult);
+    TArray<FIndex2D>& oResult,
+    TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Проверка наличия Клетки по индексу
 @param  iPosition   -- Текущая позиция Пешки
