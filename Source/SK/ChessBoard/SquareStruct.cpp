@@ -97,7 +97,10 @@ TArray<ASquare*> FSquareArray2D::GetArrayByY(const int32& iY) const
 
 ASquare* FSquareArray2D::GetByIndex(const int32& iX, const int32& iY) const
 {
-    return Square2DArray[iX].SquareArray[iY];
+    if (IsValidIndex(iX, iY))
+        return Square2DArray[iX].SquareArray[iY];
+    else
+        return nullptr;
 }
 
 ASquare* FSquareArray2D::GetByIndex(const FIndex2D& iXY) const

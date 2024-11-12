@@ -129,6 +129,14 @@ public:
 
 
 
+    /* ---   Stage   --- */
+
+    /** Добавить генерируемых Шахматных фигур */
+    void AddGeneratedChessMans(UDataTable* PlayersTable, UDataTable* ChessMansTable);
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Re Generate   --- */
@@ -153,7 +161,7 @@ private:
     /* ---   Generator | Players   --- */
 
     /** Запуск генерации Фигур игроков */
-    void CreateGeneratedPlayers();
+    void CreateGeneratedPlayers(UDataTable* PlayersTable);
     //-------------------------------------------
 
 
@@ -161,7 +169,7 @@ private:
     /* ---   Generator | ChessMan   --- */
 
     /** Запуск генерации Шахматных фигур */
-    void CreateGeneratedChessMans();
+    void CreateGeneratedChessMans(UDataTable* ChessMansTable);
     //-------------------------------------------
 
 

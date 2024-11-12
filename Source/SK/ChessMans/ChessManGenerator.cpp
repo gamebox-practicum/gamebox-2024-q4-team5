@@ -55,11 +55,11 @@ void AChessManGenerator::ReGenerate()
 {
     // Перезапуск Фигур Игроков
     DeleteAllPlayers();
-    CreateGeneratedPlayers();
+    CreateGeneratedPlayers(PlayersTable);
 
     // Перезапуск Шахматных фигур по контролем ИИ
     DeleteAllChessMans();
-    CreateGeneratedChessMans();
+    CreateGeneratedChessMans(ChessMansTable);
 }
 
 void AChessManGenerator::DeleteAllPlayers()
@@ -100,15 +100,23 @@ inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>
 
         if (lSquare)
         {
+            // Параметр создания: Всенда появлятся
+            FActorSpawnParameters lSpawnParameters;
+            lSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
             // Создать Фигуру
             T* lNewActor = GetWorld()->SpawnActor<T>(
                 iType.Get(),                 // Тип фигуры
                 lSquare->GetActorLocation(), // Локация клетки
-                FRotator::ZeroRotator);      // Без изменения ротации
+                FRotator::ZeroRotator,       // Без изменения ротации
+                lSpawnParameters);      
 
-            // Тег-маркировка Фигуры.
-            // Необходим для удаления только Генерируемых Фигур
-            lNewActor->Tags.Add(VerificationTag);
+            if (lNewActor)
+            {
+                // Тег-маркировка Фигуры.
+                // Необходим для удаления только Генерируемых Фигур
+                lNewActor->Tags.Add(VerificationTag);
+            }
 
             return lNewActor;
         }
@@ -138,9 +146,9 @@ inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>
 /* ---   Generator | Players   --- */
 // Warning: Следует переделать как шаблонные функции универсального Генератора
 
-void AChessManGenerator::CreateGeneratedPlayers()
+void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 {
-    if (PlayersTable)
+    if (iPlayersTable)
     {
         // Массив данных, получаемых из DataTable
         TArray<FPlayerData*> lPlayersData;
@@ -149,7 +157,7 @@ void AChessManGenerator::CreateGeneratedPlayers()
         FString lContext = "CreateGeneratedPlayers";
 
         // Получить массив данных из DataTable
-        PlayersTable->GetAllRows<FPlayerData>(lContext, lPlayersData);
+        iPlayersTable->GetAllRows<FPlayerData>(lContext, lPlayersData);
 
         // Создать Шахматную фигуру согласно данным
         for (auto& lData : lPlayersData)
@@ -180,9 +188,9 @@ void AChessManGenerator::CreateGeneratedPlayers()
 /* ---   Generator | ChessMan   --- */
 // Warning: Следует переделать как шаблонные функции универсального Генератора
 
-void AChessManGenerator::CreateGeneratedChessMans()
+void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
 {
-    if (ChessMansTable)
+    if (iChessMansTable)
     {
         // Массив данных, получаемых из DataTable
         TArray<FChessManData*> lChessManData;
@@ -191,7 +199,7 @@ void AChessManGenerator::CreateGeneratedChessMans()
         FString lContext = "CreateGeneratedChessMans";
 
         // Получить массив данных из DataTable
-        ChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
+        iChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
 
         // Создать Шахматную фигуру согласно данным
         for (auto& lData : lChessManData)
@@ -267,5 +275,16 @@ void AChessManGenerator::UpdateAllAvailableChessMan()
             }
         }
     }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Stage   --- */
+
+void AChessManGenerator::AddGeneratedChessMans(UDataTable* iPlayersTable, UDataTable* iChessMansTable)
+{
+    CreateGeneratedPlayers(iPlayersTable);
+    CreateGeneratedChessMans(iChessMansTable);
 }
 //--------------------------------------------------------------------------------------

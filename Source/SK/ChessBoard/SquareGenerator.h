@@ -24,7 +24,9 @@
 class UDataTable;
 
 // Interaction:
+class AChessOperator;
 class ASquare;
+class AStageTrigger;
 class USquareComponent;
 //--------------------------------------------------------------------------------------
 
@@ -89,6 +91,10 @@ public:
     // Количество вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
+
+    // Тип генерируемого Триггера новой стадии уровня
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
+    TSubclassOf<AStageTrigger> StageTriggerType;
     //-------------------------------------------
 
 
@@ -97,16 +103,27 @@ public:
 
     /** Получение всех клеток в виде двумерного массива */
     FSquareArray2D* GetPointerToAllSquares();
+
+    /** Установить указатель на текущий Оператор */
+    void SetPointerToOperator(AChessOperator* CurrentOperator);
     //-------------------------------------------
 
 
 
     /* ---   Square Components   --- */
 
-    // Таблица данных местоположения фигур
+    // Таблица данных местоположения компонентов Клеток
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Square Components",
         meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
-    UDataTable* SquareComponentTable;
+    UDataTable* SquareComponentTable = nullptr;
+    //-------------------------------------------
+
+
+
+    /* ---   Stage   --- */
+
+    /** Добавить генерируемых Клеток */
+    void AddGeneratedSquares(const int32& AddOnX, UDataTable* SquareComponentTable);
     //-------------------------------------------
 
 
@@ -125,6 +142,9 @@ private:
 
     /** Удалить все Компоненты Клеток */
     void DeleteAllSquareComponents();
+
+    /** Удалить все Триггеры смены стадии уровня */
+    void DeleteStageTriggers();
     //-------------------------------------------
 
 
@@ -136,6 +156,11 @@ private:
 
     // Вычисленное смещение точки
     FVector PointOffset = FVector::ZeroVector;
+
+    // Указатель на оператора, что управляет им
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    AChessOperator* CurrentOperator = nullptr;
 
     //
 
@@ -150,6 +175,15 @@ private:
 
     /** Получить локацию блока с указанным индексом матрицы */
     FVector GetLocationForSquare(const FIndex2D& XY) const;
+
+    /** Сгенерировать Триггер смены стадии уровня */
+    void CreatStageTrigger();
+
+    /** Рассчитать и получить локацию для генерируемого Триггера смены стадии уровня */
+    FVector GetLocationForStageTrigger();
+
+    /** Рассчитать и получить размеры для генерируемого Триггера смены стадии уровня */
+    FVector GetScaleForStageTrigger();
     //-------------------------------------------
 
 
@@ -178,6 +212,6 @@ private:
     /* ---   Square Components   --- */
 
     /** Запуск генерации Компонентов Клеток */
-    void CreateGeneratedSquareComponents();
+    void CreateGeneratedSquareComponents(UDataTable* SquareComponentTable);
     //-------------------------------------------
 };

@@ -10,6 +10,8 @@
 // Interaction:
 #include "Square.h"
 #include "SquareComponent.h"
+#include "SK/ChessOperators/ChessOperator.h"
+#include "SK/ChessOperators/StageTrigger.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -52,7 +54,9 @@ void ASquareGenerator::OnConstruction(const FTransform& Transform)
 
 void ASquareGenerator::ReGenerate()
 {
-    if (SquareType)
+    if (SquareType
+        && NumberAlongAxes.X > 0
+        && NumberAlongAxes.Y > 0)
     {
         if (NumberAlongAxes != TDArraySquares.Num())
         {
@@ -64,11 +68,24 @@ void ASquareGenerator::ReGenerate()
             DeleteAllSquareComponents();
         }
 
-        CreateGeneratedSquareComponents();
+        CreateGeneratedSquareComponents(SquareComponentTable);
+
+        DeleteStageTriggers();
+        CreatStageTrigger();
     }
-    else
+    else if (!SquareType)
     {
         UE_LOG(LogTemp, Error, TEXT("'%s': SquareType is NOT"),
+            *GetNameSafe(this));
+    }
+    else if (NumberAlongAxes.X <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': NumberAlongAxes.X <= 0"),
+            *GetNameSafe(this));
+    }
+    else if (NumberAlongAxes.Y <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': NumberAlongAxes.Y <= 0"),
             *GetNameSafe(this));
     }
 }
@@ -94,6 +111,14 @@ void ASquareGenerator::DeleteAllSquareComponents()
             lComponent->DestroyComponent();
     }
 }
+
+void ASquareGenerator::DeleteStageTriggers()
+{
+    for (auto& lTrigger : GetAllActors<AStageTrigger>(VerificationTag))
+    {
+        lTrigger->Destroy();
+    }
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -106,7 +131,7 @@ void ASquareGenerator::CreateGeneratedSquares()
     // Сброс массива
     TDArraySquares.Empty();
 
-    // Создание элементов массива X
+    // Создание элементов массива
     TDArraySquares.SetNum(NumberAlongAxes);
 
     for (int32 x = 0; x < NumberAlongAxes.X; ++x)
@@ -152,7 +177,7 @@ void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
         BlockSize = iBlock->BlockMesh->Bounds.BoxExtent * 2;
 
         PointOffset = FVector(
-            (BlockSize.X + Gap.X) * (NumberAlongAxes.X - 1) / 2, // Середина по оси X
+            0, // Без смещения по оси X
             (BlockSize.Y + Gap.Y) * (NumberAlongAxes.Y - 1) / 2, // Середина по оси Y
             BlockSize.Z); // Высота по оси Z
         // PS: Смещение указано относительно Генератора
@@ -167,6 +192,55 @@ FVector ASquareGenerator::GetLocationForSquare(const FIndex2D& iXY) const
     }
 
     return FVector::ZeroVector;
+}
+
+void ASquareGenerator::CreatStageTrigger()
+{
+    if (StageTriggerType)
+    {
+        // Создание триггера по рассчитанным параметрами
+        AStageTrigger* lTrigger = GetWorld()->SpawnActor<AStageTrigger>(
+            StageTriggerType.Get(), GetLocationForStageTrigger(), FRotator::ZeroRotator);;
+
+        if (lTrigger)
+        {
+            // Передача указателя на Оператор
+            lTrigger->SetPointerToOperator(CurrentOperator);
+
+            // Передача расчитанного размера
+            lTrigger->SetActorScale3D(GetScaleForStageTrigger());
+
+            // Тег-маркировка Клетки.
+            // Необходим для удаления только Генерируемых Триггеров
+            lTrigger->Tags.Add(VerificationTag);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': StageTriggerType is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+FVector ASquareGenerator::GetLocationForStageTrigger()
+{
+    // Получение позиции крайней Клетки вдоль оси X
+    float lXPosition = TDArraySquares.GetByIndex(NumberAlongAxes - 1)->GetActorLocation().X;
+
+    // Возврат локации: Центр последнего ряда
+    return FVector(
+        lXPosition,
+        GetActorLocation().Y,
+        GetActorLocation().Z);
+}
+
+FVector ASquareGenerator::GetScaleForStageTrigger()
+{
+    // Возврат размера: Весь ряд
+    return FVector(
+        0.5f,
+        NumberAlongAxes.Y - 1,
+        1.0);
 }
 //--------------------------------------------------------------------------------------
 
@@ -206,15 +280,20 @@ FSquareArray2D* ASquareGenerator::GetPointerToAllSquares()
 {
     return &TDArraySquares;
 }
+
+void ASquareGenerator::SetPointerToOperator(AChessOperator* iCurrentOperator)
+{
+    CurrentOperator = iCurrentOperator;
+}
 //--------------------------------------------------------------------------------------
 
 
 
 /* ---   Square Components   --- */
 
-void ASquareGenerator::CreateGeneratedSquareComponents()
+void ASquareGenerator::CreateGeneratedSquareComponents(UDataTable* iSquareComponentTable)
 {
-    if (SquareComponentTable)
+    if (iSquareComponentTable)
     {
         // Массив данных, получаемых из DataTable
         TArray<FSquareComponentData*> lSquareComponentData;
@@ -223,7 +302,7 @@ void ASquareGenerator::CreateGeneratedSquareComponents()
         FString lContext = "CreateGeneratedSquareComponents";
 
         // Получить массив данных из DataTable
-        SquareComponentTable->GetAllRows<FSquareComponentData>(lContext, lSquareComponentData);
+        iSquareComponentTable->GetAllRows<FSquareComponentData>(lContext, lSquareComponentData);
 
         // Указатель на создаваемый компонент
         USquareComponent* lNewComponent = nullptr;
@@ -236,22 +315,56 @@ void ASquareGenerator::CreateGeneratedSquareComponents()
         {
             lCurrentSquare = TDArraySquares.GetByIndex(lData->Position);
 
-            // Создаём компонент и получаем на него указатель
-            lNewComponent = Cast<USquareComponent>(
-                lCurrentSquare->AddComponentByClass(
-                    lData->Type,
-                    false,
-                    FTransform(),
-                    false));
-
-            // "Верификация" и сохранение компонента
-            if (lNewComponent)
+            if (lCurrentSquare)
             {
-                lCurrentSquare->AddInstanceComponent(lNewComponent);
-                lNewComponent->RegisterComponent();
-                lNewComponent->ComponentTags.Add(VerificationTag);
+                // Создаём компонент и получаем на него указатель
+                lNewComponent = Cast<USquareComponent>(
+                    lCurrentSquare->AddComponentByClass(
+                        lData->Type,
+                        false,
+                        FTransform(),
+                        false));
+
+                // "Верификация" и сохранение компонента
+                if (lNewComponent)
+                {
+                    lCurrentSquare->AddInstanceComponent(lNewComponent);
+                    lNewComponent->RegisterComponent();
+                    lNewComponent->ComponentTags.Add(VerificationTag);
+                }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("'%s': TDArraySquares [%d, %d] is NOT"),
+                    *GetNameSafe(this), lData->Position.X, lData->Position.Y);
             }
         }
     }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Stage   --- */
+
+void ASquareGenerator::AddGeneratedSquares(const int32& iAddOnX, UDataTable* iSquareComponentTable)
+{
+    NumberAlongAxes += FIndex2D(iAddOnX, 0);
+
+    // Создание недостающих элементов массива
+    TDArraySquares.SetNum(NumberAlongAxes);
+
+    for (int32 x = NumberAlongAxes.X - iAddOnX; x < NumberAlongAxes.X; ++x)
+    {
+        for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
+        {
+            // Создание Клетки и добавление её в массив по соответствующему индексу
+            TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
+        }
+    }
+
+    CreateGeneratedSquareComponents(iSquareComponentTable);
+
+    CreatStageTrigger();
 }
 //--------------------------------------------------------------------------------------

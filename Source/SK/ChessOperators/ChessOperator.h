@@ -12,6 +12,7 @@
 // Structs:
 #include "SK/ChessBoard/SquareStruct.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
+#include "ChessOperatorStruct.h"
 
 // Generated:
 #include "ChessOperator.generated.h"
@@ -49,6 +50,7 @@ class SK_API AChessOperator : public AActor
 public:
 
     /* ---   Delegate   --- */
+
     FOnPlayersMove OnPlayersMove; // Делегат хода Игроков
     // ----------------------------------------------------------------------------------------------------
 
@@ -99,7 +101,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
 
-    // Таблица данных местоположения фигур
+    // Таблица данных местоположения Компонентов Клетки
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator",
         meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
     UDataTable* SquareComponentTable;
@@ -109,12 +111,12 @@ public:
 
     /* ---   Generators | ChessMan Generator   --- */
 
-    // Таблица данных местоположения фигур
+    // Таблица данных местоположения Игроков
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
         meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
     UDataTable* PlayersTable;
 
-    // Таблица данных местоположения фигур
+    // Таблица данных местоположения Шахматных фигур
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
         meta = (RequiredAssetDataTags = "RowStructure=ChessManData"))
     UDataTable* ChessMansTable;
@@ -130,23 +132,62 @@ public:
 
     //
 
-    /** Функция делегата */
-    UFUNCTION()
-    void PlayerMovesSequence(bool bIsPlayersMove);
-
     /** Останов таймера: Последовательность ходов */
     void StopTimer_MovesSequence();
     //-------------------------------------------
 
 
 
+    /* ---   Generators   --- */
+
+    // Таблица данных конструирования уровня
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators",
+        meta = (RequiredAssetDataTags = "RowStructure=ChessOperatorData"))
+    UDataTable* OperatorTable;
+    //-------------------------------------------
+
+
+
+    /* ---   Stage   --- */
+
+    /** Переключиться на следующий этап */
+    void ToNextStage();
+    //-------------------------------------------
+
+
+
 private:
+
+    /* ---   Delegate   --- */
+
+    // Флаг управления ходами Оператора
+    bool bSkipOperatorTurn = false;
+
+    //
+
+    /** Функция делегата: Смена хода */
+    UFUNCTION()
+    void PlayerMovesSequence(bool bIsPlayersMove);
+    //-------------------------------------------
+
+
 
     /* ---   Generators   --- */
 
-    /** Template: Получить первый Актор конкретного типа*/
+    // Массив данных конструирования уровня, полученный из Таблицы данных "OperatorTable"
+    TArray<FChessOperatorData*> CurrentOperatorData;
+
+    // Номер текущего этапа
+    int32 CurrentStageNum = 0;
+
+    //
+
+    /** Template: Получить первый Актор конкретного типа */
     template<typename T>
     T* GetFirstActor();
+
+    /** Предварительная Инициализация из Таблицы данных Оператора */
+    void OperatorDataPreInit();
     //-------------------------------------------
 
 
@@ -230,6 +271,8 @@ private:
 
     /** Реакция таймера: Ход Оператора */
     void TimerAction_OperatorMove() const;
+
+    void TimerAction_PlayersMove() const;
     //-------------------------------------------
 
     // юпроперти предотвращающая удаление даныых, использующихся в другом потоке, гк

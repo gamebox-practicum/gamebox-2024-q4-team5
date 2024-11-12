@@ -17,7 +17,6 @@
 #include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessMans/ChessManStruct.h"
-#include "SK/ChessBoard/Square.h"
 #include "SK/Tools/SKUtils.h"
 #include "SK/Tools/Chess_AI/ChessAILibrary.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
@@ -50,6 +49,8 @@ void AChessOperator::BeginPlay()
 
     TimerInit_MovesSequence(); // Первый ход ограничен по времени
 
+    OperatorDataPreInit();
+
     OnPlayersMove.AddDynamic(this, &AChessOperator::PlayerMovesSequence);
 }
 
@@ -67,8 +68,9 @@ void AChessOperator::OnConstruction(const FTransform& Transform)
 
 void AChessOperator::ReGenerate()
 {
-    UpdateCurrentSquareGenerator();
+    OperatorDataPreInit();
 
+    UpdateCurrentSquareGenerator();
     UpdateCurrentChessManGenerator();
 }
 //--------------------------------------------------------------------------------------
@@ -92,6 +94,15 @@ T* AChessOperator::GetFirstActor()
 
     return lResult;
 }
+
+void AChessOperator::OperatorDataPreInit()
+{
+    // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
+    FString lContext = "OperatorDataPreInit";
+
+    // Получить массив данных из DataTable
+    OperatorTable->GetAllRows<FChessOperatorData>(lContext, CurrentOperatorData);
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -102,9 +113,23 @@ void AChessOperator::UpdateCurrentSquareGenerator()
 {
     if (GetCurrentSquareGenerator())
     {
-        CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
-        CurrentSquareGenerator->SquareComponentTable = SquareComponentTable;
+        // Приоритет размера по оси X у "нулевых" данных Таблицы "OperatorTable"
+        if (CurrentOperatorData[0]->AddOnX)
+        {
+            CurrentSquareGenerator->NumberAlongAxes = FIndex2D(CurrentOperatorData[0]->AddOnX, NumberAlongAxes.Y);
+        }
+        else
+        {
+            CurrentSquareGenerator->NumberAlongAxes = NumberAlongAxes;
+        }
 
+        // Передать "нулевую" Таблицу генерации 
+        CurrentSquareGenerator->SquareComponentTable = CurrentOperatorData[0]->SquareComponentTable;
+
+        // Передать указатель на самого себя
+        CurrentSquareGenerator->SetPointerToOperator(this);
+
+        // Обновить генератор
         CurrentSquareGenerator->ReGenerate();
     }
     else
@@ -148,9 +173,11 @@ void AChessOperator::UpdateCurrentChessManGenerator()
 {
     if (GetCurrentChessManGenerator())
     {
-        CurrentChessManGenerator->PlayersTable = PlayersTable;
-        CurrentChessManGenerator->ChessMansTable = ChessMansTable;
+        // Передать "нулевые" Таблицы генерации 
+        CurrentChessManGenerator->PlayersTable = CurrentOperatorData[0]->PlayersTable;
+        CurrentChessManGenerator->ChessMansTable = CurrentOperatorData[0]->ChessMansTable;
 
+        // Обновить генератор
         CurrentChessManGenerator->ReGenerate();
     }
     else
@@ -204,7 +231,22 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
         {
             CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-            PlayPrimitiveAI();
+            if (bSkipOperatorTurn)
+            {
+                bSkipOperatorTurn = false;
+
+                // Задержка передачи управления Игроку, для корректного срабатывания
+                GetWorldTimerManager().SetTimer(
+                    Timer_MovesSequence,
+                    this,
+                    &AChessOperator::TimerAction_PlayersMove,
+                    0.5f,
+                    false);
+            }
+            else
+            {
+                PlayPrimitiveAI();
+            }
         }
         else if (!CurrentChessManGenerator)
         {
@@ -238,6 +280,39 @@ void AChessOperator::TimerAction_OperatorMove() const
     OnPlayersMove.Broadcast(false);
 }
 
+void AChessOperator::TimerAction_PlayersMove() const
+{
+    OnPlayersMove.Broadcast(true);
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Stage   --- */
+
+void AChessOperator::ToNextStage()
+{
+    bSkipOperatorTurn = true;
+
+    ++CurrentStageNum;
+
+    if (CurrentOperatorData.Num() > CurrentStageNum)
+    {
+        CurrentSquareGenerator->AddGeneratedSquares(
+            CurrentOperatorData[CurrentStageNum]->AddOnX,
+            CurrentOperatorData[CurrentStageNum]->SquareComponentTable);
+
+        CurrentChessManGenerator->AddGeneratedChessMans(
+            CurrentOperatorData[CurrentStageNum]->PlayersTable,
+            CurrentOperatorData[CurrentStageNum]->ChessMansTable);
+    }
+    else
+    {
+        // Warning: Требуется заменить на триггер завершения Уровня
+        UE_LOG(LogTemp, Warning, TEXT("'%s': EndGame"),
+            *GetNameSafe(this));
+    }
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -262,7 +337,7 @@ void AChessOperator::PrimitiveAI_Init()
 void AChessOperator::PlayPrimitiveAI()
 {
     //почему то может вызваться повторно до завершения рассчетов
-    if(StepIsCalculatedNow)
+    if (StepIsCalculatedNow)
     {
         UE_LOG(LogTemp, Error,
             TEXT("AChessOperator::PlayPrimitiveAI:: the function is called again before the calculation is completed"));
@@ -270,7 +345,7 @@ void AChessOperator::PlayPrimitiveAI()
     }
     StepIsCalculatedNow = true;
 
-    if(!IsValid(ChessBoardInfo))
+    if (!IsValid(ChessBoardInfo))
     {
         ChessBoardInfo = NewObject<UChessBoardInfo>(this);
     }
@@ -280,10 +355,10 @@ void AChessOperator::PlayPrimitiveAI()
 
     //размещаем все фигуры
 
-    for(auto figure : *PointerToAllChessMans)
+    for (auto figure : *PointerToAllChessMans)
     {
         //figure почему то может быть невалидной
-        if(!IsValid(figure))
+        if (!IsValid(figure))
         {
             UE_LOG(LogTemp, Error, TEXT("AChessOperator::PlayPrimitiveAI:: 'figure' is invalid"));
             //StepIsCalculatedNow = false;
@@ -293,7 +368,7 @@ void AChessOperator::PlayPrimitiveAI()
         }
         auto chessPiece = SKUtils::ConstructChessPiece(figure->CurrentData.Type,
             PIECE_COLOR::BLACK, this);
-        if(chessPiece)
+        if (chessPiece)
         {
             ChessBoardInfo->Set(figure->CurrentData.Position.Y, figure->CurrentData.Position.X, chessPiece);
         }
@@ -302,11 +377,11 @@ void AChessOperator::PlayPrimitiveAI()
     //! сейчас считает только одну белую фигуру.
     // нужна либо список AChessMan* белих фигур (аналогично PointerToAllChessMans)
     // либо переменная с типом фигуры в SK_Character.h
-    if(AllPlayers->Num() > 0)
+    if (AllPlayers->Num() > 0)
     {
         auto chessPiece = SKUtils::ConstructChessPiece(EChessManType::King,
             PIECE_COLOR::WHITE, this);
-        if(chessPiece)
+        if (chessPiece)
         {
             auto pos = (*AllPlayers)[0]->GetCurrentPosition();
             ChessBoardInfo->Set(pos.Y, pos.X, chessPiece);
@@ -325,27 +400,27 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
 
     //поиск фигуры по индексу клетки
     auto figure = (*PointerToAllChessMans).FindByPredicate([Step](AChessMan* m)
-    {
-        if(IsValid(m))
         {
-        return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
-            (m->CurrentData.Position.X == Step.PreviousPosition.X);
-        }
-        return false;
-    });
+            if (IsValid(m))
+            {
+                return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
+                    (m->CurrentData.Position.X == Step.PreviousPosition.X);
+            }
+            return false;
+        });
 
     //фигуры почему то иногда двигаются/умирают во время рассчета хода
-    if(!figure)
+    if (!figure)
     {
         UE_LOG(LogTemp, Error,
-           TEXT("AChessOperator::PlayPrimitiveAI:: figures moved/removed while calculated"));
+            TEXT("AChessOperator::PlayPrimitiveAI:: figures moved/removed while calculated"));
         OnPlayersMove.Broadcast(true);
         return;
     }
 
     //индекс почему то иногда выходит за пределы массива PointerToAllSquares
     //(ее размер всегда равен CurrentSquareGenerator->NumberAlongAxes?)
-    if(!(PointerToAllSquares->IsValidIndex(Step.NewPosition.X, Step.NewPosition.Y)))
+    if (!(PointerToAllSquares->IsValidIndex(Step.NewPosition.X, Step.NewPosition.Y)))
     {
         UE_LOG(LogTemp, Error,
             TEXT("AChessOperator::PlayPrimitiveAI:: invalid PointerToAllSquares index:{%d, %d}"),
@@ -357,9 +432,9 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     // Переместить выбранную фигуру на выбранную клетку
 
     ASquare* target = PointerToAllSquares->
-        GetByIndex(FIndex2D{Step.NewPosition.X, Step.NewPosition.Y});
+        GetByIndex(FIndex2D { Step.NewPosition.X, Step.NewPosition.Y });
     //на всякий случай
-    if(!IsValid(target))
+    if (!IsValid(target))
     {
         UE_LOG(LogTemp, Error, TEXT("AChessOperator::PlayPrimitiveAI:: invalid target square"));
         OnPlayersMove.Broadcast(true);
