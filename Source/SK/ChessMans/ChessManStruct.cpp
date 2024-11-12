@@ -110,12 +110,17 @@ TArray<FIndex2D> GetSquareForPawn(
     // Ход вперёд
     lNotChecked.Add(iPosition + FIndex2D { -1, 0 });
 
-    // Проверка короткого и длинного хода вперёд
-    CheckPositions(
-        lNotChecked,
-        iAllSquares,
-        lResult,
-        oAttackingChessMans);
+    // Проверка хода по диагонали (Индивидуально для Пешки)
+    for (auto& dPosition : lNotChecked)
+    {
+        if (CheckSquare(dPosition, iAllSquares, lSquareData))
+        {
+            if (lSquareData.WarringPartiesType == EWarringPartiesType::NONE)
+            {
+                lResult.Add(dPosition);
+            }
+        }
+    }
 
     // Сброс переменной
     lNotChecked.Empty(2);
