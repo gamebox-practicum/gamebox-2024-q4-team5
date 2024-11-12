@@ -87,6 +87,11 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
 
     if (Cast<AChessMan>(OtherActor))
     {
+        if (CurrentChessOperator)
+        {
+            CurrentChessOperator->StopTimer_MovesSequence();
+        }
+
         Destroy();
 
         Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventLosingGame();
