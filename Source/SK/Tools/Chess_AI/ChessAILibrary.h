@@ -39,8 +39,6 @@ public:
     ///Utils---------------
 
 private:
-    static void GetPieces(UChessBoardInfo* ChessBoardInfo, std::vector<UChessPieceInfo*>& WhitePieces,
-        std::vector<UChessPieceInfo*>& BlackPieces);
 
     static FChessPieceStep GetBestStep(UChessBoardInfo* ChessBoardInfo,
         std::vector<UChessPieceInfo*>& AttackingFigures,

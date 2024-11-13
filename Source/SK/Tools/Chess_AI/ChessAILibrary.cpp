@@ -13,9 +13,7 @@ FChessPieceStep UChessAILibrary::GetNextStep(UChessBoardInfo* ChessBoardInfo, PI
     CopyTArrayToVector(ChessBoardInfo->whitePieces, whitePieces);
     CopyTArrayToVector(ChessBoardInfo->blackPieces, blackPieces);
 
-    //GetPieces(ChessBoardInfo, whitePieces, blackPieces);
-
-    ///testing: if there are no figures in any team, return UNABLE_MOVE
+    ///if there are no figures in any team, return UNABLE_MOVE
         if((whitePieces.size()) <=0 || (whitePieces.size() <= 0))
         {
             return UNABLE_MOVE;
@@ -65,7 +63,6 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     }
     (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = nullptr;
     ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, piece);
-    //(*ChessBoardInfo)[Step.NewPosition].CurrentPiece = piece;
 
     if(Step.AttackedPiece)
     {
@@ -96,48 +93,25 @@ void UChessAILibrary::GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_CO
     });
 }
 
-void UChessAILibrary::GetPieces(UChessBoardInfo* ChessBoardInfo, std::vector<UChessPieceInfo*>& WhitePieces,
-                                std::vector<UChessPieceInfo*>& BlackPieces)
-{
-    int sizeY = ChessBoardInfo->GetSizeY();
-    int sizeX = ChessBoardInfo->GetSizeX();
-    for(int y = 0; y < sizeY; y++)
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
-            auto currentPiece = (*ChessBoardInfo)[y][x].CurrentPiece;
-            if(currentPiece)
-            {
-                if(currentPiece->Color == PIECE_COLOR::WHITE)
-                {
-                    WhitePieces.push_back(currentPiece);
-                }
-                if(currentPiece->Color == PIECE_COLOR::BLACK)
-                {
-                    BlackPieces.push_back(currentPiece);
-                }
-            }
-        }
-    }
-}
-
 FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
     std::vector<UChessPieceInfo*>& AttackingFigures, std::vector<UChessPieceInfo*>& DefensiveFigures, int depth,
     int& TotalScore)
 {
-    int BestScore = -1;
+    int BestScore = int MIN_int32;
     FChessPieceStep Result = UNABLE_MOVE;
     depth--;
 
     for (auto figure : AttackingFigures)
     {
-        //on application ending check
+        //ugly on application ending check
         if(!IsValid(figure) || !IsValid(ChessBoardInfo))
         {
+            UE_LOG(LogTemp, Warning,
+                TEXT("UChessAILibrary::GetBestStep: !IsValid(figure) || !IsValid(ChessBoardInfo)"));
             return Result;
         }
 
-        auto steps = *((figure->GetLegalMoves(ChessBoardInfo)).get());
+        auto steps{*((figure->GetLegalMoves(ChessBoardInfo)).get())};
         for (auto step : steps)
         {
             int currentScore = step.GetStepScore();
@@ -179,7 +153,6 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     }
     (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = nullptr;
     ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, piece);
-    //(*ChessBoardInfo)[Step.NewPosition].CurrentPiece = piece;
 
     if(Step.AttackedPiece)
     {
@@ -193,15 +166,12 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
     auto piece = (*ChessBoardInfo)[Step.NewPosition].CurrentPiece;
     auto emptyCellPiece = (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece;
 
-    //UE_LOG(LogTemp, Error, TEXT("%s"), piece == nullptr? TEXT("piece = nullptr"): TEXT("piece is valid"));
-    //UE_LOG(LogTemp, Error, TEXT("%s"), emptyCellPiece == nullptr? TEXT("emptyCellPiece = nullptr"): TEXT("emptyCellPiece is valid"));
     if((!piece) || emptyCellPiece)
     {
         throw std::runtime_error("UChessAILibrary::UndoStep: invalid Step value");
     }
     ChessBoardInfo->Set(Step.PreviousPosition.Y, Step.PreviousPosition.X, piece);
     (*ChessBoardInfo)[Step.NewPosition].CurrentPiece = nullptr;
-    //(*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = piece;
 
     if(Step.AttackedPiece)
     {
@@ -218,41 +188,3 @@ void UChessAILibrary::CopyTArrayToVector(TArray<T>& Array, std::vector<T>& vecto
         vector.push_back(Element);
     }
 }
-
-/*
-FChessPieceStep UChessAILibrary::GetBestStep(UChessPieceInfo* Piece, UChessBoardInfo* ChessBoardInfo, int& score)
-{
-    auto legalMoves = *(Piece->GetLegalMoves(ChessBoardInfo));
-    FChessPieceStep Result = UNABLE_MOVE;
-
-    int bestScore = -1;
-
-    for (FCellIndex Move : legalMoves)
-    {
-        UChessPieceInfo* targetPiece = (*ChessBoardInfo)[Move.Y][Move.X].CurrentPiece;
-        int currentScore = 0;
-
-        if(targetPiece)
-        {
-            if(targetPiece->Color == Piece->Color)
-            {
-                continue;
-            }
-            else
-            {
-                currentScore = targetPiece->GetRelativeValue();
-            }
-        }
-
-        if(currentScore > bestScore)
-        {
-            bestScore = currentScore;
-            Result.PreviousPosition = Piece->CurrentCell;
-            Result.NewPosition = Move;
-            Result.AttackedPiece = targetPiece;
-        }
-    }
-
-    score = bestScore;
-    return  Result;
-}*/
