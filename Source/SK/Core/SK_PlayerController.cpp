@@ -18,7 +18,7 @@ ASK_PlayerController::ASK_PlayerController()
     /* ---   Mouse   --- */
 
     // Дистанция подбора предмета (трассировки наведения Мыши)
-    HitResultTraceDistance = 200.f;
+    HitResultTraceDistance = 280.f;
 
     // Включение реакций от наведения мыши данным контроллером
     bEnableMouseOverEvents = true;
@@ -64,6 +64,14 @@ void ASK_PlayerController::SetMouseToCenter()
                 }
             }
         }
+    }
+    else
+    {
+        // Выключение реакций от наведения мыши данным контроллером
+        bEnableMouseOverEvents = false;
+
+        // Выключение реакций от нажатия мыши данным контроллером
+        bEnableClickEvents = false;
     }
 }
 //--------------------------------------------------------------------------------------
