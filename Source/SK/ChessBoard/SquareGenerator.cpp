@@ -4,7 +4,6 @@
 #include "SquareGenerator.h"
 
 // UE:
-#include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
 
 // Interaction:
@@ -62,6 +61,14 @@ void ASquareGenerator::ReGenerate()
         {
             DeleteAllSquares();
             CreateGeneratedSquares();
+
+            DeleteStageTriggers();
+            CreatStageTrigger();
+
+            if (CurrentOperator)
+            {
+                CurrentOperator->UpdateCurrentTimeBeaconGenerator(BlockSize);
+            }
         }
         else
         {
@@ -69,9 +76,6 @@ void ASquareGenerator::ReGenerate()
         }
 
         CreateGeneratedSquareComponents(SquareComponentTable);
-
-        DeleteStageTriggers();
-        CreatStageTrigger();
     }
     else if (!SquareType)
     {
@@ -80,12 +84,12 @@ void ASquareGenerator::ReGenerate()
     }
     else if (NumberAlongAxes.X <= 0)
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': NumberAlongAxes.X <= 0"),
+        UE_LOG(LogTemp, Error, TEXT("'%s': NumberOfSquaresAlongAxes.X <= 0"),
             *GetNameSafe(this));
     }
     else if (NumberAlongAxes.Y <= 0)
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': NumberAlongAxes.Y <= 0"),
+        UE_LOG(LogTemp, Error, TEXT("'%s': NumberOfSquaresAlongAxes.Y <= 0"),
             *GetNameSafe(this));
     }
 }
@@ -178,7 +182,7 @@ void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
 
         PointOffset = FVector(
             0, // Без смещения по оси X
-            (BlockSize.Y + Gap.Y) * (NumberAlongAxes.Y - 1) / 2, // Середина по оси Y
+            BlockSize.Y * (NumberAlongAxes.Y - 1) / 2, // Середина по оси Y
             BlockSize.Z); // Высота по оси Z
         // PS: Смещение указано относительно Генератора
     }
@@ -188,7 +192,7 @@ FVector ASquareGenerator::GetLocationForSquare(const FIndex2D& iXY) const
 {
     if (NumberAlongAxes.Within(iXY))
     {
-        return (BlockSize + Gap) * iXY - PointOffset + GetActorLocation();
+        return BlockSize * iXY - PointOffset + GetActorLocation();
     }
 
     return FVector::ZeroVector;
@@ -198,7 +202,7 @@ void ASquareGenerator::CreatStageTrigger()
 {
     if (StageTriggerType)
     {
-        // Создание триггера по рассчитанным параметрами
+        // Создание Триггера по рассчитанным параметрами
         AStageTrigger* lTrigger = GetWorld()->SpawnActor<AStageTrigger>(
             StageTriggerType.Get(), GetLocationForStageTrigger(), FRotator::ZeroRotator);;
 
@@ -210,7 +214,7 @@ void ASquareGenerator::CreatStageTrigger()
             // Передача рассчитанного размера
             lTrigger->SetActorScale3D(GetScaleForStageTrigger());
 
-            // Тег-маркировка Клетки.
+            // Тег-маркировка Триггера.
             // Необходим для удаления только Генерируемых Триггеров
             lTrigger->Tags.Add(VerificationTag);
         }

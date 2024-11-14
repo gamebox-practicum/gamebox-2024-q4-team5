@@ -38,6 +38,8 @@ class ASquareGenerator;
 class AChessManGenerator;
 class AChessMan;
 class ASK_Character;
+class ATimeBeaconGenerator;
+class ATimeBeacon;
 //--------------------------------------------------------------------------------------
 
 
@@ -124,6 +126,23 @@ public:
 
 
 
+    /* ---   Generators | Time Beacon Generator   --- */
+
+    // Тип Маяка времени (Колонны)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generators|Time Beacon Generator")
+    TSubclassOf<ATimeBeacon> BeaconType;
+    //-------------------------------------------
+
+
+
+    /* ---   Generators | ChessMan Generator   --- */
+
+    /** Обновить данные текущего Генератора Шахматных фигур */
+    void UpdateCurrentTimeBeaconGenerator(const FVector& BlockSize);
+    //-------------------------------------------
+
+
+
     /* ---   Player Moves Sequence   --- */
 
     // Время таймера в секундах
@@ -197,6 +216,9 @@ private:
 
     /** Предварительная Инициализация из Таблицы данных Оператора */
     void OperatorDataPreInit();
+
+    /** Получить Абсолютное (полное) количество размера доски */
+    FIndex2D GetFullNumberAlongAxes();
     //-------------------------------------------
 
 
@@ -239,6 +261,24 @@ private:
 
     /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
     AChessManGenerator* GetFirstChessManGenerator();
+    //-------------------------------------------
+
+
+
+    /* ---   Generators | Time Beacon Generator   --- */
+
+    // Указатель на текущий Генератор Шахматных фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
+        meta = (AllowPrivateAccess = true))
+    ATimeBeaconGenerator* CurrentTimeBeaconGenerator;
+
+    //
+
+    /** Проверка и получение указателя на текущий Генератор Шахматных фигур */
+    ATimeBeaconGenerator* GetCurrentTimeBeaconGenerator();
+
+    /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
+    ATimeBeaconGenerator* GetFirstTimeBeaconGenerator();
     //-------------------------------------------
 
 
@@ -286,9 +326,10 @@ private:
     /** Инициализация таймера: Последовательность ходов */
     void TimerInit_MovesSequence();
 
-    /** Реакция таймера: Ход Оператора */
+    /** Реакция таймера: Передача хода Оператору */
     void TimerAction_OperatorMove() const;
 
+    /** Реакция таймера: Передача хода Игроку */
     void TimerAction_PlayersMove() const;
     //-------------------------------------------
 

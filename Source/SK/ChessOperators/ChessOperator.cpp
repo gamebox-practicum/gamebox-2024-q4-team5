@@ -18,6 +18,8 @@
 #include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessMans/ChessManStruct.h"
+#include "SK/TimeBeacons/TimeBeaconGenerator.h"
+#include "SK/TimeBeacons/TimeBeacon.h"
 #include "SK/Tools/SKUtils.h"
 #include "SK/Tools/Chess_AI/ChessAILibrary.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
@@ -99,8 +101,26 @@ void AChessOperator::OperatorDataPreInit()
     // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
     FString lContext = "OperatorDataPreInit";
 
-    // Получить массив данных из DataTable
+    // Очистить и получить массив данных из DataTable
+    CurrentOperatorData.Empty();
     OperatorTable->GetAllRows<FChessOperatorData>(lContext, CurrentOperatorData);
+}
+
+FIndex2D AChessOperator::GetFullNumberAlongAxes()
+{
+    FIndex2D lResult = NumberAlongAxes;
+
+    if (CurrentOperatorData[0]->AddOnX != 0)
+    {
+        lResult.X = 0;
+    }
+
+    for (auto& lData : CurrentOperatorData)
+    {
+        lResult.X += lData->AddOnX;
+    }
+
+    return lResult;
 }
 //--------------------------------------------------------------------------------------
 
@@ -220,6 +240,57 @@ AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
 
 
 
+/* ---   Generators | Time Beacon Generator   --- */
+
+void AChessOperator::UpdateCurrentTimeBeaconGenerator(const FVector& iBlockSize)
+{
+    if (GetCurrentTimeBeaconGenerator())
+    {
+        // Передать данные для генерации
+        CurrentTimeBeaconGenerator->BeaconType = BeaconType;
+        CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
+        CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
+
+        // Обновить генератор
+        CurrentTimeBeaconGenerator->ReGenerate();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentTimeBeaconGenerator is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+ATimeBeaconGenerator* AChessOperator::GetCurrentTimeBeaconGenerator()
+{
+    if (!CurrentTimeBeaconGenerator)
+    {
+        CurrentTimeBeaconGenerator = GetFirstTimeBeaconGenerator();
+    }
+
+    if (CurrentTimeBeaconGenerator)
+    {
+        CurrentTimeBeaconGenerator->SetTimeForBeacons(MoveLimitTime);
+
+        return CurrentTimeBeaconGenerator;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentTimeBeaconGenerator is NOT"),
+            *GetNameSafe(this));
+    }
+
+    return nullptr;
+}
+
+ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
+{
+    return GetFirstActor<ATimeBeaconGenerator>();
+}
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Player Moves Sequence   --- */
 
 void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
@@ -263,6 +334,7 @@ void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
 void AChessOperator::StopTimer_MovesSequence()
 {
     GetWorldTimerManager().ClearTimer(Timer_MovesSequence);
+    CurrentTimeBeaconGenerator->StopTimeBeaconGenerator();
 }
 
 void AChessOperator::TimerInit_MovesSequence()
@@ -273,6 +345,9 @@ void AChessOperator::TimerInit_MovesSequence()
         &AChessOperator::TimerAction_OperatorMove,
         MoveLimitTime,
         false);
+
+    CurrentTimeBeaconGenerator->StopTimeBeaconGenerator();
+    CurrentTimeBeaconGenerator->PlayTimeBeaconGenerator();
 }
 
 void AChessOperator::TimerAction_OperatorMove() const
@@ -429,7 +504,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
 {
     StepIsCalculatedNow = false;
 
-    if(Step == UNABLE_MOVE)
+    if (Step == UNABLE_MOVE)
     {
         UE_LOG(LogTemp, Error,
             TEXT("AChessOperator::OnBlackStepCalculated: no moves available or one of the teams has run out of pieces"));
@@ -439,19 +514,19 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
 
     //поиск фигуры по индексу клетки
     auto figure = (*PointerToAllChessMans).FindByPredicate([Step](AChessMan* m)
-    {
-        if (IsValid(m))
         {
-            return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
-                (m->CurrentData.Position.X == Step.PreviousPosition.X);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning,
-                TEXT("AChessOperator::OnBlackStepCalculated: 'm' is InValid"));
-        }
-        return false;
-    });
+            if (IsValid(m))
+            {
+                return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
+                    (m->CurrentData.Position.X == Step.PreviousPosition.X);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning,
+                    TEXT("AChessOperator::OnBlackStepCalculated: 'm' is InValid"));
+            }
+            return false;
+        });
 
     //фигуры почему то иногда двигаются/умирают во время рассчета хода
     if (!figure)

@@ -84,10 +84,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     TSubclassOf<ASquare> SquareType;
 
-    // Зазор между блоками и высота построения (ось Z)
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
-    FVector Gap = { 0.f, 0.f, 0.f };
-
     // Количество вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };

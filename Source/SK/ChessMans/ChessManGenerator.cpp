@@ -4,7 +4,6 @@
 #include "ChessManGenerator.h"
 
 // UE:
-#include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
 
 // Interaction:

@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+// UE:
+#include "Kismet/GameplayStatics.h"
+
 // Generated:
 #include "ChessGenerator.generated.h"
 //--------------------------------------------------------------------------------------
