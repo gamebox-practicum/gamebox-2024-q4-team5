@@ -459,7 +459,8 @@ void AChessOperator::PlayPrimitiveAI()
     }
 
     //инициализируем обьект с данными фигур
-    ChessBoardInfo->Init(CurrentSquareGenerator->NumberAlongAxes.Y, CurrentSquareGenerator->NumberAlongAxes.X);
+    FIndex2D boardShape{SKUtils::GameToAI(CurrentSquareGenerator->NumberAlongAxes)};
+    ChessBoardInfo->Init(boardShape.Y, boardShape.X);
 
     //размещаем все фигуры
 
@@ -476,7 +477,8 @@ void AChessOperator::PlayPrimitiveAI()
             PIECE_COLOR::BLACK, this);
         if (chessPiece)
         {
-            ChessBoardInfo->Set(figure->CurrentData.Position.Y, figure->CurrentData.Position.X, chessPiece);
+            FIndex2D AICoordinatePosition{SKUtils::GameToAI(figure->CurrentData.Position)};
+            ChessBoardInfo->Set(AICoordinatePosition.Y, AICoordinatePosition.X, chessPiece);
         }
     }
 
@@ -489,7 +491,7 @@ void AChessOperator::PlayPrimitiveAI()
             PIECE_COLOR::WHITE, this);
         if (chessPiece)
         {
-            auto pos = (*AllPlayers)[0]->GetCurrentPosition();
+            auto pos{SKUtils::GameToAI((*AllPlayers)[0]->GetCurrentPosition())};
             ChessBoardInfo->Set(pos.Y, pos.X, chessPiece);
         }
     }
@@ -513,12 +515,13 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     }
 
     //поиск фигуры по индексу клетки
-    auto figure = (*PointerToAllChessMans).FindByPredicate([Step](AChessMan* m)
+    FCellIndex previousPosition{SKUtils::AIToGame(Step.PreviousPosition)};
+    auto figure = (*PointerToAllChessMans).FindByPredicate([previousPosition](AChessMan* m)
         {
             if (IsValid(m))
             {
-                return (m->CurrentData.Position.Y == Step.PreviousPosition.Y) &&
-                    (m->CurrentData.Position.X == Step.PreviousPosition.X);
+                return (m->CurrentData.Position.Y == previousPosition.Y) &&
+                    (m->CurrentData.Position.X == previousPosition.X);
             }
             else
             {
@@ -537,20 +540,22 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
         return;
     }
 
+
+    FCellIndex newPosition{SKUtils::AIToGame(Step.NewPosition)};
     //индекс почему то иногда выходит за пределы массива PointerToAllSquares
     //(ее размер всегда равен CurrentSquareGenerator->NumberAlongAxes?)
-    if (!(PointerToAllSquares->IsValidIndex(Step.NewPosition.X, Step.NewPosition.Y)))
+    if (!(PointerToAllSquares->IsValidIndex(newPosition.X, newPosition.Y)))
     {
         UE_LOG(LogTemp, Error,
             TEXT("AChessOperator::OnBlackStepCalculated: invalid PointerToAllSquares index:{%d, %d}"),
-            Step.NewPosition.X, Step.NewPosition.Y);
+            newPosition.X, newPosition.Y);
         OnPlayersMove.Broadcast(true);
         return;
     }
 
     // Переместить выбранную фигуру на выбранную клетку
     ASquare* target = PointerToAllSquares->
-        GetByIndex(FIndex2D { Step.NewPosition.X, Step.NewPosition.Y });
+        GetByIndex(FIndex2D { newPosition.X, newPosition.Y });
 
     (*figure)->MoveToSquare(target);
 
