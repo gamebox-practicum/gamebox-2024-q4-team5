@@ -9,9 +9,10 @@
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/SKUtils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/SKUtils.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/SKUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/SKUtils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Pause.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Pause.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_PlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_PlayerController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/ChessBoard/Square.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessBoard/Square.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/ChessMans/ChessMan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessMans/ChessMan.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,6 +141,7 @@
       <workItem from="1731351093693" duration="8413000" />
       <workItem from="1731520784174" duration="5057000" />
       <workItem from="1731695876216" duration="2854000" />
+      <workItem from="1731755362814" duration="3018000" />
     </task>
     <servers />
   </component>

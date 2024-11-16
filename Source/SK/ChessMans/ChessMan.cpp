@@ -87,6 +87,11 @@ void AChessMan::NotifyActorBeginCursorOver()
 {
     Super::NotifyActorBeginCursorOver();
 
+    if(GetWorldSettings()->GetPauserPlayerState() != NULL)
+    {
+        return;
+    }
+    
     if (ChessmanSkeletalMesh)
         ChessmanSkeletalMesh->SetRenderCustomDepth(true);
     if (ChessmanStaticMesh)
