@@ -12,13 +12,25 @@ int UPawnChess::GetRelativeValue()
 
 void UPawnChess::PushAttackStepIfValid(UChessBoardInfo* ChessBoardInfo, std::vector<FChessPieceStep>* result, FCellIndex attackTarget)
 {
-    if(ChessBoardInfo->IsValidCell(attackTarget))
+    if(ChessBoardInfo->IsValidCell(attackTarget) &&
+        (*ChessBoardInfo)[attackTarget].IsCanStepOn)
     {
         auto targetPiece = (*ChessBoardInfo)[attackTarget].CurrentPiece;
         if(targetPiece && targetPiece->Color != this->Color)
         {
             result->push_back({this->CurrentCell, attackTarget, targetPiece});
         }
+    }
+}
+
+void UPawnChess::PushNonAttackStepIfValid(UChessBoardInfo* ChessBoardInfo, std::vector<FChessPieceStep>* result,
+    FCellIndex target)
+{
+    if(ChessBoardInfo->IsValidCell(target) &&
+        (*ChessBoardInfo)[target].CurrentPiece == nullptr &&
+        (*ChessBoardInfo)[target].IsCanStepOn)
+    {
+        result->push_back({this->CurrentCell, target, nullptr});
     }
 }
 
@@ -35,11 +47,7 @@ std::unique_ptr<std::vector<FChessPieceStep>> UPawnChess::GetLegalMoves(UChessBo
         PushAttackStepIfValid(ChessBoardInfo, result.get(), target);
 
         target = CurrentCell + FCellIndex{1, 0};
-        //doesn't account for the corpses yet.
-        if(ChessBoardInfo->IsValidCell(target) && (*ChessBoardInfo)[target].CurrentPiece == nullptr)
-        {
-            result.get()->push_back({this->CurrentCell, target, nullptr});
-        }
+        PushNonAttackStepIfValid(ChessBoardInfo, result.get(), target);
     }
     if(Color == PIECE_COLOR::BLACK)
     {
@@ -49,11 +57,7 @@ std::unique_ptr<std::vector<FChessPieceStep>> UPawnChess::GetLegalMoves(UChessBo
         PushAttackStepIfValid(ChessBoardInfo, result.get(), target);
 
         target = CurrentCell + FCellIndex{-1, 0};
-        //doesn't account for the corpses yet.
-        if(ChessBoardInfo->IsValidCell(target) && (*ChessBoardInfo)[target].CurrentPiece == nullptr)
-        {
-            result.get()->push_back({this->CurrentCell, target, nullptr});
-        }
+        PushNonAttackStepIfValid(ChessBoardInfo, result.get(), target);
     }
 
     return result;

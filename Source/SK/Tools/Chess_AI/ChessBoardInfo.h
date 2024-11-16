@@ -29,6 +29,9 @@ public:
     void Set(int Y, int X, UChessPieceInfo* value);
 
     UFUNCTION(BlueprintCallable)
+    void SetCellAccessibility(int Y, int X, bool value);
+
+    UFUNCTION(BlueprintCallable)
     int GetSizeY(){return m_sizeY;}
 
     UFUNCTION(BlueprintCallable)

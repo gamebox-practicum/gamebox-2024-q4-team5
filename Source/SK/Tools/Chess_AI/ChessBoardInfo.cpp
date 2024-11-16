@@ -34,6 +34,12 @@ void UChessBoardInfo::Init( int sizeY, int sizeX)
 
 void UChessBoardInfo::Set(int Y, int X, UChessPieceInfo* value)
 {
+    if(!m_Board[Y][X].IsCanStepOn)
+    {
+        UE_LOG(LogTemp, Warning,
+           TEXT("UChessBoardInfo::Set: the chess piece is placed on a place inaccessible for a move"));
+    }
+
     m_Board[Y][X].CurrentPiece = value;
     value->CurrentCell.Y = Y;
     value->CurrentCell.X = X;
@@ -46,6 +52,16 @@ void UChessBoardInfo::Set(int Y, int X, UChessPieceInfo* value)
     {
         blackPieces.AddUnique(value);
     }
+}
+
+void UChessBoardInfo::SetCellAccessibility(int Y, int X, bool value)
+{
+    if((*this)[Y][X].CurrentPiece && !value)
+    {
+        UE_LOG(LogTemp, Warning,
+            TEXT("UChessBoardInfo::SetCellAccessibility: the square containing the chess piece has become unavailable for a move"));
+    }
+    (*this)[Y][X].IsCanStepOn = value;
 }
 
 FSquareInfo*& UChessBoardInfo::operator[](int Y)

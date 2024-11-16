@@ -23,4 +23,7 @@ public:
 private:
     void PushAttackStepIfValid(UChessBoardInfo* ChessBoardInfo, std::vector<FChessPieceStep>* result,
                                FCellIndex attackTarget);
+
+    void PushNonAttackStepIfValid(UChessBoardInfo* ChessBoardInfo, std::vector<FChessPieceStep>* result,
+                               FCellIndex target);
 };

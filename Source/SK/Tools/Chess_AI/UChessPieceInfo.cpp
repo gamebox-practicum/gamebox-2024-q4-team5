@@ -31,7 +31,7 @@ bool UChessPieceInfo::CanJumpOver(UChessBoardInfo* ChessBoardInfo, FCellIndex ce
 void UChessPieceInfo::PushStepIfValid(UChessBoardInfo* ChessBoardInfo, FCellIndex Target,
                                       std::vector<FChessPieceStep>* Result)
 {
-    if(ChessBoardInfo->IsValidCell(Target))
+    if(ChessBoardInfo->IsValidCell(Target) && (*ChessBoardInfo)[Target].IsCanStepOn)
     {
         if(UChessPieceInfo* targetPiece = (*ChessBoardInfo)[Target].CurrentPiece)
         {
