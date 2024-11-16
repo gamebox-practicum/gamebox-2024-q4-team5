@@ -132,8 +132,9 @@ void ASquareGenerator::DeleteStageTriggers()
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
-    // Сброс массива
+    // Сброс массивов
     TDArraySquares.Empty();
+    CorpsesPositionIndex.Empty();
 
     // Создание элементов массива
     TDArraySquares.SetNum(NumberAlongAxes);
@@ -164,10 +165,6 @@ ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
     {
         lSquare = GetWorld()->SpawnActor<ASquare>(SquareType.Get(), GetLocationForSquare(iXY), FRotator::ZeroRotator);
     }
-
-    // Тег-маркировка Клетки.
-    // Необходим для удаления только Генерируемых Клеток
-    lSquare->Tags.Add(VerificationTag);
 
     SetSquareData(lSquare, SquareDataGeneration(iXY));
 
@@ -256,6 +253,12 @@ void ASquareGenerator::SetSquareData(ASquare* iBlock, FSquareData iData)
 {
     if (iBlock)
     {
+        // Тег-маркировка Клетки.
+        // Необходим для удаления только Генерируемых Клеток
+        iBlock->Tags.Add(VerificationTag);
+
+        iBlock->SetPointerToSquareGenerator(this);
+
         iBlock->SetData(iData);
     }
 }

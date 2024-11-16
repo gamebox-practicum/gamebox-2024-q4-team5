@@ -294,16 +294,19 @@ private:
     /* ---   Primitive AI   --- */
 
     // Массив из всех Шахматных фигур
-    TArray<AChessMan*>* PointerToAllChessMans;
+    TArray<AChessMan*>* PointerToAllChessMans = nullptr;
 
     // Массив из Шахматных фигур, доступных для хода
-    TArray<AChessMan*>* PointerToAllAvailableChessMans;
+    TArray<AChessMan*>* PointerToAllAvailableChessMans = nullptr;
 
     // Массив из всех игроков
-    TArray<ASK_Character*>* AllPlayers;
+    TArray<ASK_Character*>* AllPlayers = nullptr;
 
     // Двумерный массив указателей на Клетки
-    FSquareArray2D* PointerToAllSquares;
+    FSquareArray2D* PointerToAllSquares = nullptr;
+
+    // Массив Индексов Позиций всех "Трупов"
+    TArray<FIndex2D>* PointerToAllCorpsesPositionIndex = nullptr;
 
     //
 

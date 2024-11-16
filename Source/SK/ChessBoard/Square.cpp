@@ -6,7 +6,9 @@
 // UE:
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
+
 // Interaction:
+#include "SquareGenerator.h"
 #include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
@@ -46,6 +48,11 @@ ASquare::ASquare()
 void ASquare::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (!CurrentSquareGenerator)
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentSquareGenerator is NOT"), *GetNameSafe(this));
+    }
 }
 //--------------------------------------------------------------------------------------
 
@@ -57,7 +64,7 @@ void ASquare::NotifyActorBeginCursorOver()
 {
     Super::NotifyActorBeginCursorOver();
 
-    if(GetWorldSettings()->GetPauserPlayerState() != NULL)
+    if (GetWorldSettings()->GetPauserPlayerState() != NULL)
     {
         return;
     }
@@ -139,6 +146,17 @@ const FSquareData& ASquare::GetData()
 
 void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
 {
+    if (iWarringPartiesType == EWarringPartiesType::Corpse
+        && SquareData.WarringPartiesType != EWarringPartiesType::Corpse)
+    {
+        CurrentSquareGenerator->CorpsesPositionIndex.Add(SquareData.PositionNumber);
+    }
+    else if (iWarringPartiesType != EWarringPartiesType::Corpse
+        && SquareData.WarringPartiesType == EWarringPartiesType::Corpse)
+    {
+        CurrentSquareGenerator->CorpsesPositionIndex.Remove(SquareData.PositionNumber);
+    }
+
     SquareData.WarringPartiesType = iWarringPartiesType;
 
     // Контроль цвета выделения от типа Клетки
@@ -150,5 +168,10 @@ void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
     {
         BlockMesh->SetCustomDepthStencilValue(0);
     }
+}
+
+void ASquare::SetPointerToSquareGenerator(ASquareGenerator* iSquareGenerator)
+{
+    CurrentSquareGenerator = iSquareGenerator;
 }
 //--------------------------------------------------------------------------------------

@@ -440,6 +440,9 @@ void AChessOperator::PrimitiveAI_Init()
 
     // Получить Двумерный массив указателей на Клетки
     PointerToAllSquares = CurrentSquareGenerator->GetPointerToAllSquares();
+
+    // Получить массив Индексов Позиций всех "Трупов"
+    PointerToAllCorpsesPositionIndex = &CurrentSquareGenerator->CorpsesPositionIndex;
 }
 
 void AChessOperator::PlayPrimitiveAI()
@@ -459,7 +462,7 @@ void AChessOperator::PlayPrimitiveAI()
     }
 
     //инициализируем обьект с данными фигур
-    FIndex2D boardShape{SKUtils::GameToAI(CurrentSquareGenerator->NumberAlongAxes)};
+    FIndex2D boardShape { SKUtils::GameToAI(CurrentSquareGenerator->NumberAlongAxes) };
     ChessBoardInfo->Init(boardShape.Y, boardShape.X);
 
     //размещаем все фигуры
@@ -477,7 +480,7 @@ void AChessOperator::PlayPrimitiveAI()
             PIECE_COLOR::BLACK, this);
         if (chessPiece)
         {
-            FIndex2D AICoordinatePosition{SKUtils::GameToAI(figure->CurrentData.Position)};
+            FIndex2D AICoordinatePosition { SKUtils::GameToAI(figure->CurrentData.Position) };
             ChessBoardInfo->Set(AICoordinatePosition.Y, AICoordinatePosition.X, chessPiece);
         }
     }
@@ -491,7 +494,7 @@ void AChessOperator::PlayPrimitiveAI()
             PIECE_COLOR::WHITE, this);
         if (chessPiece)
         {
-            auto pos{SKUtils::GameToAI((*AllPlayers)[0]->GetCurrentPosition())};
+            auto pos { SKUtils::GameToAI((*AllPlayers)[0]->GetCurrentPosition()) };
             ChessBoardInfo->Set(pos.Y, pos.X, chessPiece);
         }
     }
@@ -515,7 +518,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     }
 
     //поиск фигуры по индексу клетки
-    FCellIndex previousPosition{SKUtils::AIToGame(Step.PreviousPosition)};
+    FCellIndex previousPosition { SKUtils::AIToGame(Step.PreviousPosition) };
     auto figure = (*PointerToAllChessMans).FindByPredicate([previousPosition](AChessMan* m)
         {
             if (IsValid(m))
@@ -541,7 +544,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     }
 
 
-    FCellIndex newPosition{SKUtils::AIToGame(Step.NewPosition)};
+    FCellIndex newPosition { SKUtils::AIToGame(Step.NewPosition) };
     //индекс почему то иногда выходит за пределы массива PointerToAllSquares
     //(ее размер всегда равен CurrentSquareGenerator->NumberAlongAxes?)
     if (!(PointerToAllSquares->IsValidIndex(newPosition.X, newPosition.Y)))

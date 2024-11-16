@@ -95,7 +95,14 @@ public:
 
 
 
-    /* ---   Get Data   --- */
+    /* ---   Generator | SquareData   --- */
+
+    // Индексы позиции всех "трупов"
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    TArray<FIndex2D> CorpsesPositionIndex;
+
+    //
 
     /** Получение всех клеток в виде двумерного массива */
     FSquareArray2D* GetPointerToAllSquares();

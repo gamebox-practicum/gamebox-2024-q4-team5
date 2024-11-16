@@ -19,6 +19,7 @@
 
 // Interaction:
 class ASK_Character;
+class ASquareGenerator;
 //--------------------------------------------------------------------------------------
 
 
@@ -97,6 +98,9 @@ public:
 
     /** Занять Клетку определённым типом стороны */
     void OccupySquare(const EWarringPartiesType& WarringPartiesType);
+
+    /** Установить указатель на текущий Генератор клеток */
+    void SetPointerToSquareGenerator(ASquareGenerator* SquareGenerator);
     //-------------------------------------------
 
 
@@ -105,12 +109,19 @@ private:
 
     /* ---   Generator   --- */
 
-    // Установка материала по номеру
-    void UpdateMaterialByType(int32& NumType);
-
     // Данные Клетки
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     FSquareData SquareData;
+
+    // Указатель на текущий Генератор клеток
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ASquareGenerator* CurrentSquareGenerator = nullptr;
+
+    //
+
+    /** Установка материала по номеру */
+    void UpdateMaterialByType(int32& NumType);
     //-------------------------------------------
 };

@@ -77,8 +77,6 @@ void USquareComponent::CurrentComponentInit()
 
 void USquareComponent::ReactionPreInit()
 {
-    CurrentSquare = Cast<ASquare>(GetOwner());
-
     if (bEnableReactions
         && CurrentSquare
         && !ResponseBoxComponent)

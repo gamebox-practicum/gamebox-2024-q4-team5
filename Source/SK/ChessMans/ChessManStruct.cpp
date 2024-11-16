@@ -75,7 +75,7 @@ AChessMan* GetAvailableChessMan(
         {
             lData.AvailablePositions += lSquaresIndex2D;
 
-            // Если были добавлены позиции аттаки, то заполнить указатели на текущую Шахматную фигуру
+            // Если были добавлены позиции атаки, то заполнить указатели на текущую Шахматную фигуру
             if (lCheckAttacking != oAttackingChessMans.Num())
             {
                 for (int32 i = lCheckAttacking; i < oAttackingChessMans.Num(); ++i)
