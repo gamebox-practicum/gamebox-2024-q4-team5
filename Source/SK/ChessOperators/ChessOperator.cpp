@@ -499,6 +499,13 @@ void AChessOperator::PlayPrimitiveAI()
         }
     }
 
+    //размещаем трупов
+    for(auto corps : *PointerToAllCorpsesPositionIndex)
+    {
+        auto pos { SKUtils::GameToAI(corps) };
+        ChessBoardInfo->SetCellAccessibility(pos.Y, pos.X, false);
+    }
+
     FOnStepCalculatedSignature OnStepCalculated;
     OnStepCalculated.BindDynamic(this, &AChessOperator::OnBlackStepCalculated);
     UChessAILibrary::GetNextStepAsync(ChessBoardInfo, PIECE_COLOR::BLACK, 5, OnStepCalculated);
