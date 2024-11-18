@@ -3,6 +3,9 @@
 // Base:
 #include "ChessMan.h"
 
+// UE:
+#include "Components/CapsuleComponent.h"
+
 // Interaction:
 #include "ChessManGenerator.h"
 #include "SK/ChessBoard/Square.h"
@@ -26,9 +29,14 @@ AChessMan::AChessMan()
     // Корневой компонент
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
+    // Капсула коллизии
+    CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
+    CapsuleComponent->SetupAttachment(RootComponent);
+    CapsuleComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+
     // Меш Шахматной Фигуры со скелетом
     ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
-    ChessmanSkeletalMesh->SetupAttachment(RootComponent);
+    ChessmanSkeletalMesh->SetupAttachment(CapsuleComponent);
 
     // Статичный Меш Шахматной Фигуры
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
@@ -70,6 +78,7 @@ void AChessMan::Cleaning()
     if (ChessmanSkeletalMesh && !(ChessmanSkeletalMesh->SkeletalMesh))
     {
         ChessmanSkeletalMesh->DestroyComponent();
+        CapsuleComponent->DestroyComponent();
     }
 
     if (ChessmanStaticMesh && !(ChessmanStaticMesh->GetStaticMesh()))
@@ -87,11 +96,11 @@ void AChessMan::NotifyActorBeginCursorOver()
 {
     Super::NotifyActorBeginCursorOver();
 
-    if(GetWorldSettings()->GetPauserPlayerState() != NULL)
+    if (GetWorldSettings()->GetPauserPlayerState() != NULL)
     {
         return;
     }
-    
+
     if (ChessmanSkeletalMesh)
         ChessmanSkeletalMesh->SetRenderCustomDepth(true);
     if (ChessmanStaticMesh)

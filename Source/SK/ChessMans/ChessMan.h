@@ -17,6 +17,9 @@
 
 /* ---   Pre-declaration of classes and structures   --- */
 
+// UE:
+class UCapsuleComponent;
+
 // Interaction:
 class AChessManGenerator;
 class ASquare;
@@ -41,6 +44,11 @@ public:
 
 
     /* ---   Components   --- */
+
+    // Капсула коллизии
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+        meta = (AllowPrivateAccess = "true"))
+    UCapsuleComponent* CapsuleComponent;
 
     // Меш Шахматной Фигуры со скелетом
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
