@@ -94,7 +94,7 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
 
         Destroy();
 
-        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventLosingGame();
+        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetLosingGame();
     }
 }
 

@@ -195,22 +195,25 @@ void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 
 void AChessMan::ChessManDeath()
 {
-    if (CurrentChessManGenerator)
+    if (!bIsMovingToNewLocation)
     {
-        CurrentChessManGenerator->RemoveChessMan(this);
-    }
+        if (CurrentChessManGenerator)
+        {
+            CurrentChessManGenerator->RemoveChessMan(this);
+        }
 
-    for (auto& lSquareComponent : SquareComponentsTypes)
-    {
-        // Создаём компонент, который всё остальное сделает сам
-        Cast<USquareComponent>(
-            CurrentSquare->AddComponentByClass(
-                lSquareComponent.Get(),
-                false,
-                FTransform(),
-                false));
-    }
+        for (auto& lSquareComponent : SquareComponentsTypes)
+        {
+            // Создаём компонент, который всё остальное сделает сам
+            Cast<USquareComponent>(
+                CurrentSquare->AddComponentByClass(
+                    lSquareComponent.Get(),
+                    false,
+                    FTransform(),
+                    false));
+        }
 
-    Destroy();
+        Destroy();
+    }
 }
 //--------------------------------------------------------------------------------------

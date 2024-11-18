@@ -383,7 +383,7 @@ void AChessOperator::ToNextStage()
     }
     else
     {
-        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->EventWinningGame();
+        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetWinningGame();
     }
 
     PlayingAttackSound();
@@ -500,7 +500,7 @@ void AChessOperator::PlayPrimitiveAI()
     }
 
     //размещаем трупов
-    for(auto corps : *PointerToAllCorpsesPositionIndex)
+    for (auto corps : *PointerToAllCorpsesPositionIndex)
     {
         auto pos { SKUtils::GameToAI(corps) };
         ChessBoardInfo->SetCellAccessibility(pos.Y, pos.X, false);

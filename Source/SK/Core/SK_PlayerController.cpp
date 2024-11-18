@@ -2,6 +2,9 @@
 
 // Base:
 #include "SK_PlayerController.h"
+
+// Interaction:
+#include "SK_GameMode.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -11,7 +14,7 @@
 ASK_PlayerController::ASK_PlayerController()
 {
     // Установка вызова функции Tick() в каждом кадре.
-    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true; // Принудительно
     //-------------------------------------------
 
 
@@ -31,7 +34,15 @@ ASK_PlayerController::ASK_PlayerController()
 
 
 
+
 /* ---   Base   --- */
+
+void ASK_PlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    bpIsGameOver = Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->GetFlagGameOver();
+}
 
 void ASK_PlayerController::Tick(float DeltaSeconds)
 {
@@ -47,9 +58,11 @@ void ASK_PlayerController::Tick(float DeltaSeconds)
 
 void ASK_PlayerController::SetMouseToCenter()
 {
-    if (GetPawn())
+    if (bMouseToCenter)
     {
-        if (!IsPaused())
+        if (GetPawn()
+            && !IsPaused()
+            && !*bpIsGameOver)
         {
             if (GetMousePosition(MousePositionX, MousePositionY))
             {
@@ -64,14 +77,17 @@ void ASK_PlayerController::SetMouseToCenter()
                 }
             }
         }
-    }
-    else
-    {
-        // Выключение реакций от наведения мыши данным контроллером
-        bEnableMouseOverEvents = false;
+        else
+        {
+            // Выключение реакций от наведения мыши данным контроллером
+            bEnableMouseOverEvents = false;
 
-        // Выключение реакций от нажатия мыши данным контроллером
-        bEnableClickEvents = false;
+            // Выключение реакций от нажатия мыши данным контроллером
+            bEnableClickEvents = false;
+
+            // Флаг: Прекратить контроль Мыши
+            bMouseToCenter = false;
+        }
     }
 }
 //--------------------------------------------------------------------------------------

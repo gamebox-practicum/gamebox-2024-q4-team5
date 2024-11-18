@@ -17,7 +17,7 @@ class SK_API ASK_GameMode : public AGameMode
 {
     GENERATED_BODY()
 
-public:
+protected:
 
     /* ---   Events   --- */
 
@@ -30,5 +30,31 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "Game Status",
         meta = (DisplayName = "Losing Game"))
     void EventLosingGame();
+    //-------------------------------------------
+
+
+
+public:
+
+    /* ---   Events   --- */
+
+    /** Установить Игру как Выигрышную */
+    void SetWinningGame();
+
+    /** Установить Игру как Проигрышную */
+    void SetLosingGame();
+
+    /** Получить ссылку на флаг завершения игры */
+    const bool* GetFlagGameOver();
+    //-------------------------------------------
+
+
+
+private:
+
+    /* ---   Events   --- */
+
+    // Флаг завершения игры (необходим для выхода из цикла лишних действий)
+    bool bIsGameOver = false;
     //-------------------------------------------
 };
