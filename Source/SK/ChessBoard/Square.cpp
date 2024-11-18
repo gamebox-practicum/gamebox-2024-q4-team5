@@ -48,11 +48,6 @@ ASquare::ASquare()
 void ASquare::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (!CurrentSquareGenerator)
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentSquareGenerator is NOT"), *GetNameSafe(this));
-    }
 }
 //--------------------------------------------------------------------------------------
 
@@ -146,15 +141,23 @@ const FSquareData& ASquare::GetData()
 
 void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
 {
-    if (iWarringPartiesType == EWarringPartiesType::Corpse
-        && SquareData.WarringPartiesType != EWarringPartiesType::Corpse)
+    if (CurrentSquareGenerator)
     {
-        CurrentSquareGenerator->CorpsesPositionIndex.Add(SquareData.PositionNumber);
+        if (iWarringPartiesType == EWarringPartiesType::Corpse
+            && SquareData.WarringPartiesType != EWarringPartiesType::Corpse)
+        {
+            CurrentSquareGenerator->CorpsesPositionIndex.Add(SquareData.PositionNumber);
+        }
+        else if (iWarringPartiesType != EWarringPartiesType::Corpse
+            && SquareData.WarringPartiesType == EWarringPartiesType::Corpse)
+        {
+            CurrentSquareGenerator->CorpsesPositionIndex.Remove(SquareData.PositionNumber);
+        }
+
     }
-    else if (iWarringPartiesType != EWarringPartiesType::Corpse
-        && SquareData.WarringPartiesType == EWarringPartiesType::Corpse)
+    else
     {
-        CurrentSquareGenerator->CorpsesPositionIndex.Remove(SquareData.PositionNumber);
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentSquareGenerator is NOT"), *GetNameSafe(this));
     }
 
     SquareData.WarringPartiesType = iWarringPartiesType;
