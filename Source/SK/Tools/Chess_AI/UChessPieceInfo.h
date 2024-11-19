@@ -34,7 +34,7 @@ public:
     /// @return
     virtual std::unique_ptr<std::vector<FChessPieceStep>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo);
 
-    virtual int GetRelativeValue();
+    virtual float GetRelativeValue();
 
     virtual ~UChessPieceInfo() override{};
 

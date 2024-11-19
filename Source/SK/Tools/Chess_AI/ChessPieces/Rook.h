@@ -14,7 +14,7 @@ class SK_API URook : public UChessPieceInfo
 {
     GENERATED_BODY()
 public:
-    virtual int GetRelativeValue() override;
+    virtual float GetRelativeValue() override;
 
     virtual FString GetLogView() override;
 

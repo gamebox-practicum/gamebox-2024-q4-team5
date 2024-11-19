@@ -15,7 +15,7 @@ public:
 
     UChessPieceInfo* AttackedPiece = nullptr;
 
-    int GetStepScore();
+    float GetStepScore();
 };
 
 inline bool operator== (const FChessPieceStep &step1, const FChessPieceStep &step2)

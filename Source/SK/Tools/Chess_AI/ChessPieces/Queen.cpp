@@ -3,7 +3,7 @@
 
 #include "Queen.h"
 
-int UQueen::GetRelativeValue()
+float UQueen::GetRelativeValue()
 {
     return 9;
 }

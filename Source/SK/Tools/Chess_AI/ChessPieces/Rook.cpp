@@ -3,7 +3,7 @@
 
 #include "Rook.h"
 
-int URook::GetRelativeValue()
+float URook::GetRelativeValue()
 {
     return 5;
 }

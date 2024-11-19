@@ -10,7 +10,7 @@ std::unique_ptr<std::vector<FChessPieceStep>> UChessPieceInfo::GetLegalMoves(UCh
     return nullptr;
 }
 
-int UChessPieceInfo::GetRelativeValue()
+float UChessPieceInfo::GetRelativeValue()
 {
     //UCLASS does not support abstract functions, so it is empty
     return 0;

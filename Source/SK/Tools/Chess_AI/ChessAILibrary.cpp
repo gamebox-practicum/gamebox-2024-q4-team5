@@ -20,14 +20,17 @@ FChessPieceStep UChessAILibrary::GetNextStep(UChessBoardInfo* ChessBoardInfo, PI
         }
     ///
 
-    int score;
+    float score;
     if(CurrentStepColor == PIECE_COLOR::WHITE)
     {
         return GetBestStep(ChessBoardInfo, whitePieces, blackPieces, depth, score);
     }
     else
     {
-        return GetBestStep(ChessBoardInfo, blackPieces, whitePieces, depth, score);
+        auto temp = GetBestStep(ChessBoardInfo, blackPieces, whitePieces, depth, score);
+        UE_LOG(LogTemp, Warning,
+                TEXT("%f"), score);
+        return temp;
     }
 }
 
@@ -95,9 +98,9 @@ void UChessAILibrary::GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_CO
 
 FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
     std::vector<UChessPieceInfo*>& AttackingFigures, std::vector<UChessPieceInfo*>& DefensiveFigures, int depth,
-    int& TotalScore)
+    float& TotalScore)
 {
-    int BestScore = int MIN_int32;
+    float BestScore = - std::numeric_limits<float>::max();
     FChessPieceStep Result = UNABLE_MOVE;
     depth--;
 
@@ -114,18 +117,18 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
         auto steps{*((figure->GetLegalMoves(ChessBoardInfo)).get())};
         for (auto step : steps)
         {
-            int currentScore = step.GetStepScore();
+            float currentScore = step.GetStepScore();
 
             if(depth > 0)
             {
                 DoStep(step, ChessBoardInfo, DefensiveFigures);
 
-                int defensiveBestScore;
+                float defensiveBestScore;
                 const FChessPieceStep defensiveBestStep = GetBestStep(ChessBoardInfo, DefensiveFigures,
                 AttackingFigures, depth, defensiveBestScore);
                 if(defensiveBestStep != UNABLE_MOVE)
                 {
-                    currentScore -= defensiveBestScore;
+                    currentScore -= defensiveBestScore * DepthCoefficient;
                 }
 
                 UndoStep(step, ChessBoardInfo, DefensiveFigures);

@@ -3,7 +3,7 @@
 
 #include "Bishop.h"
 
-int UBishop::GetRelativeValue()
+float UBishop::GetRelativeValue()
 {
     return 3;
 }

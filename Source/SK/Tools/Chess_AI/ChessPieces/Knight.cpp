@@ -3,7 +3,7 @@
 
 #include "Knight.h"
 
-int UKnight::GetRelativeValue()
+float UKnight::GetRelativeValue()
 {
     return 3;
 }

@@ -5,7 +5,7 @@
 
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 
-int UKing::GetRelativeValue()
+float UKing::GetRelativeValue()
 {
     return 999;
 }

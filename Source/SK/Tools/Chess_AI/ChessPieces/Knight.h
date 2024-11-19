@@ -14,7 +14,7 @@ class SK_API UKnight : public UChessPieceInfo
 {
     GENERATED_BODY()
 public:
-    virtual int GetRelativeValue() override;
+    virtual float GetRelativeValue() override;
 
     virtual std::unique_ptr<std::vector<FChessPieceStep>> GetLegalMoves(UChessBoardInfo* ChessBoardInfo) override;
 

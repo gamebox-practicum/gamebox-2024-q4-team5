@@ -15,7 +15,7 @@ class SK_API UQueen : public UChessPieceInfo
     GENERATED_BODY()
 
 public:
-    virtual int GetRelativeValue() override;
+    virtual float GetRelativeValue() override;
 
     virtual FString GetLogView() override;
 

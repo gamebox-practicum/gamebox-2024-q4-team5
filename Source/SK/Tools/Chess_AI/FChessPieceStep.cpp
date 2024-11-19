@@ -2,7 +2,7 @@
 
 #include "UChessPieceInfo.h"
 
-int FChessPieceStep::GetStepScore()
+float FChessPieceStep::GetStepScore()
 {
-    return AttackedPiece == nullptr? 0 : AttackedPiece->GetRelativeValue();
+    return AttackedPiece == nullptr? 0.0f : AttackedPiece->GetRelativeValue();
 }

@@ -5,7 +5,7 @@
 
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 
-int UPawnChess::GetRelativeValue()
+float UPawnChess::GetRelativeValue()
 {
     return 1;
 }
