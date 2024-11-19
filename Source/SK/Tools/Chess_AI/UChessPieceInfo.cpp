@@ -25,7 +25,8 @@ FString UChessPieceInfo::GetLogView()
 bool UChessPieceInfo::CanJumpOver(UChessBoardInfo* ChessBoardInfo, FCellIndex cell)
 {
     return ChessBoardInfo->IsValidCell(cell) &&
-        (!(*ChessBoardInfo)[cell].CurrentPiece);
+        (!(*ChessBoardInfo)[cell].CurrentPiece) &&
+            (*ChessBoardInfo)[cell].IsCanStepOn;
 }
 
 void UChessPieceInfo::PushStepIfValid(UChessBoardInfo* ChessBoardInfo, FCellIndex Target,
