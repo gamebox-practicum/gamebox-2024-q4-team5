@@ -73,7 +73,7 @@ void UActorMovementComponent::CurrentComponentInit()
 
 void UActorMovementComponent::MoveToLocation(const FVector& iPoint)
 {
-    if (!bIsMovingToNewLocation && CurrentActor)
+    if (CurrentActor)
     {
         if (bControlSpeedAtStart)
         {
@@ -98,7 +98,7 @@ void UActorMovementComponent::MovementForTick(const float& DeltaTime)
             CurrentActor->SetActorLocation(EndLocation);
             bIsMovingToNewLocation = false;
 
-            OnCompletedMove.ExecuteIfBound();
+            OnCompletedMove.Broadcast();
         }
         else
         {

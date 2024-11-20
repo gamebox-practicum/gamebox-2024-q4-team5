@@ -11,6 +11,7 @@
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessBoard/SquareComponent.h"
 #include "SK/ChessOperators/ChessOperator.h"
+#include "SK/ChessOperators/DealerHand.h"
 #include "SK/Tools/ActorMovementComponent.h"
 //--------------------------------------------------------------------------------------
 
@@ -44,6 +45,11 @@ AChessMan::AChessMan()
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
     ChessmanStaticMesh->SetupAttachment(RootComponent);
     ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+
+    // Точка местоположения Места Захвата данной фигуры Рукой Дилера
+    CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));;
+    CapturePoint->SetupAttachment(RootComponent);
+    CapturePoint->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
 
     // Компонент перемещения данного Актора
     MovementComponent = CreateDefaultSubobject<UActorMovementComponent>(TEXT("Movement Component"));
@@ -146,9 +152,9 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         // Сохранение данных
         CurrentData.Position = CurrentSquare->GetData().PositionNumber;
 
-        // Запуск перемещения
-        MovementComponent->OnCompletedMove.BindUObject(this, &AChessMan::MovementEnd);
-        MovementComponent->MoveToLocation(ToSquare->GetActorLocation());
+        // Запуск перемещения Руки Дилера
+        CurrentDealerHand->MovementComponent->OnCompletedMove.AddUObject(this, &AChessMan::DealerHandMovementEnd);
+        CurrentDealerHand->MoveToLocation(CapturePoint->GetComponentLocation());
     }
 }
 
@@ -167,11 +173,32 @@ void AChessMan::SetPointerToOperator(AChessOperator* iCurrentOperator)
     CurrentOperator = iCurrentOperator;
 }
 
+void AChessMan::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
+{
+    CurrentDealerHand = iCurrentDealerHand;
+}
+
+void AChessMan::DealerHandMovementEnd()
+{
+    // Привязка данной Руки Дилера к компоненту Точки Захвата
+    CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+    // Запуск перемещения Фигуры
+    MovementComponent->OnCompletedMove.AddUObject(this, &AChessMan::MovementEnd);
+    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
+}
+
 void AChessMan::MovementEnd()
 {
-    MovementComponent->OnCompletedMove.Unbind();
+    // Отвязать и отправить на "Базу" Руку Дилера
+    CurrentDealerHand->DetachRootComponentFromParent();
+    CurrentDealerHand->MoveToBase();
+
+    // Завершить перемещение и передать ход игроку
+    MovementComponent->OnCompletedMove.Clear();
     CurrentOperator->OnPlayersMove.Broadcast(true);
 
+    // Разрешить взаимодействие с данной фигурой
     bIsMovingToNewLocation = false;
 }
 //--------------------------------------------------------------------------------------

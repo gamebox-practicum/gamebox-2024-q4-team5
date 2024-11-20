@@ -24,10 +24,11 @@
 class UDataTable;
 
 // Interaction:
-class ASquare;
-class ASK_Character;
 class AChessMan;
 class AChessOperator;
+class ADealerHand;
+class ASquare;
+class ASK_Character;
 //--------------------------------------------------------------------------------------
 
 
@@ -74,6 +75,15 @@ public:
     /** Перегенерировать (перезапустить) данный Генератор */
     UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
     void ReGenerate();
+    //-------------------------------------------
+
+
+
+    /* ---   Generator | Dealer Hand   --- */
+
+    // Тип генерируемой Руки Дилера
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
+    TSubclassOf<ADealerHand> DealerHandType;
     //-------------------------------------------
 
 
@@ -161,6 +171,21 @@ private:
 
     template<class T>
     T* CreateFigureOnChessboard(const TSubclassOf<AActor>& Type, const FIndex2D& XY);
+    //-------------------------------------------
+
+
+
+    /* ---   Generator | Dealer Hand   --- */
+
+    // Указатель на текущую Руку Дилера
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ADealerHand* CurrentDealerHand = nullptr;
+
+    //
+
+    /** Запуск генерации Шахматных фигур */
+    void CreateGeneratedDealerHand();
     //-------------------------------------------
 
 

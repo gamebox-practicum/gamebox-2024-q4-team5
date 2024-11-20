@@ -45,7 +45,7 @@ enum struct EChessManType : uint8
     // Ферзь (Королева)
     Queen,
     // Король
-    King,
+    King UMETA(Hidden),
 
     // Базовый без эффектов
     NONE UMETA(Hidden)// Всегда в конце для строгого назначения количества элементов массива

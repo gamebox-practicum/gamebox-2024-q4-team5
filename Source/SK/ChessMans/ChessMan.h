@@ -21,8 +21,9 @@
 class UCapsuleComponent;
 
 // Interaction:
-class AChessOperator;
 class AChessManGenerator;
+class AChessOperator;
+class ADealerHand;
 class ASquare;
 class UActorMovementComponent;
 class USquareComponent;
@@ -61,6 +62,11 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UStaticMeshComponent* ChessmanStaticMesh;
+
+    // Точка местоположения Места Захвата данной фигуры Рукой Дилера
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+        meta = (AllowPrivateAccess = "true"))
+    USceneComponent* CapturePoint = nullptr;
 
     // Компонент перемещения данного Актора
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
@@ -126,6 +132,9 @@ public:
 
     /** Установить указатель на текущий Оператор */
     void SetPointerToOperator(AChessOperator* CurrentOperator);
+
+    /** Установить указатель на текущую Руку Дилера */
+    void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
     //-------------------------------------------
 
 
@@ -168,7 +177,15 @@ private:
         meta = (AllowPrivateAccess = true))
     AChessOperator* CurrentOperator = nullptr;
 
+    // Указатель на текущую Руку Дилера
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ADealerHand* CurrentDealerHand = nullptr;
+
     //
+
+    /** Событие при завершении перемещения Руки Дилера */
+    void DealerHandMovementEnd();
 
     /** Событие при завершении перемещения */
     void MovementEnd();

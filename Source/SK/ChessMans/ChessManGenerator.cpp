@@ -10,6 +10,7 @@
 #include "ChessMan.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessOperators/ChessOperator.h"
+#include "SK/ChessOperators/DealerHand.h"
 #include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
@@ -53,11 +54,14 @@ void AChessManGenerator::OnConstruction(const FTransform& Transform)
 
 void AChessManGenerator::ReGenerate()
 {
-    // Перезапуск Фигур Игроков
+    // Создать Руку дилера, если её нет
+    CreateGeneratedDealerHand();
+
+    // Пересоздать Фигур Игроков
     DeleteAllPlayers();
     CreateGeneratedPlayers(PlayersTable);
 
-    // Перезапуск Шахматных фигур по контролем ИИ
+    // Пересоздать Шахматные фигуры под контролем ИИ
     DeleteAllChessMans();
     CreateGeneratedChessMans(ChessMansTable);
 }
@@ -100,21 +104,21 @@ inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>
 
         if (lSquare)
         {
-            // Параметр создания: Всенда появлятся
+            // Параметр создания: Всегда появляется
             FActorSpawnParameters lSpawnParameters;
             lSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
             // Создать Фигуру
             T* lNewActor = GetWorld()->SpawnActor<T>(
-                iType.Get(),                 // Тип фигуры
+                iType.Get(),                 // Тип Актора
                 lSquare->GetActorLocation(), // Локация клетки
                 FRotator::ZeroRotator,       // Без изменения ротации
                 lSpawnParameters);
 
             if (lNewActor)
             {
-                // Тег-маркировка Фигуры.
-                // Необходим для удаления только Генерируемых Фигур
+                // Тег-маркировка генерируемого Актора.
+                // Необходим для удаления только Генерируемых Акторов
                 lNewActor->Tags.Add(VerificationTag);
             }
 
@@ -143,8 +147,41 @@ inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>
 
 
 
+/* ---   Generator | Dealer Hand   --- */
+
+void AChessManGenerator::CreateGeneratedDealerHand()
+{
+    if (!CurrentDealerHand)
+    {
+        // Удаление всех рук Дилера, созданных Генератором
+        for (auto& lHand : GetAllActors<ADealerHand>(VerificationTag))
+        {
+            lHand->Destroy();
+        }
+
+        if (DealerHandType)
+        {
+            CurrentDealerHand = GetWorld()->SpawnActor<ADealerHand>(
+                DealerHandType.Get(),   // Тип Руки
+                GetActorLocation(),     // Локация текущая Генератора
+                FRotator::ZeroRotator); // Без изменения ротации
+
+            if (CurrentDealerHand)
+            {
+                CurrentDealerHand->SetCurrentChessManGenerator(this);
+
+                // Тег-маркировка Фигуры.
+                // Необходим для удаления только Генерируемых Фигур
+                CurrentDealerHand->Tags.Add(VerificationTag);
+            }
+        }
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Generator | Players   --- */
-// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 {
@@ -188,7 +225,6 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 
 
 /* ---   Generator | ChessMan   --- */
-// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
 {
@@ -215,6 +251,7 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
                 lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
                 lNewChessMan->SetCurrentChessManGenerator(this);
                 lNewChessMan->SetPointerToOperator(CurrentOperator);
+                lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
 
                 AllChessMans.Add(lNewChessMan);
             }
