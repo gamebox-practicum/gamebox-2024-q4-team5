@@ -158,14 +158,14 @@ void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
     SquareData.WarringPartiesType = iWarringPartiesType;
 
     // Контроль цвета выделения от типа Клетки
-    if (SquareData.WarringPartiesType == EWarringPartiesType::Black)
-    {
-        BlockMesh->SetCustomDepthStencilValue(1);
-    }
-    else
-    {
-        BlockMesh->SetCustomDepthStencilValue(0);
-    }
+    //if (SquareData.WarringPartiesType == EWarringPartiesType::Black)
+    //{
+    //    BlockMesh->SetCustomDepthStencilValue(1);
+    //}
+    //else
+    //{
+    //    BlockMesh->SetCustomDepthStencilValue(0);
+    //}
 }
 
 void ASquare::SetPointerToSquareGenerator(ASquareGenerator* iSquareGenerator)
