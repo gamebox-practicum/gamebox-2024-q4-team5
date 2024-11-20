@@ -243,7 +243,7 @@ void ASK_Character::EnableMouse(bool bEnabled)
 
 /* ---   Player Moves Sequence   --- */
 
-void ASK_Character::PlayerMovesSequence(bool bIsPlayersMove)
+void ASK_Character::PlayerMovesSequence(const bool& bIsPlayersMove)
 {
     if (bIsPlayersMove)
     {
@@ -270,7 +270,7 @@ void ASK_Character::SubscribeToDelegates()
 
     if (CurrentChessOperator)
     {
-        CurrentChessOperator->OnPlayersMove.AddDynamic(this, &ASK_Character::PlayerMovesSequence);
+        CurrentChessOperator->OnPlayersMove.AddUObject(this, &ASK_Character::PlayerMovesSequence);
     }
 }
 //--------------------------------------------------------------------------------------

@@ -135,7 +135,7 @@ public:
     /* ---   Player Moves Sequence   --- */
 
     UFUNCTION()
-    void PlayerMovesSequence(bool bIsPlayersMove);
+    void PlayerMovesSequence(const bool& bIsPlayersMove);
     //-------------------------------------------
 
 

@@ -52,7 +52,7 @@ void AChessOperator::BeginPlay()
 
     OperatorDataPreInit();
 
-    OnPlayersMove.AddDynamic(this, &AChessOperator::PlayerMovesSequence);
+    OnPlayersMove.AddUObject(this, &AChessOperator::PlayerMovesSequence);
 }
 
 void AChessOperator::OnConstruction(const FTransform& Transform)
@@ -293,7 +293,7 @@ ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
 
 /* ---   Player Moves Sequence   --- */
 
-void AChessOperator::PlayerMovesSequence(bool bIsPlayersMove)
+void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
 {
     if (GetCurrentChessManGenerator())
     {

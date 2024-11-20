@@ -10,6 +10,7 @@
 #include "ChessManGenerator.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessBoard/SquareComponent.h"
+#include "SK/Tools/ActorMovementComponent.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -42,6 +43,9 @@ AChessMan::AChessMan()
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
     ChessmanStaticMesh->SetupAttachment(RootComponent);
     ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+
+    // Компонент перемещения данного Актора
+    MovementComponent = CreateDefaultSubobject<UActorMovementComponent>(TEXT("Movement Component"));
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
@@ -62,8 +66,6 @@ void AChessMan::BeginPlay()
 void AChessMan::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    MovementForTick(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -136,19 +138,20 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
     if (!bIsMovingToNewLocation && ToSquare)
     {
+        bIsMovingToNewLocation = true;
+
         // Освободить предыдущую клетку и занять новую
         if (CurrentSquare)
             CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
         ToSquare->OccupySquare(EWarringPartiesType::Black);
 
+        // Сохранение данных
         CurrentSquare = ToSquare;
+        CurrentData.Position = CurrentSquare->GetData().PositionNumber;
 
-        NewLocation = ToSquare->GetActorLocation();
-        NewLocation.Z = GetActorLocation().Z;
-
-        CurrentData.Position = ToSquare->GetData().PositionNumber;
-
-        bIsMovingToNewLocation = true;
+        // Запуск перемещения
+        MovementComponent->OnCompletedMove.BindUObject(this, &AChessMan::MovementEnd);
+        MovementComponent->MoveToLocation(ToSquare->GetActorLocation());
     }
 }
 
@@ -162,25 +165,11 @@ void AChessMan::SetCurrentSquare(ASquare* ToSquare)
     CurrentSquare = ToSquare;
 }
 
-void AChessMan::MovementForTick(const float& lDeltaTime)
+void AChessMan::MovementEnd()
 {
-    // Контроль перемещения
-    if (bIsMovingToNewLocation)
-    {
-        FVector lCurrentLocation = GetActorLocation();
+    MovementComponent->OnCompletedMove.Unbind();
 
-        // Контроль близости к новой локации
-        if ((lCurrentLocation - NewLocation).Size() < MaxDeviation)
-        {
-            SetActorLocation(NewLocation);
-            bIsMovingToNewLocation = false;
-        }
-        else
-        {
-            // Плавная интерполяция перемещения
-            SetActorLocation(FMath::VInterpTo(lCurrentLocation, NewLocation, lDeltaTime, MovementSpeed));
-        }
-    }
+    bIsMovingToNewLocation = false;
 }
 //--------------------------------------------------------------------------------------
 

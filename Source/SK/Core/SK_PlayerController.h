@@ -73,5 +73,8 @@ private:
 
     /** Установить Мышь в центр экрана */
     void SetMouseToCenter();
+
+    /** Включить события мыши */
+    void EnableMouseEvents(const bool& bControl);
     //-------------------------------------------
 };

@@ -166,7 +166,9 @@ private:
         meta = (AllowPrivateAccess = true))
     ASquare* CurrentSquare = nullptr;
 
+    //
 
+    /** Инициализация данных текущего компонента*/
     void CurrentComponentInit();
     //-------------------------------------------
 

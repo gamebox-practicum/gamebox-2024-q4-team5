@@ -23,11 +23,7 @@ ASK_PlayerController::ASK_PlayerController()
     // Дистанция подбора предмета (трассировки наведения Мыши)
     HitResultTraceDistance = 280.f;
 
-    // Включение реакций от наведения мыши данным контроллером
-    bEnableMouseOverEvents = true;
-
-    // Включение реакций от нажатия мыши данным контроллером
-    bEnableClickEvents = true;
+    EnableMouseEvents(true);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
@@ -61,33 +57,37 @@ void ASK_PlayerController::SetMouseToCenter()
     if (bMouseToCenter)
     {
         if (GetPawn()
-            && !IsPaused()
             && !*bpIsGameOver)
         {
-            if (GetMousePosition(MousePositionX, MousePositionY))
+            if (!IsPaused())
             {
-                GetViewportSize(SizeCenterX, SizeCenterY);
-
-                SizeCenterX /= 2;
-                SizeCenterY /= 2;
-
-                if (MousePositionX != SizeCenterX || MousePositionY != SizeCenterY)
+                if (GetMousePosition(MousePositionX, MousePositionY))
                 {
-                    SetMouseLocation(SizeCenterX, SizeCenterY);
+                    GetViewportSize(SizeCenterX, SizeCenterY);
+
+                    if (MousePositionX != int32(SizeCenterX / 2) || MousePositionY != int32(SizeCenterY / 2))
+                    {
+                        SetMouseLocation(SizeCenterX / 2, SizeCenterY / 2);
+                    }
                 }
             }
         }
         else
         {
-            // Выключение реакций от наведения мыши данным контроллером
-            bEnableMouseOverEvents = false;
-
-            // Выключение реакций от нажатия мыши данным контроллером
-            bEnableClickEvents = false;
+            EnableMouseEvents(false);
 
             // Флаг: Прекратить контроль Мыши
             bMouseToCenter = false;
         }
     }
+}
+
+void ASK_PlayerController::EnableMouseEvents(const bool& bControl)
+{
+    // Выключение реакций от наведения мыши данным контроллером
+    bEnableMouseOverEvents = bControl;
+
+    // Выключение реакций от нажатия мыши данным контроллером
+    bEnableClickEvents = bControl;
 }
 //--------------------------------------------------------------------------------------

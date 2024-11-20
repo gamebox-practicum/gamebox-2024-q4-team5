@@ -23,6 +23,7 @@ class UCapsuleComponent;
 // Interaction:
 class AChessManGenerator;
 class ASquare;
+class UActorMovementComponent;
 class USquareComponent;
 //--------------------------------------------------------------------------------------
 
@@ -59,6 +60,11 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UStaticMeshComponent* ChessmanStaticMesh;
+
+    // Компонент перемещения данного Актора
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+        meta = (AllowPrivateAccess = "true"))
+    UActorMovementComponent* MovementComponent;
     //-------------------------------------------
 
 
@@ -161,7 +167,7 @@ private:
     UPROPERTY()
     ASquare* CurrentSquare = nullptr;
 
-    // Флаг контроля перемещения
+    // Флаг контроля при перемещении Актора
     bool bIsMovingToNewLocation = false;
 
     // Новая локация к которой движемся
@@ -169,8 +175,8 @@ private:
 
     //
 
-    /** Расчёт передвижения на каждый кадр */
-    void MovementForTick(const float& DeltaTime);
+    /** Событие при завершении перемещения */
+    void MovementEnd();
     //-------------------------------------------
 
 

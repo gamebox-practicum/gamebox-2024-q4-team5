@@ -59,13 +59,8 @@ void ASquare::NotifyActorBeginCursorOver()
 {
     Super::NotifyActorBeginCursorOver();
 
-    if (GetWorldSettings()->GetPauserPlayerState() != NULL)
-    {
-        return;
-    }
-
     // Контроль выделения (свечения) от типа Клетки
-    if (SquareData.WarringPartiesType != EWarringPartiesType::Corpse)
+    if (SquareData.WarringPartiesType != EWarringPartiesType::Corpse && !GetWorld()->IsPaused())
     {
         BlockMesh->SetRenderCustomDepth(true);
     }

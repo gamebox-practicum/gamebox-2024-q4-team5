@@ -20,10 +20,10 @@
 
 
 
-/* ---   Delegate   --- */
+/* ---   Delegates   --- */
 
 // Делегат хода Игроков
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayersMove, bool, bIsPlayersMove);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayersMove, const bool&);
 // ----------------------------------------------------------------------------------------------------
 
 
@@ -51,7 +51,7 @@ class SK_API AChessOperator : public AActor
 
 public:
 
-    /* ---   Delegate   --- */
+    /* ---   Delegates   --- */
 
     FOnPlayersMove OnPlayersMove; // Делегат хода Игроков
     // ----------------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ private:
 
     /** Функция делегата: Смена хода */
     UFUNCTION()
-    void PlayerMovesSequence(bool bIsPlayersMove);
+    void PlayerMovesSequence(const bool& bIsPlayersMove);
     //-------------------------------------------
 
 
