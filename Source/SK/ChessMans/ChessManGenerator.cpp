@@ -9,6 +9,7 @@
 // Interaction:
 #include "ChessMan.h"
 #include "SK/ChessBoard/Square.h"
+#include "SK/ChessOperators/ChessOperator.h"
 #include "SK/Core/SK_Character.h"
 //--------------------------------------------------------------------------------------
 
@@ -168,6 +169,8 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 
                 if (lNewPlayer)
                 {
+                    lNewPlayer->SetPointerToOperator(CurrentOperator);
+
                     // Добавление в массив Игроков
                     AllPlayers.Add(lNewPlayer);
 
@@ -211,6 +214,7 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
                 lNewChessMan->CurrentData = *lData;
                 lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
                 lNewChessMan->SetCurrentChessManGenerator(this);
+                lNewChessMan->SetPointerToOperator(CurrentOperator);
 
                 AllChessMans.Add(lNewChessMan);
             }
@@ -279,6 +283,11 @@ void AChessManGenerator::UpdateAllAvailableChessMan()
             }
         }
     }
+}
+
+void AChessManGenerator::SetPointerToOperator(AChessOperator* iCurrentOperator)
+{
+    CurrentOperator = iCurrentOperator;
 }
 //--------------------------------------------------------------------------------------
 

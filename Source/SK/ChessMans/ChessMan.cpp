@@ -10,6 +10,7 @@
 #include "ChessManGenerator.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessBoard/SquareComponent.h"
+#include "SK/ChessOperators/ChessOperator.h"
 #include "SK/Tools/ActorMovementComponent.h"
 //--------------------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@
 AChessMan::AChessMan()
 {
     // Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-    PrimaryActorTick.bCanEverTick = true; // Warning: Принудительно!
+    PrimaryActorTick.bCanEverTick = false; // Предварительно
 
 
 
@@ -140,13 +141,9 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
     {
         bIsMovingToNewLocation = true;
 
-        // Освободить предыдущую клетку и занять новую
-        if (CurrentSquare)
-            CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
-        ToSquare->OccupySquare(EWarringPartiesType::Black);
+        SetCurrentSquare(ToSquare);
 
         // Сохранение данных
-        CurrentSquare = ToSquare;
         CurrentData.Position = CurrentSquare->GetData().PositionNumber;
 
         // Запуск перемещения
@@ -165,9 +162,15 @@ void AChessMan::SetCurrentSquare(ASquare* ToSquare)
     CurrentSquare = ToSquare;
 }
 
+void AChessMan::SetPointerToOperator(AChessOperator* iCurrentOperator)
+{
+    CurrentOperator = iCurrentOperator;
+}
+
 void AChessMan::MovementEnd()
 {
     MovementComponent->OnCompletedMove.Unbind();
+    CurrentOperator->OnPlayersMove.Broadcast(true);
 
     bIsMovingToNewLocation = false;
 }

@@ -21,6 +21,7 @@
 class UCapsuleComponent;
 
 // Interaction:
+class AChessOperator;
 class AChessManGenerator;
 class ASquare;
 class UActorMovementComponent;
@@ -117,22 +118,14 @@ public:
 
     /* ---   Movement   --- */
 
-    // Скорость перемещения
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
-    float MovementSpeed = 10.0f;
-
-    // Максимальное отклонение.
-    // Если местоположение меньше данного отклонения, то телепортируем персонажа
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
-    float MaxDeviation = 0.1f;
-
-    //
-
     /** Переместиться к указанной Клетке */
     void MoveToSquare(ASquare* ToSquare);
 
     /** Установить указатель на новую Клетку */
     void SetCurrentSquare(ASquare* ToSquare);
+
+    /** Установить указатель на текущий Оператор */
+    void SetPointerToOperator(AChessOperator* CurrentOperator);
     //-------------------------------------------
 
 
@@ -170,14 +163,17 @@ private:
     // Флаг контроля при перемещении Актора
     bool bIsMovingToNewLocation = false;
 
-    // Новая локация к которой движемся
-    FVector NewLocation;
+    // Указатель на текущего Оператора
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    AChessOperator* CurrentOperator = nullptr;
 
     //
 
     /** Событие при завершении перемещения */
     void MovementEnd();
     //-------------------------------------------
+
 
 
     /* ---   Death   --- */

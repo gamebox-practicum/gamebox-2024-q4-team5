@@ -120,7 +120,7 @@ private:
     /* ---   This Component   --- */
 
     // Текущий Актор-владелец
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AActor* CurrentActor = nullptr;
 

@@ -27,6 +27,7 @@ class UDataTable;
 class ASquare;
 class ASK_Character;
 class AChessMan;
+class AChessOperator;
 //--------------------------------------------------------------------------------------
 
 
@@ -128,6 +129,9 @@ public:
 
     /** Обновить данные о доступных Шахматных фигурах */
     void UpdateAllAvailableChessMan();
+
+    /** Установить указатель на текущий Оператор */
+    void SetPointerToOperator(AChessOperator* CurrentOperator);
     //-------------------------------------------
 
 
@@ -181,6 +185,11 @@ private:
 
     // Указатель на Двумерный массив указателей на Клетки
     FSquareArray2D* PointerToAllSquares;
+
+    // Указатель на оператора, что управляет им
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    AChessOperator* CurrentOperator = nullptr;
 
     // Все Фигуры Игроков
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",

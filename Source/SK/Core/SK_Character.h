@@ -136,6 +136,9 @@ public:
 
     UFUNCTION()
     void PlayerMovesSequence(const bool& bIsPlayersMove);
+
+    /** Установить указатель на текущий Оператор */
+    void SetPointerToOperator(AChessOperator* CurrentOperator);
     //-------------------------------------------
 
 
@@ -200,7 +203,9 @@ private:
     /* ---   Player Moves Sequence   --- */
 
     // Указатель на текущего Оператора
-    AChessOperator* CurrentChessOperator = nullptr;
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    AChessOperator* CurrentOperator = nullptr;
 
     //
 

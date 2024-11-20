@@ -87,9 +87,9 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
 
     if (Cast<AChessMan>(OtherActor))
     {
-        if (CurrentChessOperator)
+        if (CurrentOperator)
         {
-            CurrentChessOperator->StopTimer_MovesSequence();
+            CurrentOperator->StopTimer_MovesSequence();
         }
 
         Destroy();
@@ -184,9 +184,9 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         bIsMovingToNewLocation = true;
         bIsMoveAllowed = false;
 
-        if (CurrentChessOperator)
+        if (CurrentOperator)
         {
-            CurrentChessOperator->StopTimer_MovesSequence();
+            CurrentOperator->StopTimer_MovesSequence();
         }
 
         EnableMouse(false);
@@ -216,9 +216,9 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
             SetActorLocation(NewLocation);
             bIsMovingToNewLocation = false;
 
-            if (CurrentChessOperator)
+            if (CurrentOperator)
             {
-                CurrentChessOperator->OnPlayersMove.Broadcast(false);
+                CurrentOperator->OnPlayersMove.Broadcast(false);
             }
         }
         else
@@ -257,20 +257,16 @@ void ASK_Character::PlayerMovesSequence(const bool& bIsPlayersMove)
     }
 }
 
+void ASK_Character::SetPointerToOperator(AChessOperator* iCurrentOperator)
+{
+    CurrentOperator = iCurrentOperator;
+}
+
 void ASK_Character::SubscribeToDelegates()
 {
-    TArray<AActor*> lResultActors;
-
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChessOperator::StaticClass(), lResultActors);
-
-    if (lResultActors.IsValidIndex(0))
+    if (CurrentOperator)
     {
-        CurrentChessOperator = Cast<AChessOperator>(lResultActors[0]);
-    }
-
-    if (CurrentChessOperator)
-    {
-        CurrentChessOperator->OnPlayersMove.AddUObject(this, &ASK_Character::PlayerMovesSequence);
+        CurrentOperator->OnPlayersMove.AddUObject(this, &ASK_Character::PlayerMovesSequence);
     }
 }
 //--------------------------------------------------------------------------------------

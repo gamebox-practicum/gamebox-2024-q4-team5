@@ -196,6 +196,9 @@ void AChessOperator::UpdateCurrentChessManGenerator()
         CurrentChessManGenerator->PlayersTable = CurrentOperatorData[0]->PlayersTable;
         CurrentChessManGenerator->ChessMansTable = CurrentOperatorData[0]->ChessMansTable;
 
+        // Передать указатель на самого себя
+        CurrentChessManGenerator->SetPointerToOperator(this);
+
         // Обновить генератор
         CurrentChessManGenerator->ReGenerate();
     }
@@ -568,7 +571,5 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
         GetByIndex(FIndex2D { newPosition.X, newPosition.Y });
 
     (*figure)->MoveToSquare(target);
-
-    OnPlayersMove.Broadcast(true);
 }
 //--------------------------------------------------------------------------------------
