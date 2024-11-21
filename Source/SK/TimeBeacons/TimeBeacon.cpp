@@ -22,11 +22,16 @@ ATimeBeacon::ATimeBeacon()
     // Корневой компонент
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
-    // Меш Шахматной Фигуры со скелетом
+    // Меш Колонны со скелетом
     ColumnSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Column Skeletal Mesh"));
     ColumnSkeletalMesh->SetupAttachment(RootComponent);
 
-    // Статичный Меш Шахматной Фигуры
+    // Статичный Меш Основания Колонны
+    BochekStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bochek Static Mesh"));
+    BochekStaticMesh->SetupAttachment(RootComponent);
+    BochekStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+
+    // Статичный Меш Колонны
     ColumnStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Column Static Mesh"));
     ColumnStaticMesh->SetupAttachment(RootComponent);
     ColumnStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
