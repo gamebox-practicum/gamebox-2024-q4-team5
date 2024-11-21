@@ -44,6 +44,7 @@ void ADealerHand::BeginPlay()
 {
     Super::BeginPlay();
 
+    bOriginalMeaning_ControlSpeedAtStart = MovementComponent->bControlSpeedAtStart;
 }
 
 // Called every frame
@@ -65,6 +66,11 @@ void ADealerHand::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 
 void ADealerHand::MoveToLocation(const FVector& Point)
 {
+    if (bOriginalMeaning_ControlSpeedAtStart)
+    {
+        MovementComponent->bControlSpeedAtStart = false;
+    }
+    
     MovementComponent->OnApproach.AddDynamic(this, &ADealerHand::GrabWithHand);
     MovementComponent->MoveToLocation(Point);
 }
@@ -72,6 +78,11 @@ void ADealerHand::MoveToLocation(const FVector& Point)
 void ADealerHand::MoveToBase()
 {
     OnReleaseFromHand.Broadcast();
+
+    if (bOriginalMeaning_ControlSpeedAtStart)
+    {
+        MovementComponent->bControlSpeedAtStart = true;
+    }
 
     MovementComponent->OnCompletedMove.Clear();
     MovementComponent->OnApproach.Clear();

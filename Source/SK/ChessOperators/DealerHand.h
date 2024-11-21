@@ -118,6 +118,9 @@ private:
         meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator = nullptr;
 
+    // Изначальное значение: Флаг контроля плавности скорости на старте движения
+    bool bOriginalMeaning_ControlSpeedAtStart = false;
+
     //
 
     /** Событие: Захватить рукой */
