@@ -65,16 +65,21 @@ void ADealerHand::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 
 void ADealerHand::MoveToLocation(const FVector& Point)
 {
-    MovementComponent->OnApproach.AddDynamic(this, &ADealerHand::EventGrabWithHand);
+    MovementComponent->OnApproach.AddDynamic(this, &ADealerHand::GrabWithHand);
     MovementComponent->MoveToLocation(Point);
 }
 
 void ADealerHand::MoveToBase()
 {
-    EventReleaseFromHand();
+    OnReleaseFromHand.Broadcast();
 
     MovementComponent->OnCompletedMove.Clear();
     MovementComponent->OnApproach.Clear();
     MovementComponent->MoveToLocation(CurrentChessManGenerator->GetActorLocation());
+}
+
+void ADealerHand::GrabWithHand()
+{
+    OnGrabWithHand.Broadcast();
 }
 //--------------------------------------------------------------------------------------

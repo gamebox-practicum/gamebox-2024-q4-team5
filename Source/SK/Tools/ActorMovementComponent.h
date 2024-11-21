@@ -47,14 +47,17 @@ public:
 
     /* ---   Delegates   --- */
 
+    // Делегат: Ход Игроков
     UPROPERTY(BlueprintAssignable)
-    FOnCompletedMove OnCompletedMove; // Делегат: Ход Игроков
+    FOnCompletedMove OnCompletedMove;
 
+    // Делегат: На Приближении
     UPROPERTY(BlueprintAssignable)
-    FOnApproach OnApproach;           // Делегат: На Приближении
+    FOnApproach OnApproach;
 
+    // Делегат: На Отдалении
     UPROPERTY(BlueprintAssignable)
-    FOnSeparation OnSeparation;       // Делегат: На Отдалении
+    FOnSeparation OnSeparation;
     //-------------------------------------------
 
 

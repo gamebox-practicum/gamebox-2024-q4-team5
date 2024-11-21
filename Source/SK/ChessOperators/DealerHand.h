@@ -12,6 +12,17 @@
 
 
 
+/* ---   Delegates   --- */
+
+// Делегат: При Захвате рукой
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGrabWithHand);
+
+// Делегат: При Освобождении из рук
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReleaseFromHand);
+// ----------------------------------------------------------------------------------------------------
+
+
+
 /* ---   Pre-declaration of classes and structures   --- */
 
 // Interaction:
@@ -27,6 +38,19 @@ class SK_API ADealerHand : public APawn
     GENERATED_BODY()
 
 public:
+
+    /* ---   Delegates   --- */
+
+    // Делегат: При Захвате рукой
+    UPROPERTY(BlueprintAssignable)
+    FOnGrabWithHand OnGrabWithHand;
+
+    // Делегат: При Освобождении из рук
+    UPROPERTY(BlueprintAssignable)
+    FOnReleaseFromHand OnReleaseFromHand;
+    //-------------------------------------------
+
+
 
     /* ---   Constructors   --- */
 
@@ -63,21 +87,6 @@ protected:
 
 public:
 
-    /* ---   Events   --- */
-
-    /** Событие: Захватить рукой */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Hand Events",
-        meta = (DisplayName = "Grab with Hand"))
-    void EventGrabWithHand();
-
-    /** Событие: Освободить рукой */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Hand Events",
-        meta = (DisplayName = "Release from Hand"))
-    void EventReleaseFromHand();
-    //-------------------------------------------
-
-
-
     /* ---   Components   --- */
 
     // Called every frame
@@ -108,5 +117,11 @@ private:
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator = nullptr;
+
+    //
+
+    /** Событие: Захватить рукой */
+    UFUNCTION()
+    void GrabWithHand();
     //-------------------------------------------
 };
