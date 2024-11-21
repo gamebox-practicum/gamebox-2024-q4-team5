@@ -4,7 +4,7 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 
 // Generated:
 #include "DealerHand.generated.h"
@@ -22,7 +22,7 @@ class UActorMovementComponent;
 
 
 UCLASS()
-class SK_API ADealerHand : public AActor
+class SK_API ADealerHand : public APawn
 {
     GENERATED_BODY()
 
@@ -65,16 +65,17 @@ public:
 
     /* ---   Events   --- */
 
-    /** Событие Выигрышной игры */
+    /** Событие: Захватить рукой */
     UFUNCTION(BlueprintImplementableEvent, Category = "Hand Events",
         meta = (DisplayName = "Grab with Hand"))
     void EventGrabWithHand();
 
-    /** Событие Проигрышной игры */
+    /** Событие: Освободить рукой */
     UFUNCTION(BlueprintImplementableEvent, Category = "Hand Events",
         meta = (DisplayName = "Release from Hand"))
     void EventReleaseFromHand();
     //-------------------------------------------
+
 
 
     /* ---   Components   --- */

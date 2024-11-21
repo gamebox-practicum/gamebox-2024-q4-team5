@@ -153,7 +153,7 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         CurrentData.Position = CurrentSquare->GetData().PositionNumber;
 
         // Запуск перемещения Руки Дилера
-        CurrentDealerHand->MovementComponent->OnCompletedMove.AddUObject(this, &AChessMan::DealerHandMovementEnd);
+        CurrentDealerHand->MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::DealerHandMovementEnd);
         CurrentDealerHand->MoveToLocation(CapturePoint->GetComponentLocation());
     }
 }
@@ -184,7 +184,7 @@ void AChessMan::DealerHandMovementEnd()
     CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
     // Запуск перемещения Фигуры
-    MovementComponent->OnCompletedMove.AddUObject(this, &AChessMan::MovementEnd);
+    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
     MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
 }
 

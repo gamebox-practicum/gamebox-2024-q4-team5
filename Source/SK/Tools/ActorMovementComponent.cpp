@@ -75,13 +75,11 @@ void UActorMovementComponent::MoveToLocation(const FVector& iPoint)
 {
     if (CurrentActor)
     {
-        if (bControlSpeedAtStart)
-        {
-            StartLocation = CurrentActor->GetActorLocation();
-        }
-
+        StartLocation = CurrentActor->GetActorLocation();
         EndLocation = iPoint;
         bIsMovingToNewLocation = true;
+        bApproachWork = false;
+        bSeparationWork = false;
     }
 }
 
@@ -98,12 +96,24 @@ void UActorMovementComponent::MovementForTick(const float& DeltaTime)
             CurrentActor->SetActorLocation(EndLocation);
             bIsMovingToNewLocation = false;
 
-            OnCompletedMove.Broadcast();
+            if (OnCompletedMove.IsBound())
+            {
+                OnCompletedMove.Broadcast();
+            }
         }
         else
         {
+            /* ---   Приближение к Цели   --- */
+
             // Шаг в векторном исполнении
             FVector lNewSpeed_Vector = (EndLocation - lCurrentLocation);
+
+            if (!bApproachWork
+                && lNewSpeed_Vector.Size() <= ApproachDistance)
+            {
+                OnApproach.Broadcast();
+                bApproachWork = true;
+            }
 
             if (lNewSpeed_Vector.Size() * DecelerationCoefficient > MaxSpeed)
             {
@@ -113,16 +123,30 @@ void UActorMovementComponent::MovementForTick(const float& DeltaTime)
             {
                 lNewSpeed_Vector *= DecelerationCoefficient;
             }
+            //-------------------------------------------
+
+
+            /* ---   Отдаление от предыдущей Цели   --- */
+
+            // Пройденная дистанция
+            float lDistanceTraveled = (lCurrentLocation - StartLocation).Size();
+
+            if (!bSeparationWork
+                && lDistanceTraveled >= ApproachDistance)
+            {
+                OnSeparation.Broadcast();
+                bSeparationWork = true;
+            }
 
             if (bControlSpeedAtStart)
             {
-                float lDistanceTraveled = (lCurrentLocation - StartLocation).Size();
-
                 if (lNewSpeed_Vector.Size() > lDistanceTraveled * AccelerationCoefficient)
                 {
                     lNewSpeed_Vector = lNewSpeed_Vector.GetSafeNormal() * (lDistanceTraveled * AccelerationCoefficient + MinStep);
                 }
             }
+            //-------------------------------------------
+
 
             //UE_LOG(LogTemp, Error, TEXT("'%s': lNewSpeed_Vector = %s"),
             //    *GetNameSafe(this), *(lNewSpeed_Vector.ToString()));

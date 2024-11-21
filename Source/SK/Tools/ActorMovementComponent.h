@@ -17,8 +17,14 @@
 
 /* ---   Delegates   --- */
 
-// Делегат хода Игроков
-DECLARE_MULTICAST_DELEGATE(FOnCompletedMove);
+// Делегат: Ход Игроков
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCompletedMove);
+
+// Делегат: На Приближении
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnApproach);
+
+// Делегат: На Отдалении
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSeparation);
 // ----------------------------------------------------------------------------------------------------
 
 
@@ -41,8 +47,15 @@ public:
 
     /* ---   Delegates   --- */
 
-    FOnCompletedMove OnCompletedMove; // Делегат завершения перемещения
-    // ----------------------------------------------------------------------------------------------------
+    UPROPERTY(BlueprintAssignable)
+    FOnCompletedMove OnCompletedMove; // Делегат: Ход Игроков
+
+    UPROPERTY(BlueprintAssignable)
+    FOnApproach OnApproach;           // Делегат: На Приближении
+
+    UPROPERTY(BlueprintAssignable)
+    FOnSeparation OnSeparation;       // Делегат: На Отдалении
+    //-------------------------------------------
 
 
 
@@ -85,26 +98,34 @@ public:
 
     /* ---   Actor Movement   --- */
 
-    // Флаг контроля плавности скорости на старте движения
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Movement")
-    bool bControlSpeedAtStart = true;
-
     // Максимальная скорость перемещения
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Speed")
     float MaxSpeed = 1000.f;
 
     // Минимальный шаг перемещения.
     // Если до конечной точки осталось расстояние меньше MinStep
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Speed")
     float MinStep = 0.5f;
 
+    // Флаг контроля плавности скорости на старте движения
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Acceleration")
+    bool bControlSpeedAtStart = true;
+
     // Коэффициент ускорения скорости перемещения в начале пути
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Acceleration")
     float AccelerationCoefficient = 10.f;
 
     // Коэффициент замедления скорости перемещения в конце пути
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Acceleration")
     float DecelerationCoefficient = 10.f;
+
+    // Расстояние, на котором срабатывает Делегат OnApproach (На Приближении)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Distance Triggers")
+    float ApproachDistance = 100.f;
+
+    // Расстояние, на котором срабатывает Делегат OnSeparation (На Отдалении)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Distance Triggers")
+    float SeparationDistance = 100.f;
 
     //
 
@@ -141,6 +162,12 @@ private:
 
     // Конечная локация перемещения
     FVector EndLocation;
+
+    // Флаг срабатывания Делегата OnApproach (На Приближении)
+    bool bApproachWork = false;
+
+    // Флаг срабатывания Делегата OnSeparation (На Отдалении)
+    bool bSeparationWork = false;
 
     //
 
