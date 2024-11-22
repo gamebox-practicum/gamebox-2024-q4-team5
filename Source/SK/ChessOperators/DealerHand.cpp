@@ -5,7 +5,7 @@
 
 // Interaction:
 #include "SK/ChessMans/ChessManGenerator.h"
-#include "SK/Tools/ActorMovementComponent.h"
+#include "SK/Tools/ActorComponents/ActorMovementComponent.h"
 //--------------------------------------------------------------------------------------
 
 

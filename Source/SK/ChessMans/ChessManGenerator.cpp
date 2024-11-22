@@ -252,6 +252,7 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
                 lNewChessMan->SetCurrentChessManGenerator(this);
                 lNewChessMan->SetPointerToOperator(CurrentOperator);
                 lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
+                lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
 
                 AllChessMans.Add(lNewChessMan);
             }

@@ -57,7 +57,7 @@ void UActorMovementComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
 
 void UActorMovementComponent::CurrentComponentInit()
 {
-    CurrentActor = Cast<AActor>(GetOwner());
+    CurrentActor = GetOwner();
 
     if (!CurrentActor)
     {
@@ -96,10 +96,7 @@ void UActorMovementComponent::MovementForTick(const float& DeltaTime)
             CurrentActor->SetActorLocation(EndLocation);
             bIsMovingToNewLocation = false;
 
-            if (OnCompletedMove.IsBound())
-            {
-                OnCompletedMove.Broadcast();
-            }
+            OnCompletedMove.Broadcast();
         }
         else
         {
@@ -152,7 +149,7 @@ void UActorMovementComponent::MovementForTick(const float& DeltaTime)
             //    *GetNameSafe(this), *(lNewSpeed_Vector.ToString()));
 
             // Сделать шаг (Плавное перемещение)
-            CurrentActor->AddActorLocalOffset(lNewSpeed_Vector * DeltaTime);
+            CurrentActor->AddActorWorldOffset(lNewSpeed_Vector * DeltaTime);
         }
     }
 }

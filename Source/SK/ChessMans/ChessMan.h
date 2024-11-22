@@ -25,8 +25,11 @@ class AChessManGenerator;
 class AChessOperator;
 class ADealerHand;
 class ASquare;
-class UActorMovementComponent;
 class USquareComponent;
+
+// Tools:
+class UActorMovementComponent;
+class UActorRotationComponent;
 //--------------------------------------------------------------------------------------
 
 
@@ -72,6 +75,11 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UActorMovementComponent* MovementComponent;
+
+    // Компонент вращения данного Актора
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+        meta = (AllowPrivateAccess = "true"))
+    UActorRotationComponent* RotationComponent;
     //-------------------------------------------
 
 

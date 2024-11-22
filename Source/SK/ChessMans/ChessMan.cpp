@@ -12,7 +12,10 @@
 #include "SK/ChessBoard/SquareComponent.h"
 #include "SK/ChessOperators/ChessOperator.h"
 #include "SK/ChessOperators/DealerHand.h"
-#include "SK/Tools/ActorMovementComponent.h"
+
+// Tools:
+#include "SK/Tools/ActorComponents/ActorMovementComponent.h"
+#include "SK/Tools/ActorComponents/ActorRotationComponent.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -47,12 +50,14 @@ AChessMan::AChessMan()
     ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
-    CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));;
-    CapturePoint->SetupAttachment(RootComponent);
-    CapturePoint->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
+    CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));
+    CapturePoint->SetupAttachment(ChessmanSkeletalMesh, FName(TEXT("Custom_CaptureSocket")));
 
     // Компонент перемещения данного Актора
     MovementComponent = CreateDefaultSubobject<UActorMovementComponent>(TEXT("Movement Component"));
+
+    // Компонент вращения данного Актора
+    RotationComponent = CreateDefaultSubobject<UActorRotationComponent>(TEXT("Rotation Component"));
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
@@ -181,7 +186,7 @@ void AChessMan::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
 void AChessMan::DealerHandMovementEnd()
 {
     // Привязка данной Руки Дилера к компоненту Точки Захвата
-    CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::KeepWorldTransform);
 
     // Запуск перемещения Фигуры
     MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
@@ -200,6 +205,11 @@ void AChessMan::MovementEnd()
 
     // Разрешить взаимодействие с данной фигурой
     bIsMovingToNewLocation = false;
+
+    if (GetWorld()->GetFirstPlayerController()->GetPawn())
+    {
+        RotationComponent->RotateToLocation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
+    }
 }
 //--------------------------------------------------------------------------------------
 

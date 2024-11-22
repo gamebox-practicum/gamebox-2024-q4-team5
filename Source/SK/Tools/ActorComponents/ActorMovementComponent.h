@@ -6,9 +6,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
-// C++:
-#include <functional>
-
 // Generated:
 #include "ActorMovementComponent.generated.h"
 //--------------------------------------------------------------------------------------
@@ -17,7 +14,7 @@
 
 /* ---   Delegates   --- */
 
-// Делегат: Ход Игроков
+// Делегат: Завершение перемещения
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCompletedMove);
 
 // Делегат: На Приближении
@@ -47,7 +44,7 @@ public:
 
     /* ---   Delegates   --- */
 
-    // Делегат: Ход Игроков
+    // Делегат: Завершение перемещения
     UPROPERTY(BlueprintAssignable)
     FOnCompletedMove OnCompletedMove;
 
@@ -106,7 +103,7 @@ public:
     float MaxSpeed = 1000.f;
 
     // Минимальный шаг перемещения.
-    // Если до конечной точки осталось расстояние меньше MinStep
+    // Если до конечной точки осталось расстояние меньше MinStep, то Актор "телепортируется" в точку назначения
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement|Speed")
     float MinStep = 0.5f;
 
