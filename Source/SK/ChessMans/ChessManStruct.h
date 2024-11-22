@@ -53,6 +53,28 @@ enum struct EChessManType : uint8
 
 
 
+// Тип направления ротации Шахматной фигуры
+UENUM(BlueprintType)
+enum struct EChessManRotationType : uint8
+{
+    // Конь
+    Knight,
+    // Слон
+    Bishop,
+    // Ладья
+    Rook,
+    // Ферзь (Королева)
+    Queen,
+
+    // В сторону игрока
+    ToCharacter,
+
+    // Базовый без эффектов
+    NONE
+};
+
+
+
 // Данные Игроков
 USTRUCT(BlueprintType)
 struct FPlayerData : public FTableRowBase

@@ -207,6 +207,7 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
                 if (lNewPlayer)
                 {
                     lNewPlayer->SetPointerToOperator(CurrentOperator);
+                    lNewPlayer->SetCurrentChessManGenerator(this);
 
                     // Добавление в массив Игроков
                     AllPlayers.Add(lNewPlayer);
@@ -297,9 +298,15 @@ TArray<FAttackingChessMansData>* AChessManGenerator::GetPointerToAttackingChessM
     return &AttackingChessMans;
 }
 
-void AChessManGenerator::RemoveChessMan(AChessMan* ChessMan)
+void AChessManGenerator::RemovePlayer(ASK_Character* iPlayer)
 {
-    AllChessMans.RemoveSwap(ChessMan);
+    AllPlayers.Remove(iPlayer);
+}
+
+void AChessManGenerator::RemoveChessMan(AChessMan* iChessMan)
+{
+    AllAvailableChessMan.RemoveSwap(iChessMan);
+    AllChessMans.RemoveSwap(iChessMan);
 }
 
 void AChessManGenerator::UpdateAllAvailableChessMan()

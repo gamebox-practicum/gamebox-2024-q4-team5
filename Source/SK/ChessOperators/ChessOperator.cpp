@@ -298,39 +298,46 @@ ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
 
 void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
 {
-    if (GetCurrentChessManGenerator())
+    if (AllPlayers->Num())
     {
-        CurrentChessManGenerator->UpdateAllAvailableChessMan();
-
-        if (!bIsPlayersMove)
+        if (GetCurrentChessManGenerator())
         {
-            if (bSkipOperatorTurn)
-            {
-                bSkipOperatorTurn = false;
+            CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-                // Задержка передачи управления Игроку, для корректного срабатывания
-                GetWorldTimerManager().SetTimer(
-                    Timer_MovesSequence,
-                    this,
-                    &AChessOperator::TimerAction_PlayersMove,
-                    0.5f,
-                    false);
+            if (!bIsPlayersMove)
+            {
+                if (bSkipOperatorTurn)
+                {
+                    bSkipOperatorTurn = false;
+
+                    // Задержка передачи управления Игроку, для корректного срабатывания
+                    GetWorldTimerManager().SetTimer(
+                        Timer_MovesSequence,
+                        this,
+                        &AChessOperator::TimerAction_PlayersMove,
+                        0.5f,
+                        false);
+                }
+                else
+                {
+                    PlayPrimitiveAI();
+                }
             }
             else
             {
-                PlayPrimitiveAI();
+                TimerInit_MovesSequence();
+                PlayingAttackSound();
             }
         }
-        else
+        else if (!CurrentChessManGenerator)
         {
-            TimerInit_MovesSequence();
-            PlayingAttackSound();
+            UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+                *GetNameSafe(this));
         }
     }
-    else if (!CurrentChessManGenerator)
+    else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
-            *GetNameSafe(this));
+        StopTimer_MovesSequence();
     }
 }
 
@@ -355,7 +362,27 @@ void AChessOperator::TimerInit_MovesSequence()
 
 void AChessOperator::TimerAction_OperatorMove() const
 {
-    OnPlayersMove.Broadcast(false);
+    if (PointerToAllChessMans->Num() != 0)
+    {
+        OnPlayersMove.Broadcast(false);
+    }
+    else
+    {
+        for (int32 i = 0; i < AllPlayers->Num(); ++i)
+        {
+            if ((*AllPlayers)[i])
+            {
+                (*AllPlayers)[i]->CharacterDeath();
+            }
+        }
+        /* PS: В данном случае нельзя использовать следующий вариант: for (auto& Player : *AllPlayers)
+        * При вызове CharacterDeath() происходит изменение массива AllPlayers
+        * что вызывает ошибку при таком варианте использования "for".
+        *
+        * Ошибка "Array has changed during ranged-for iteration!"*
+        * ("Массив изменился во время итерации ranged-for!")*
+        */
+    }
 }
 
 void AChessOperator::TimerAction_PlayersMove() const

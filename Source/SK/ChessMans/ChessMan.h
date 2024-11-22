@@ -24,6 +24,7 @@ class UCapsuleComponent;
 class AChessManGenerator;
 class AChessOperator;
 class ADealerHand;
+class ACharacter;
 class ASquare;
 class USquareComponent;
 
@@ -124,7 +125,7 @@ public:
     /* ---   Type   --- */
 
     // Текущая информация о данной Фигуре
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Type")
     FChessManData CurrentData;
     //-------------------------------------------
 
@@ -143,6 +144,15 @@ public:
 
     /** Установить указатель на текущую Руку Дилера */
     void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+    //-------------------------------------------
+
+
+
+    /* ---   Rotation   --- */
+
+    // Тип поворота данной Шахматной фигуры
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Rotation")
+    EChessManRotationType RotationType = EChessManRotationType::NONE;
     //-------------------------------------------
 
 
@@ -199,6 +209,25 @@ private:
     /** Событие при завершении перемещения */
     UFUNCTION()
     void MovementEnd();
+    //-------------------------------------------
+
+
+
+    /* ---   Rotation   --- */
+
+    // Указатель на игрока, в сторону которого происходит поворот
+    ACharacter* CurrentFirstPlayer = nullptr;
+
+    //
+
+    // Инициализация данных для Ротации
+    void RotationInit();
+
+    // Поворот в сторону игрока с учётом выбранного типа поворота
+    void RotateToFirstPlayer();
+
+    // Получение ближайшей к игроку локации
+    FVector GetClosestToPlayer(const TArray<FIndex2D>& Variants);
     //-------------------------------------------
 
 

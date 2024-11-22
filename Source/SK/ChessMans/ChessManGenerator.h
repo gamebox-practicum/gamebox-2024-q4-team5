@@ -134,7 +134,10 @@ public:
     /** Получение указателя на все Атакующие фигуры */
     TArray<FAttackingChessMansData>* GetPointerToAttackingChessMans();
 
-    /** Обновить данные о всех Шахматных фигурах */
+    /** Удалить данные о Игроке */
+    void RemovePlayer(ASK_Character* Player);
+
+    /** Удалить данные о Шахматной фигуре */
     void RemoveChessMan(AChessMan* ChessMan);
 
     /** Обновить данные о доступных Шахматных фигурах */
