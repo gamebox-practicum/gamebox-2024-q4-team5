@@ -481,7 +481,7 @@ void AChessOperator::PlayPrimitiveAI()
 
         auto chessPiece = SKUtils::ConstructChessPiece(figure->CurrentData.Type,
             PIECE_COLOR::BLACK, this);
-        if (chessPiece)
+        if (IsValid(chessPiece))
         {
             FIndex2D AICoordinatePosition { SKUtils::GameToAI(figure->CurrentData.Position) };
             ChessBoardInfo->Set(AICoordinatePosition.Y, AICoordinatePosition.X, chessPiece);
@@ -495,7 +495,7 @@ void AChessOperator::PlayPrimitiveAI()
     {
         auto chessPiece = SKUtils::ConstructChessPiece(EChessManType::King,
             PIECE_COLOR::WHITE, this);
-        if (chessPiece)
+        if (IsValid(chessPiece))
         {
             auto pos { SKUtils::GameToAI((*AllPlayers)[0]->GetCurrentPosition()) };
             ChessBoardInfo->Set(pos.Y, pos.X, chessPiece);

@@ -1,4 +1,4 @@
-// 
+//
 
 #pragma once
 
@@ -19,6 +19,7 @@ class SK_API ASK_GameMode : public AGameMode
 
 protected:
 
+    virtual void BeginPlay() override;
     /* ---   Events   --- */
 
     /** Событие Выигрышной игры */
@@ -48,10 +49,15 @@ public:
     const bool* GetFlagGameOver();
     //-------------------------------------------
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnWindowsLostFocus();
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnWindowsGainFocus();
 
 private:
 
+    void OnWindowFocusChanged(bool bIsFocused);
     /* ---   Events   --- */
 
     // Флаг завершения игры (необходим для выхода из цикла лишних действий)

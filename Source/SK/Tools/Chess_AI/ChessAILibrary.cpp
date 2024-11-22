@@ -150,11 +150,12 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     std::vector<UChessPieceInfo*>& DefensiveFigures)
 {
     auto piece = (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece;
-    if(!piece)
+    if(!IsValid(piece))
     {
         //throw std::runtime_error("UChessAILibrary::DoStep: invalid Step value");
         UE_LOG(LogTemp, Error,
                 TEXT("UChessAILibrary::DoStep: invalid Step value"));
+        return;
     }
     (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = nullptr;
     ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, piece);
@@ -171,16 +172,17 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
     auto piece = (*ChessBoardInfo)[Step.NewPosition].CurrentPiece;
     auto emptyCellPiece = (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece;
 
-    if((!piece) || emptyCellPiece)
+    if(!IsValid(piece) || emptyCellPiece)
     {
         //throw std::runtime_error("UChessAILibrary::UndoStep: invalid Step value");
         UE_LOG(LogTemp, Error,
             TEXT("UChessAILibrary::UndoStep: invalid Step value"));
+        return;
     }
     ChessBoardInfo->Set(Step.PreviousPosition.Y, Step.PreviousPosition.X, piece);
     (*ChessBoardInfo)[Step.NewPosition].CurrentPiece = nullptr;
 
-    if(Step.AttackedPiece)
+    if(IsValid(Step.AttackedPiece))
     {
         ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, Step.AttackedPiece);
         DefensiveFigures.push_back(Step.AttackedPiece);
