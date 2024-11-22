@@ -152,7 +152,9 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
     auto piece = (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece;
     if(!piece)
     {
-        throw std::runtime_error("UChessAILibrary::DoStep: invalid Step value");
+        //throw std::runtime_error("UChessAILibrary::DoStep: invalid Step value");
+        UE_LOG(LogTemp, Error,
+                TEXT("UChessAILibrary::DoStep: invalid Step value"));
     }
     (*ChessBoardInfo)[Step.PreviousPosition].CurrentPiece = nullptr;
     ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, piece);
@@ -171,7 +173,9 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
 
     if((!piece) || emptyCellPiece)
     {
-        throw std::runtime_error("UChessAILibrary::UndoStep: invalid Step value");
+        //throw std::runtime_error("UChessAILibrary::UndoStep: invalid Step value");
+        UE_LOG(LogTemp, Error,
+            TEXT("UChessAILibrary::UndoStep: invalid Step value"));
     }
     ChessBoardInfo->Set(Step.PreviousPosition.Y, Step.PreviousPosition.X, piece);
     (*ChessBoardInfo)[Step.NewPosition].CurrentPiece = nullptr;
