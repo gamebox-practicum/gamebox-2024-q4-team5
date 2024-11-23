@@ -48,6 +48,8 @@ private:
 
     static constexpr float DepthCoefficient = 0.999f;
 
+    static constexpr int LastLineBonus = 100;
+
     static void DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo,
     std::vector<UChessPieceInfo*>& DefensiveFigures);
 

@@ -119,6 +119,14 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
         {
             float currentScore = step.GetStepScore();
 
+            if(figure->Color == PIECE_COLOR::WHITE)
+            {
+                if(step.NewPosition.Y >= ChessBoardInfo->GetSizeY() - 2)
+                {
+                    currentScore += LastLineBonus;
+                }
+            }
+
             if(depth > 0)
             {
                 DoStep(step, ChessBoardInfo, DefensiveFigures);
