@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
+// Structs:
+#include "SK/ChessMans/ChessManStruct.h"
+
 // Tools:
 #include "SK/Tools/Index2D.h"
 
@@ -116,6 +119,13 @@ public:
 
     /* ---   Movement   --- */
 
+    // Позиция на доске
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FIndex2D CurrentPosition;
+
+    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
+    ASquare* CurrentSquare = nullptr;
+
     // Скорость перемещения
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
     float MovementSpeed = 10.0f;
@@ -130,8 +140,8 @@ public:
     // Переместиться к указанной клетке
     void MoveToSquare(ASquare* ToSquare);
 
-    // Получить текущую ползицию на Шахматной доске
-    FIndex2D GetCurrentPosition();
+    // Получить текущую позицию на Шахматной доске
+    FIndex2D GetCurrentPosition() const;
     //-------------------------------------------
 
 
@@ -187,9 +197,6 @@ private:
 
 
     /* ---   Movement   --- */
-
-    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
-    ASquare* CurrentSquare = nullptr;
 
     // Новая локация к которой движемся
     FVector NewLocation;

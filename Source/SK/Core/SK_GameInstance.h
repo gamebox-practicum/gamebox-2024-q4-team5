@@ -15,6 +15,14 @@
 
 
 
+/* ---   Delegates   --- */
+
+// Делегат информирования о сохранении текущего состояния уровня
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelDataSave);
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Pre-declaration of classes   --- */
 
 // Interaction:
@@ -29,6 +37,15 @@ class SK_API USK_GameInstance : public UGameInstance
     GENERATED_BODY()
 
 public:
+
+    /* ---   Delegates   --- */
+
+    // Делегат информирования о сохранении текущего состояния уровня
+    UPROPERTY(BlueprintAssignable)
+    FOnLevelDataSave OnLevelDataSave;
+    //-------------------------------------------
+
+
 
     /* ---   Base   --- */
 
@@ -51,6 +68,11 @@ public:
 
     /** Получение сохранённых данных уровня */
     FLevelData LoadLevelData() const;
+
+    /** Проверка на наличие сохранения */
+    UFUNCTION(BlueprintPure, Category = "Level Saving",
+        meta = (CompactNodeTitle = "Is Empty?"))
+    bool IsEmpty();
     //-------------------------------------------
 
 
