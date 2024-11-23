@@ -9,7 +9,19 @@
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LawnMoverGame/Levels/MenuLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LawnMoverGame/Levels/MenuLevel.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/ATT_DistanceEffect.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/ATT_DistanceEffect.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_episkop_v1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_episkop_v1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_konina.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_konina.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_ladya.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_ladya.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_peshka.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_peshka.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_queen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/pers/pers_queen.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/BP_ChessMan_Base.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/BP_ChessMan_Base.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Bishop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Bishop.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Knight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Knight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Pawn.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Pawn.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Queen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Queen.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Rook.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessMans/ChessMans/BP_ChessMan_Rook.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_DealerHand.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_DealerHand.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Maps/Test.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Maps/Test.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
