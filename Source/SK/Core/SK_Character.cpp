@@ -190,6 +190,7 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         ToSquare->OccupySquare(EWarringPartiesType::White);
 
         CurrentSquare = ToSquare;
+        CurrentPosition = CurrentSquare->GetData().PositionNumber;
 
         NewLocation = ToSquare->GetActorLocation();
         NewLocation.Z = GetActorLocation().Z;
@@ -206,9 +207,9 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
     }
 }
 
-FIndex2D ASK_Character::GetCurrentPosition()
+FIndex2D ASK_Character::GetCurrentPosition() const
 {
-    return CurrentSquare->GetData().PositionNumber;
+    return CurrentPosition;
 }
 
 void ASK_Character::MovementForTick(const float& lDeltaTime)

@@ -197,6 +197,8 @@ void AChessManGenerator::CreateGeneratedPlayers(const TArray<FPlayerData*>& iPla
             {
                 lNewPlayer->SetPointerToOperator(CurrentOperator);
                 lNewPlayer->SetCurrentChessManGenerator(this);
+                lNewPlayer->CurrentPosition = lData->Position;
+                lNewPlayer->CurrentSquare = PointerToAllSquares->GetByIndex(lData->Position);
 
                 // Добавление в массив Игроков
                 AllPlayers.Add(lNewPlayer);

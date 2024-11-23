@@ -56,6 +56,16 @@ FLevelData USK_GameInstance::LoadLevelData() const
     return FLevelData::Empty;
 }
 
+bool USK_GameInstance::IsEmpty()
+{
+    if (SaveLevel)
+    {
+        return SaveLevel->LevelData.PlayersData.Num() == 0;
+    }
+
+    return true;
+}
+
 void USK_GameInstance::LevelSavingInit()
 {
     SaveLevel = Cast<USavedLevelData>(UGameplayStatics::LoadGameFromSlot(LevelDataSlot, 0));
