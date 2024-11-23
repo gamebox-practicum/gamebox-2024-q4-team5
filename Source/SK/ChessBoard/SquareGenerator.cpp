@@ -59,16 +59,7 @@ void ASquareGenerator::ReGenerate()
     {
         if (NumberAlongAxes != TDArraySquares.Num())
         {
-            DeleteAllSquares();
-            CreateGeneratedSquares();
-
-            DeleteStageTriggers();
-            CreatStageTrigger();
-
-            if (CurrentOperator)
-            {
-                CurrentOperator->UpdateCurrentTimeBeaconGenerator(BlockSize);
-            }
+            RecreateBoard();
         }
         else
         {
@@ -105,11 +96,11 @@ void ASquareGenerator::DeleteAllSquares()
 
 void ASquareGenerator::DeleteAllSquareComponents()
 {
-    UActorComponent* lComponent = nullptr;
+    USquareComponent* lComponent = nullptr;
 
     for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
     {
-        lComponent = lSquare->GetComponentByClass(USquareComponent::StaticClass());
+        lComponent = Cast<USquareComponent>(lSquare->GetComponentByClass(USquareComponent::StaticClass()));
 
         if (lComponent)
             lComponent->DestroyComponent();
@@ -121,6 +112,20 @@ void ASquareGenerator::DeleteStageTriggers()
     for (auto& lTrigger : GetAllActors<AStageTrigger>(VerificationTag))
     {
         lTrigger->Destroy();
+    }
+}
+
+void ASquareGenerator::RecreateBoard()
+{
+    DeleteAllSquares();
+    CreateGeneratedSquares();
+
+    DeleteStageTriggers();
+    CreatStageTrigger();
+
+    if (CurrentOperator)
+    {
+        CurrentOperator->UpdateCurrentTimeBeaconGenerator(BlockSize);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -298,54 +303,59 @@ void ASquareGenerator::SetPointerToOperator(AChessOperator* iCurrentOperator)
 
 /* ---   Square Components   --- */
 
+void ASquareGenerator::CreateGeneratedSquareComponents(const TArray<FSquareComponentData*>& iSquareComponentsData)
+{
+    // Указатель на создаваемый компонент
+    USquareComponent* lNewComponent = nullptr;
+
+    // Указатель на выбранную клетку
+    ASquare* lCurrentSquare = nullptr;
+
+    // Создать компонент в указанной клетке
+    for (auto& lData : iSquareComponentsData)
+    {
+        lCurrentSquare = TDArraySquares.GetByIndex(lData->Position);
+
+        if (lCurrentSquare)
+        {
+            // Создаём компонент и получаем на него указатель
+            lNewComponent = Cast<USquareComponent>(
+                lCurrentSquare->AddComponentByClass(
+                    lData->Type,
+                    false,
+                    FTransform(),
+                    false));
+
+            // "Верификация" и сохранение компонента
+            if (lNewComponent)
+            {
+                lCurrentSquare->AddInstanceComponent(lNewComponent);
+                lNewComponent->RegisterComponent();
+                lNewComponent->ComponentTags.Add(VerificationTag);
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("'%s': TDArraySquares [%d, %d] is NOT"),
+                *GetNameSafe(this), lData->Position.X, lData->Position.Y);
+        }
+    }
+}
+
 void ASquareGenerator::CreateGeneratedSquareComponents(UDataTable* iSquareComponentTable)
 {
     if (iSquareComponentTable)
     {
         // Массив данных, получаемых из DataTable
-        TArray<FSquareComponentData*> lSquareComponentData;
+        TArray<FSquareComponentData*> lPointersToData;
 
         // Контекст для определения в случае ошибки (см. UDataTable::GetAllRows)
         FString lContext = "CreateGeneratedSquareComponents";
 
         // Получить массив данных из DataTable
-        iSquareComponentTable->GetAllRows<FSquareComponentData>(lContext, lSquareComponentData);
+        iSquareComponentTable->GetAllRows<FSquareComponentData>(lContext, lPointersToData);
 
-        // Указатель на создаваемый компонент
-        USquareComponent* lNewComponent = nullptr;
-
-        // Указатель на выбранную клетку
-        ASquare* lCurrentSquare = nullptr;
-
-        // Создать компонент в указанной клетке
-        for (auto& lData : lSquareComponentData)
-        {
-            lCurrentSquare = TDArraySquares.GetByIndex(lData->Position);
-
-            if (lCurrentSquare)
-            {
-                // Создаём компонент и получаем на него указатель
-                lNewComponent = Cast<USquareComponent>(
-                    lCurrentSquare->AddComponentByClass(
-                        lData->Type,
-                        false,
-                        FTransform(),
-                        false));
-
-                // "Верификация" и сохранение компонента
-                if (lNewComponent)
-                {
-                    lCurrentSquare->AddInstanceComponent(lNewComponent);
-                    lNewComponent->RegisterComponent();
-                    lNewComponent->ComponentTags.Add(VerificationTag);
-                }
-            }
-            else
-            {
-                UE_LOG(LogTemp, Warning, TEXT("'%s': TDArraySquares [%d, %d] is NOT"),
-                    *GetNameSafe(this), lData->Position.X, lData->Position.Y);
-            }
-        }
+        CreateGeneratedSquareComponents(lPointersToData);
     }
 }
 //--------------------------------------------------------------------------------------

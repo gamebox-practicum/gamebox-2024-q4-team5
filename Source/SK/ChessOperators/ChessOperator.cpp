@@ -20,6 +20,8 @@
 #include "SK/ChessMans/ChessManStruct.h"
 #include "SK/TimeBeacons/TimeBeaconGenerator.h"
 #include "SK/TimeBeacons/TimeBeacon.h"
+
+// AI:
 #include "SK/Tools/SKUtils.h"
 #include "SK/Tools/Chess_AI/ChessAILibrary.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
@@ -53,6 +55,16 @@ void AChessOperator::BeginPlay()
     OperatorDataPreInit();
 
     OnPlayersMove.AddUObject(this, &AChessOperator::PlayerMovesSequence);
+
+    SavedDataInit();
+
+    if (CurrentGameInstance && !CurrentGameInstance->bIsNewGame)
+    {
+        CurrentChessManGenerator->SetPointerToAllSquares(
+            CurrentSquareGenerator->GetPointerToAllSquares());
+
+        UploadLevelData();
+    }
 }
 
 void AChessOperator::OnConstruction(const FTransform& Transform)
@@ -298,39 +310,46 @@ ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
 
 void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
 {
-    if (GetCurrentChessManGenerator())
+    if (AllPlayers->Num())
     {
-        CurrentChessManGenerator->UpdateAllAvailableChessMan();
-
-        if (!bIsPlayersMove)
+        if (GetCurrentChessManGenerator())
         {
-            if (bSkipOperatorTurn)
-            {
-                bSkipOperatorTurn = false;
+            CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-                // Задержка передачи управления Игроку, для корректного срабатывания
-                GetWorldTimerManager().SetTimer(
-                    Timer_MovesSequence,
-                    this,
-                    &AChessOperator::TimerAction_PlayersMove,
-                    0.5f,
-                    false);
+            if (!bIsPlayersMove)
+            {
+                if (bSkipOperatorTurn)
+                {
+                    bSkipOperatorTurn = false;
+
+                    // Задержка передачи управления Игроку, для корректного срабатывания
+                    GetWorldTimerManager().SetTimer(
+                        Timer_MovesSequence,
+                        this,
+                        &AChessOperator::TimerAction_PlayersMove,
+                        0.5f,
+                        false);
+                }
+                else
+                {
+                    PlayPrimitiveAI();
+                }
             }
             else
             {
-                PlayPrimitiveAI();
+                TimerInit_MovesSequence();
+                PlayingAttackSound();
             }
         }
-        else
+        else if (!CurrentChessManGenerator)
         {
-            TimerInit_MovesSequence();
-            PlayingAttackSound();
+            UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
+                *GetNameSafe(this));
         }
     }
-    else if (!CurrentChessManGenerator)
+    else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentChessManGenerator is NOT"),
-            *GetNameSafe(this));
+        StopTimer_MovesSequence();
     }
 }
 
@@ -355,7 +374,27 @@ void AChessOperator::TimerInit_MovesSequence()
 
 void AChessOperator::TimerAction_OperatorMove() const
 {
-    OnPlayersMove.Broadcast(false);
+    if (PointerToAllChessMans->Num() != 0)
+    {
+        OnPlayersMove.Broadcast(false);
+    }
+    else
+    {
+        for (int32 i = 0; i < AllPlayers->Num(); ++i)
+        {
+            if ((*AllPlayers)[i])
+            {
+                (*AllPlayers)[i]->CharacterDeath();
+            }
+        }
+        /* PS: В данном случае нельзя использовать следующий вариант: for (auto& Player : *AllPlayers)
+        * При вызове CharacterDeath() происходит изменение массива AllPlayers
+        * что вызывает ошибку при таком варианте использования "for".
+        *
+        * Ошибка "Array has changed during ranged-for iteration!"
+        * ("Массив изменился во время итерации ranged-for!")
+        */
+    }
 }
 
 void AChessOperator::TimerAction_PlayersMove() const
@@ -374,6 +413,7 @@ void AChessOperator::ToNextStage()
 
     ++CurrentStageNum;
 
+    // Проверка выигрышного этапа
     if (CurrentOperatorData.Num() > CurrentStageNum)
     {
         CurrentSquareGenerator->AddGeneratedSquares(
@@ -383,13 +423,18 @@ void AChessOperator::ToNextStage()
         CurrentChessManGenerator->AddGeneratedChessMans(
             CurrentOperatorData[CurrentStageNum]->PlayersTable,
             CurrentOperatorData[CurrentStageNum]->ChessMansTable);
+
+        // Сохранение данных на новом этапе
+        SaveLevelData();
+
+        // Проверка атаки на игрока
+        PlayingAttackSound();
     }
     else
     {
+        // Если этапы закончились, то заверщить игру с победой
         Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetWinningGame();
     }
-
-    PlayingAttackSound();
 }
 //--------------------------------------------------------------------------------------
 
@@ -421,6 +466,175 @@ void AChessOperator::PlayingAttackSound()
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("'%s': WalkingSound is NOT"),
+            *GetNameSafe(this));
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Level Saving   --- */
+
+void AChessOperator::SaveLevelData() const
+{
+    if (CurrentGameInstance)
+    {
+        FLevelData lCurrentData;
+
+        /* ---   Chess Operator Data   --- */
+
+        lCurrentData.CurrentStageNum = CurrentStageNum;
+        lCurrentData.MoveLimitTime = MoveLimitTime;
+        lCurrentData.OperatorTable = OperatorTable;
+        //-------------------------------------------
+
+
+        /* ---   Square Generator Data   --- */
+        {
+            lCurrentData.NumberAlongAxes = CurrentSquareGenerator->NumberAlongAxes;
+
+            TArray<FSquareComponentData> lSquareComponentsData;
+            USquareComponent* lComponent = nullptr;
+            FSquareComponentData lComponentData;
+
+            for (ASquare*& lSquare : CurrentSquareGenerator->GetAllActors<ASquare>(CurrentSquareGenerator->VerificationTag))
+            {
+                lComponent = Cast<USquareComponent>(lSquare->GetComponentByClass(USquareComponent::StaticClass()));
+
+                if (lComponent)
+                {
+                    lComponentData.Type = lComponent->GetClass();
+                    lComponentData.Position = lSquare->GetData().PositionNumber;
+                    lSquareComponentsData.Add(lComponentData);
+                }
+            }
+
+            lCurrentData.SquareComponentsData = lSquareComponentsData;
+        }
+        //-------------------------------------------
+
+
+        /* ---   ChessMan Generator Data | ChessMans Data   --- */
+        {
+            TArray<FChessManData> lChessMansData;
+
+            for (AChessMan*& lChessMan : CurrentChessManGenerator->GetAllActors<AChessMan>(CurrentChessManGenerator->VerificationTag))
+            {
+                lChessMansData.Add(lChessMan->CurrentData);
+            }
+
+            lCurrentData.ChessMansData = lChessMansData;
+        }
+        //-------------------------------------------
+
+
+        /* ---   ChessMan Generator Data | Players Data   --- */
+        {
+            TArray<FPlayerData> lPlayersData;
+            FPlayerData lPlayerData;
+
+            for (ASK_Character*& lPlayer : CurrentChessManGenerator->GetAllActors<ASK_Character>(CurrentChessManGenerator->VerificationTag))
+            {
+                lPlayerData.Type = lPlayer->GetClass();
+                lPlayerData.Position = lPlayer->GetCurrentPosition();
+                lPlayersData.Add(lPlayerData);
+            }
+
+            lCurrentData.PlayersData = lPlayersData;
+        }
+        //-------------------------------------------
+
+
+        // Предварительно
+        CurrentGameInstance->SaveLevelData(lCurrentData);
+    }
+}
+
+void AChessOperator::UploadLevelData()
+{
+    if (CurrentGameInstance)
+    {
+        FLevelData lCurrentData = CurrentGameInstance->LoadLevelData();
+
+        if (lCurrentData.PlayersData.Num())
+        {
+
+            /* ---   Chess Operator Data   --- */
+
+            CurrentStageNum = lCurrentData.CurrentStageNum;
+            MoveLimitTime = lCurrentData.MoveLimitTime;
+            OperatorTable = lCurrentData.OperatorTable;
+            //-------------------------------------------
+
+
+            /* ---   Square Generator Data   --- */
+            {
+                CurrentSquareGenerator->NumberAlongAxes = lCurrentData.NumberAlongAxes;
+                CurrentSquareGenerator->RecreateBoard();
+
+                // Массив указателей на данные
+                TArray<FSquareComponentData*> lSquareComponentsData;
+                for (auto& lData : lCurrentData.SquareComponentsData)
+                {
+                    lSquareComponentsData.Add(&lData);
+                    /* PS: Перестройка массива на массив указателей где-то да необходим:
+                    * TArray<FSquareComponentData>  -- Необходимо для сохранения данных уровня
+                    * TArray<FSquareComponentData*> -- Результат получения данных из DataTable в ASquareGenerator
+                    * В теории, менее ресурсозатратный:
+                    * Преобразование TArray<FSquareComponentData> в TArray<FSquareComponentData*>
+                    */
+                }
+
+                CurrentSquareGenerator->CreateGeneratedSquareComponents(lSquareComponentsData);
+            }
+            //-------------------------------------------
+
+
+            /* ---   ChessMan Generator Data | ChessMans Data   --- */
+            {
+                // Массив указателей на данные
+                TArray<FChessManData*> lChessMansData;
+                for (auto& lData : lCurrentData.ChessMansData)
+                {
+                    lChessMansData.Add(&lData);
+                    /* PS: Перестройка массива на массив указателей где-то да необходим:
+                    * Ситуация аналогична с lSquareComponentsData
+                    */
+                }
+
+                CurrentChessManGenerator->DeleteAllChessMans();
+                CurrentChessManGenerator->CreateGeneratedChessMans(lChessMansData);
+            }
+            //-------------------------------------------
+
+
+            /* ---   ChessMan Generator Data | Players Data   --- */
+            {
+                // Массив указателей на данные
+                TArray<FPlayerData*> lPlayersData;
+                for (auto& lData : lCurrentData.PlayersData)
+                {
+                    lPlayersData.Add(&lData);
+                    /* PS: Перестройка массива на массив указателей где-то да необходим:
+                    * Ситуация аналогична с lSquareComponentsData
+                    */
+                }
+
+                CurrentChessManGenerator->DeleteAllPlayers();
+                CurrentChessManGenerator->CreateGeneratedPlayers(lPlayersData);
+            }
+            //-------------------------------------------
+        }
+    }
+}
+
+void AChessOperator::SavedDataInit()
+{
+    CurrentGameInstance = Cast<USK_GameInstance>(GetGameInstance());
+
+    if (!CurrentGameInstance)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': CurrentGameInstance is NOT"),
             *GetNameSafe(this));
     }
 }
@@ -503,7 +717,7 @@ void AChessOperator::PlayPrimitiveAI()
     }
 
     //размещаем трупов
-    for (auto corps : *PointerToAllCorpsesPositionIndex)
+    for (auto& corps : *PointerToAllCorpsesPositionIndex)
     {
         auto pos { SKUtils::GameToAI(corps) };
         ChessBoardInfo->SetCellAccessibility(pos.Y, pos.X, false);

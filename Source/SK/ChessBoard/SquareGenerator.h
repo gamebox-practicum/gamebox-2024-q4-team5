@@ -28,6 +28,7 @@ class AChessOperator;
 class ASquare;
 class AStageTrigger;
 class USquareComponent;
+struct FSquareComponentData;
 //--------------------------------------------------------------------------------------
 
 
@@ -71,9 +72,17 @@ public:
 
     /* ---   Re Generate   --- */
 
+    // Тег для определения клетки, созданной генератором
+    FName VerificationTag = FName(GetNameSafe(this));
+
+    //
+
     /** Перегенерировать (перезапустить) данный Генератор */
     UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
     void ReGenerate();
+
+    /** Пересоздать все Клетки */
+    void RecreateBoard();
     //-------------------------------------------
 
 
@@ -91,6 +100,11 @@ public:
     // Тип генерируемого Триггера новой стадии уровня
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
     TSubclassOf<AStageTrigger> StageTriggerType;
+
+    //
+
+    /** Запуск генерации Клеток */
+    void CreateGeneratedSquares();
     //-------------------------------------------
 
 
@@ -119,6 +133,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Square Components",
         meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
     UDataTable* SquareComponentTable = nullptr;
+
+    //
+
+    /** Запуск генерации Компонентов Клеток по данным из Массива */
+    void CreateGeneratedSquareComponents(const TArray<FSquareComponentData*>& SquareComponentsData);
     //-------------------------------------------
 
 
@@ -134,11 +153,6 @@ public:
 private:
 
     /* ---   Re Generate   --- */
-
-    // Тег для определения клетки, созданной генератором
-    FName VerificationTag = FName(GetNameSafe(this));
-
-    //
 
     /** Удалить все клетки */
     void DeleteAllSquares();
@@ -166,9 +180,6 @@ private:
     AChessOperator* CurrentOperator = nullptr;
 
     //
-
-    /** Запуск генерации Клеток */
-    void CreateGeneratedSquares();
 
     /** Создать блок в указанной позиции */
     ASquare* CreateSquare(const FIndex2D& XY);
@@ -214,7 +225,7 @@ private:
 
     /* ---   Square Components   --- */
 
-    /** Запуск генерации Компонентов Клеток */
+    /** Запуск генерации Компонентов Клеток по данным из Таблицы */
     void CreateGeneratedSquareComponents(UDataTable* SquareComponentTable);
     //-------------------------------------------
 };

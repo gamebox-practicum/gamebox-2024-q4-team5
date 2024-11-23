@@ -5,6 +5,7 @@
 
 // UE:
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/Character.h"
 
 // Interaction:
 #include "ChessManGenerator.h"
@@ -43,11 +44,13 @@ AChessMan::AChessMan()
     // Меш Шахматной Фигуры со скелетом
     ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
     ChessmanSkeletalMesh->SetupAttachment(CapsuleComponent);
+    ChessmanSkeletalMesh->SetCustomDepthStencilValue(1);
 
     // Статичный Меш Шахматной Фигуры
     ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
     ChessmanStaticMesh->SetupAttachment(RootComponent);
     ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+    ChessmanStaticMesh->SetCustomDepthStencilValue(1);
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
     CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));
@@ -72,6 +75,7 @@ void AChessMan::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
+    RotationInit();
 }
 
 // Called every frame
@@ -206,10 +210,112 @@ void AChessMan::MovementEnd()
     // Разрешить взаимодействие с данной фигурой
     bIsMovingToNewLocation = false;
 
-    if (GetWorld()->GetFirstPlayerController()->GetPawn())
+    // Поворот в сторону игрока с учётом выбранного типа поворота
+    RotateToFirstPlayer();
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Rotation   --- */
+
+void AChessMan::RotationInit()
+{
+    CurrentFirstPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+}
+
+void AChessMan::RotateToFirstPlayer()
+{
+    if (CurrentFirstPlayer
+        && RotationType != EChessManRotationType::NONE)
     {
-        RotationComponent->RotateToLocation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
+        if (RotationType == EChessManRotationType::ToCharacter)
+        {
+            RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
+        }
+        else
+        {
+            FVector lRotateTo;
+
+            switch (RotationType)
+            {
+            case EChessManRotationType::Knight:
+                lRotateTo = GetClosestToPlayer(
+                    {
+                        FIndex2D { 1, 2 },
+                        FIndex2D { 1, -2 },
+                        FIndex2D { -1, 2 },
+                        FIndex2D { -1, -2 },
+
+                        FIndex2D { 2, 1 },
+                        FIndex2D { 2, -1 },
+                        FIndex2D { -2, 1 },
+                        FIndex2D { -2, -1 },
+                    });
+                break;
+
+            case EChessManRotationType::Bishop:
+                lRotateTo = GetClosestToPlayer(
+                    {
+                        FIndex2D{ 1, 1 },
+                        FIndex2D { 1, -1 },
+                        FIndex2D { -1, -1 },
+                        FIndex2D { -1, 1 }
+                    });
+                break;
+
+            case EChessManRotationType::Rook:
+                lRotateTo = GetClosestToPlayer(
+                    {
+                        FIndex2D{ 1, 0 },
+                        FIndex2D { -1, 0 },
+                        FIndex2D { 0, 1 },
+                        FIndex2D { 0, -1 }
+                    });
+                break;
+
+            case EChessManRotationType::Queen:
+                lRotateTo = GetClosestToPlayer(
+                    {
+                        FIndex2D{ 1, 1 },
+                        FIndex2D { 1, -1 },
+                        FIndex2D { -1, -1 },
+                        FIndex2D { -1, 1 },
+                        FIndex2D{ 1, 0 },
+                        FIndex2D { -1, 0 },
+                        FIndex2D { 0, 1 },
+                        FIndex2D { 0, -1 }
+                    });
+                break;
+            }
+
+            RotationComponent->RotateToLocation(lRotateTo);
+        }
     }
+}
+
+FVector AChessMan::GetClosestToPlayer(const TArray<FIndex2D>& iVariants)
+{
+    FVector lResult = GetActorLocation();
+    FVector lCurrentLocation = lResult;
+    FVector lPlayerLocation = CurrentFirstPlayer->GetActorLocation();
+    FVector lChecked;
+
+    float lDistanceSquared = (lPlayerLocation - lResult).SizeSquared();
+    // PS: SizeSquared() используется для более быстрого счёта
+
+    for (const FIndex2D& lIndex : iVariants)
+    {
+        lChecked = lCurrentLocation + FVector(lIndex.X, lIndex.Y, 0) * 128;
+
+        if (lDistanceSquared > (lPlayerLocation - lChecked).SizeSquared())
+        {
+            lResult = lChecked;
+            lDistanceSquared = (lPlayerLocation - lResult).SizeSquared();
+        }
+    }
+
+    return lResult;
 }
 //--------------------------------------------------------------------------------------
 

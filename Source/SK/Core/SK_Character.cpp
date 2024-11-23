@@ -13,6 +13,7 @@
 #include "SK/Core/SK_GameMode.h"
 #include "SK/ChessBoard/Square.h"
 #include "SK/ChessMans/ChessMan.h"
+#include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessOperators/ChessOperator.h"
 //--------------------------------------------------------------------------------------
 
@@ -65,8 +66,7 @@ void ASK_Character::BeginPlay()
 {
     Super::BeginPlay();
 
-    Cleaning();
-    SubscribeToDelegates();
+    CharacterDataInit();
 }
 
 void ASK_Character::Tick(float DeltaTime)
@@ -87,14 +87,22 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
 
     if (Cast<AChessMan>(OtherActor))
     {
-        if (CurrentOperator)
+        CharacterDeath();
+    }
+}
+
+void ASK_Character::CharacterDataInit()
+{
+    Cleaning();
+    SubscribeToDelegates();
+
+    if (!CurrentPlayerController)
+    {
+        APlayerController* PC = GetWorld()->GetFirstPlayerController();
+        if (PC)
         {
-            CurrentOperator->StopTimer_MovesSequence();
+            PC->Possess(this);
         }
-
-        Destroy();
-
-        Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetLosingGame();
     }
 }
 
@@ -171,6 +179,11 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         && CurrentSquare != ToSquare
         && !bIsMovingToNewLocation)
     {
+        if (CurrentOperator)
+        {
+            CurrentOperator->StopTimer_MovesSequence();
+        }
+
         // Освободить предыдущую клетку и занять новую
         if (CurrentSquare)
             CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
@@ -183,11 +196,6 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
 
         bIsMovingToNewLocation = true;
         bIsMoveAllowed = false;
-
-        if (CurrentOperator)
-        {
-            CurrentOperator->StopTimer_MovesSequence();
-        }
 
         EnableMouse(false);
     }
@@ -260,6 +268,28 @@ void ASK_Character::PlayerMovesSequence(const bool& bIsPlayersMove)
 void ASK_Character::SetPointerToOperator(AChessOperator* iCurrentOperator)
 {
     CurrentOperator = iCurrentOperator;
+}
+
+void ASK_Character::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
+{
+    CurrentChessManGenerator = iGenerator;
+}
+
+void ASK_Character::CharacterDeath()
+{
+    if (CurrentOperator)
+    {
+        CurrentOperator->StopTimer_MovesSequence();
+    }
+
+    if (CurrentChessManGenerator)
+    {
+        CurrentChessManGenerator->RemovePlayer(this);
+    }
+
+    Destroy();
+
+    Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetLosingGame();
 }
 
 void ASK_Character::SubscribeToDelegates()

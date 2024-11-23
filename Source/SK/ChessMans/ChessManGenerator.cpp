@@ -69,9 +69,9 @@ void AChessManGenerator::ReGenerate()
 void AChessManGenerator::DeleteAllPlayers()
 {
     // Удаление всех Фигур Игроков, созданных Генератором
-    for (auto& lPlayers : GetAllActors<ASK_Character>(VerificationTag))
+    for (auto& lPlayer : GetAllActors<ASK_Character>(VerificationTag))
     {
-        lPlayers->Destroy();
+        lPlayer->Destroy();
     }
 
     // Очистка массивов
@@ -81,9 +81,9 @@ void AChessManGenerator::DeleteAllPlayers()
 void AChessManGenerator::DeleteAllChessMans()
 {
     // Удаление всех Шахматных фигур, созданных Генератором
-    for (auto& lSquare : GetAllActors<AChessMan>(VerificationTag))
+    for (auto& lChessMan : GetAllActors<AChessMan>(VerificationTag))
     {
-        lSquare->Destroy();
+        lChessMan->Destroy();
     }
 
     // Очистка массивов
@@ -183,6 +183,35 @@ void AChessManGenerator::CreateGeneratedDealerHand()
 
 /* ---   Generator | Players   --- */
 
+void AChessManGenerator::CreateGeneratedPlayers(const TArray<FPlayerData*>& iPlayersData)
+{
+    // Создать Шахматную фигуру согласно данным
+    for (auto& lData : iPlayersData)
+    {
+        if (AllPlayers.Num() <= EAutoReceiveInput::Player7)
+        {
+            // Создание Персонажа
+            ASK_Character* lNewPlayer = CreateFigureOnChessboard<ASK_Character>(lData->Type, lData->Position);
+
+            if (lNewPlayer)
+            {
+                lNewPlayer->SetPointerToOperator(CurrentOperator);
+                lNewPlayer->SetCurrentChessManGenerator(this);
+
+                // Добавление в массив Игроков
+                AllPlayers.Add(lNewPlayer);
+
+                // Автоподхват Игрока
+                lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
+
+                lNewPlayer->CharacterDataInit();
+            }
+        }
+
+        // Warning: Требуется проверка клетки на доступность (свободна ли она)
+    }
+}
+
 void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 {
     if (iPlayersTable)
@@ -196,28 +225,7 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
         // Получить массив данных из DataTable
         iPlayersTable->GetAllRows<FPlayerData>(lContext, lPlayersData);
 
-        // Создать Шахматную фигуру согласно данным
-        for (auto& lData : lPlayersData)
-        {
-            if (AllPlayers.Num() <= EAutoReceiveInput::Player7)
-            {
-                // Создание Персонажа
-                ASK_Character* lNewPlayer = CreateFigureOnChessboard<ASK_Character>(lData->Type, lData->Position);
-
-                if (lNewPlayer)
-                {
-                    lNewPlayer->SetPointerToOperator(CurrentOperator);
-
-                    // Добавление в массив Игроков
-                    AllPlayers.Add(lNewPlayer);
-
-                    // Автоподхват Игрока
-                    lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
-                }
-            }
-
-            // Warning: Требуется проверка клетки на доступность (свободна ли она)
-        }
+        CreateGeneratedPlayers(lPlayersData);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -225,6 +233,35 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 
 
 /* ---   Generator | ChessMan   --- */
+
+void AChessManGenerator::CreateGeneratedChessMans(const TArray<FChessManData*>& iChessMansData)
+{
+    // Создать Шахматную фигуру согласно данным
+    for (auto& lData : iChessMansData)
+    {
+        // Создание Вражеской фигуры
+        AChessMan* lNewChessMan = CreateFigureOnChessboard<AChessMan>(ChessManType[uint8(lData->Type)], lData->Position);
+
+        if (lNewChessMan)
+        {
+            lNewChessMan->CurrentData = *lData;
+            lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
+            lNewChessMan->SetCurrentChessManGenerator(this);
+            lNewChessMan->SetPointerToOperator(CurrentOperator);
+            lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
+            lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
+
+            AllChessMans.Add(lNewChessMan);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("'%s': lNewChessMan is InValid: '%s'"),
+                *GetNameSafe(this), *GetNameSafe(lNewChessMan));
+        }
+
+        // Warning: Требуется проверка клетки на доступность (свободна ли она)
+    }
+}
 
 void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
 {
@@ -239,31 +276,7 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
         // Получить массив данных из DataTable
         iChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
 
-        // Создать Шахматную фигуру согласно данным
-        for (auto& lData : lChessManData)
-        {
-            // Создание Вражеской фигуры
-            AChessMan* lNewChessMan = CreateFigureOnChessboard<AChessMan>(ChessManType[uint8(lData->Type)], lData->Position);
-
-            if (lNewChessMan)
-            {
-                lNewChessMan->CurrentData = *lData;
-                lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
-                lNewChessMan->SetCurrentChessManGenerator(this);
-                lNewChessMan->SetPointerToOperator(CurrentOperator);
-                lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
-                lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
-
-                AllChessMans.Add(lNewChessMan);
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("'%s': lNewChessMan is InValid: '%s'"),
-                    *GetNameSafe(this), *GetNameSafe(lNewChessMan));
-            }
-
-            // Warning: Требуется проверка клетки на доступность (свободна ли она)
-        }
+        CreateGeneratedChessMans(lChessManData);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -297,9 +310,15 @@ TArray<FAttackingChessMansData>* AChessManGenerator::GetPointerToAttackingChessM
     return &AttackingChessMans;
 }
 
-void AChessManGenerator::RemoveChessMan(AChessMan* ChessMan)
+void AChessManGenerator::RemovePlayer(ASK_Character* iPlayer)
 {
-    AllChessMans.RemoveSwap(ChessMan);
+    AllPlayers.Remove(iPlayer);
+}
+
+void AChessManGenerator::RemoveChessMan(AChessMan* iChessMan)
+{
+    AllAvailableChessMan.RemoveSwap(iChessMan);
+    AllChessMans.RemoveSwap(iChessMan);
 }
 
 void AChessManGenerator::UpdateAllAvailableChessMan()

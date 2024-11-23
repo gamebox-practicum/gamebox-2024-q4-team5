@@ -21,8 +21,9 @@
 class UCameraComponent;
 
 // Interaction:
-class ASquare;
 class AChessOperator;
+class AChessManGenerator;
+class ASquare;
 class ASK_PlayerController;
 //--------------------------------------------------------------------------------------
 
@@ -93,6 +94,9 @@ public:
 
     /**	Событие, когда этот субъект перекрывается с другим */
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+    /** Инициализация данных */
+    void CharacterDataInit();
     //-------------------------------------------
 
 
@@ -134,11 +138,18 @@ public:
 
     /* ---   Player Moves Sequence   --- */
 
+    /** Контроль передачи хода игроку */
     UFUNCTION()
     void PlayerMovesSequence(const bool& bIsPlayersMove);
 
     /** Установить указатель на текущий Оператор */
     void SetPointerToOperator(AChessOperator* CurrentOperator);
+
+    /** Записать Указатель на "родительский" Генератор Шахматных фигур */
+    void SetCurrentChessManGenerator(AChessManGenerator* Generator);
+
+    /** Запустить метод смерти ГГ */
+    void CharacterDeath();
     //-------------------------------------------
 
 
@@ -147,7 +158,7 @@ private:
 
     /* ---   Base   --- */
 
-    /* Очистка от неиспользуемых компонентов */
+    /** Очистка от неиспользуемых компонентов */
     void Cleaning();
     //-------------------------------------------
 
@@ -206,6 +217,11 @@ private:
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AChessOperator* CurrentOperator = nullptr;
+
+    // Указатель на "родительский" Генератор Шахматных фигур
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    AChessManGenerator* CurrentChessManGenerator = nullptr;
 
     //
 
