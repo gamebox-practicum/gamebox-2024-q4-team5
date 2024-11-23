@@ -429,6 +429,8 @@ void AChessOperator::ToNextStage()
 
         // Проверка атаки на игрока
         PlayingAttackSound();
+
+        OnNextStage();
     }
     else
     {

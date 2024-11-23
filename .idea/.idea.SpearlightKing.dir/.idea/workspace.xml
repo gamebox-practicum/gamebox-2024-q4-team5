@@ -9,20 +9,14 @@
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_enemy_moved.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_enemy_moved.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_game_start.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_game_start.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_gg_death_music.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_gg_death_music.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_gg_step.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_gg_step.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_map_open.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_map_open.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_torch_dies.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_torch_dies.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_ChessOperator_Base.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_ChessOperator_Base.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_DealerHand.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/ChessOperators/BP_DealerHand.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_Character.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_Character.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_GameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/Core/Game/BP_GameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/Utils/BP_ActorRepeatSound.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/Utils/BP_ActorRepeatSound.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SK/Blueprints/TimeBeacons/BP_TimeBeacon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Blueprints/TimeBeacons/BP_TimeBeacon.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/SK/Maps/Test.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Maps/Test.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Core/SK_Character.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Core/SK_Character.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Core/SK_Character.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Core/SK_Character.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -351,4 +351,7 @@ private:
 public:
     UFUNCTION(BlueprintImplementableEvent)
     void OnKingAttacked();
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnNextStage();
 };
