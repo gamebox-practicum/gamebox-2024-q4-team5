@@ -66,8 +66,7 @@ void ASK_Character::BeginPlay()
 {
     Super::BeginPlay();
 
-    Cleaning();
-    SubscribeToDelegates();
+    CharacterDataInit();
 }
 
 void ASK_Character::Tick(float DeltaTime)
@@ -89,6 +88,21 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
     if (Cast<AChessMan>(OtherActor))
     {
         CharacterDeath();
+    }
+}
+
+void ASK_Character::CharacterDataInit()
+{
+    Cleaning();
+    SubscribeToDelegates();
+
+    if (!CurrentPlayerController)
+    {
+        APlayerController* PC = GetWorld()->GetFirstPlayerController();
+        if (PC)
+        {
+            PC->Possess(this);
+        }
     }
 }
 

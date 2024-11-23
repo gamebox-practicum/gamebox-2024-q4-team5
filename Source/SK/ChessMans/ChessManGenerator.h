@@ -72,9 +72,20 @@ public:
 
     /* ---   Re Generate   --- */
 
+    // Тег для определения Шахматных фигур, созданной генератором
+    FName VerificationTag = FName(GetNameSafe(this));
+
+    //
+
     /** Перегенерировать (перезапустить) данный Генератор */
     UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
     void ReGenerate();
+
+    /** Удалить все Фигуры игроков */
+    void DeleteAllPlayers();
+
+    /** Удалить все Шахматные фигуры */
+    void DeleteAllChessMans();
     //-------------------------------------------
 
 
@@ -94,6 +105,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator",
         meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
     UDataTable* PlayersTable;
+
+    //
+
+    /** Запуск генерации Фигур игроков по данным из Массива */
+    void CreateGeneratedPlayers(const TArray<FPlayerData*>& PlayersData);
     //-------------------------------------------
 
 
@@ -112,6 +128,11 @@ public:
     UPROPERTY(EditAnywhere, Category = "Settings|Generator",
         meta = (ArraySizeEnum = "EChessManType"))
     TSubclassOf<AChessMan> ChessManType[EChessManType::NONE];
+
+    //
+
+    /** Запуск генерации Шахматных фигур по данным из Массива */
+    void CreateGeneratedChessMans(const TArray<FChessManData*>& ChessMansData);
     //-------------------------------------------
 
 
@@ -161,17 +182,6 @@ private:
 
     /* ---   Re Generate   --- */
 
-    // Тег для определения Шахматных фигур, созданной генератором
-    FName VerificationTag = FName(GetNameSafe(this));
-
-    //
-
-    /** Удалить все Фигуры игроков */
-    void DeleteAllPlayers();
-
-    /** Удалить все Шахматные фигуры */
-    void DeleteAllChessMans();
-
     template<class T>
     T* CreateFigureOnChessboard(const TSubclassOf<AActor>& Type, const FIndex2D& XY);
     //-------------------------------------------
@@ -195,7 +205,7 @@ private:
 
     /* ---   Generator | Players   --- */
 
-    /** Запуск генерации Фигур игроков */
+    /** Запуск генерации Фигур игроков по данным из Таблицы */
     void CreateGeneratedPlayers(UDataTable* PlayersTable);
     //-------------------------------------------
 
@@ -203,7 +213,7 @@ private:
 
     /* ---   Generator | ChessMan   --- */
 
-    /** Запуск генерации Шахматных фигур */
+    /** Запуск генерации Шахматных фигур по данным из Таблицы */
     void CreateGeneratedChessMans(UDataTable* ChessMansTable);
     //-------------------------------------------
 

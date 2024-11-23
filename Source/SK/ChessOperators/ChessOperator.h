@@ -11,6 +11,7 @@
 
 // Structs:
 #include "SK/ChessBoard/SquareStruct.h"
+#include "SK/Core/SK_GameInstance.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 #include "ChessOperatorStruct.h"
 
@@ -99,34 +100,22 @@ public:
 
     /* ---   Generators | Square Generator   --- */
 
+    // Указатель на текущий Генератор Клеток
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
+    ASquareGenerator* CurrentSquareGenerator;
+
     // Количество клеток доски вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
-
-    // Таблица данных местоположения Компонентов Клетки
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator",
-        meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
-    UDataTable* SquareComponentTable;
-    //-------------------------------------------
-
-
-
-    /* ---   Generators | ChessMan Generator   --- */
-
-    // Таблица данных местоположения Игроков
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
-        meta = (RequiredAssetDataTags = "RowStructure=PlayerData"))
-    UDataTable* PlayersTable;
-
-    // Таблица данных местоположения Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator",
-        meta = (RequiredAssetDataTags = "RowStructure=ChessManData"))
-    UDataTable* ChessMansTable;
     //-------------------------------------------
 
 
 
     /* ---   Generators | Time Beacon Generator   --- */
+
+    // Указатель на текущий Генератор Шахматных фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Time Beacon Generator")
+    ATimeBeaconGenerator* CurrentTimeBeaconGenerator;
 
     // Тип Маяка времени (Колонны)
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generators|Time Beacon Generator")
@@ -136,6 +125,12 @@ public:
 
 
     /* ---   Generators | ChessMan Generator   --- */
+
+    // Указатель на текущий Генератор Шахматных фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator")
+    AChessManGenerator* CurrentChessManGenerator;
+
+    //
 
     /** Обновить данные текущего Генератора Шахматных фигур */
     void UpdateCurrentTimeBeaconGenerator(const FVector& BlockSize);
@@ -184,6 +179,19 @@ public:
 
 
 
+    /* ---   Level Saving   --- */
+
+    /** Сохранить данные уровня */
+    UFUNCTION(BlueprintCallable, Category = "Level Saving")
+    void SaveLevelData() const;
+
+    /** Выгрузить сохранённых данных уровня */
+    //UFUNCTION(BlueprintCallable, Category = "Level Saving")
+    void UploadLevelData();
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Delegate   --- */
@@ -225,13 +233,6 @@ private:
 
     /* ---   Generators | Square Generator   --- */
 
-    // Указатель на текущий Генератор Клеток
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
-        meta = (AllowPrivateAccess = true))
-    ASquareGenerator* CurrentSquareGenerator;
-
-    //
-
     /** Проверка указателя на текущий Генератор Клеток */
     void UpdateCurrentSquareGenerator();
 
@@ -246,13 +247,6 @@ private:
 
     /* ---   Generators | ChessMan Generator   --- */
 
-    // Указатель на текущий Генератор Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
-        meta = (AllowPrivateAccess = true))
-    AChessManGenerator* CurrentChessManGenerator;
-
-    //
-
     /** Обновить данные текущего Генератора Шахматных фигур */
     void UpdateCurrentChessManGenerator();
 
@@ -266,13 +260,6 @@ private:
 
 
     /* ---   Generators | Time Beacon Generator   --- */
-
-    // Указатель на текущий Генератор Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Check",
-        meta = (AllowPrivateAccess = true))
-    ATimeBeaconGenerator* CurrentTimeBeaconGenerator;
-
-    //
 
     /** Проверка и получение указателя на текущий Генератор Шахматных фигур */
     ATimeBeaconGenerator* GetCurrentTimeBeaconGenerator();
@@ -336,6 +323,18 @@ private:
     void TimerAction_PlayersMove() const;
     //-------------------------------------------
 
+
+
+    /* ---   Level Saving   --- */
+
+    // Текущий GameInstance
+    USK_GameInstance* CurrentGameInstance = nullptr;
+
+    //
+
+    /** Предварительная инициализация данных для сохранения */
+    void SavedDataInit();
+    //-------------------------------------------
 
 
 

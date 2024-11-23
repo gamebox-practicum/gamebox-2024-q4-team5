@@ -87,6 +87,12 @@ void ADealerHand::MoveToBase()
     MovementComponent->OnCompletedMove.Clear();
     MovementComponent->OnApproach.Clear();
     MovementComponent->MoveToLocation(CurrentChessManGenerator->GetActorLocation());
+
+    if (GetActorRotation() != FRotator::ZeroRotator
+        && GetActorLocation() == CurrentChessManGenerator->GetActorLocation())
+    {
+        SetActorRotation(FRotator::ZeroRotator);
+    }
 }
 
 void ADealerHand::GrabWithHand()
