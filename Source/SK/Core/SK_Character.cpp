@@ -1,4 +1,4 @@
-// 
+//
 
 // Base:
 #include "SK_Character.h"
@@ -205,6 +205,8 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         UE_LOG(LogTemp, Error, TEXT("'%s': ToSquare is NOT"),
             *GetNameSafe(this));
     }
+
+    OnMove();
 }
 
 FIndex2D ASK_Character::GetCurrentPosition() const

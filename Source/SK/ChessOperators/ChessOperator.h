@@ -347,4 +347,8 @@ private:
 
     //для запрета вызова рассчета хода если не рассчитался предыдущий
     bool StepIsCalculatedNow = false;
+
+public:
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnKingAttacked();
 };

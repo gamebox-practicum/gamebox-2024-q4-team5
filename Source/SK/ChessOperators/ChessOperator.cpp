@@ -780,6 +780,15 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
         return;
     }
 
+    //вызывается ивент, если белый король на прицеле
+    if (AllPlayers->Num() > 0)
+    {
+        if((*AllPlayers)[0]->GetCurrentPosition() == FIndex2D{newPosition.X, newPosition.Y})
+        {
+            OnKingAttacked();
+        }
+    }
+
     // Переместить выбранную фигуру на выбранную клетку
     ASquare* target = PointerToAllSquares->
         GetByIndex(FIndex2D { newPosition.X, newPosition.Y });

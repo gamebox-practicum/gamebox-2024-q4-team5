@@ -1,4 +1,4 @@
-// 
+//
 
 #pragma once
 
@@ -139,6 +139,9 @@ public:
 
     // Переместиться к указанной клетке
     void MoveToSquare(ASquare* ToSquare);
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnMove();
 
     // Получить текущую позицию на Шахматной доске
     FIndex2D GetCurrentPosition() const;
