@@ -409,7 +409,7 @@ void AChessOperator::TimerAction_PlayersMove() const
 
 void AChessOperator::ToNextStage()
 {
-    bSkipOperatorTurn = true;
+    //bSkipOperatorTurn = true;
 
     ++CurrentStageNum;
 
