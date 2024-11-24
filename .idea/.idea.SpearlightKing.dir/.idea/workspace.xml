@@ -8,12 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_MasterButton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_MasterButton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Pause.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Pause.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Settings.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LawnMoverGame/Blueprints/UI/Menu/W_Settings.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_menu_button_v1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SK/Assets/Sounds/Sound/event/event_menu_button_v1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/ChessOperators/ChessOperator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/UChessPieceInfo.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

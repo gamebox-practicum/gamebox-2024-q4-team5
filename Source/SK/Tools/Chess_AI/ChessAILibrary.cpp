@@ -106,6 +106,11 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
 
     for (auto figure : AttackingFigures)
     {
+        if(figure->IsDead)
+        {
+            continue;
+        }
+
         //ugly on application ending check
         if(!IsValid(figure) || !IsValid(ChessBoardInfo))
         {
@@ -162,7 +167,7 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
 
     if(Step.AttackedPiece)
     {
-        std::_Erase_remove(DefensiveFigures, Step.AttackedPiece);
+        Step.AttackedPiece->IsDead = true;
     }
 }
 
@@ -185,7 +190,7 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
     if(IsValid(Step.AttackedPiece))
     {
         ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, Step.AttackedPiece);
-        DefensiveFigures.push_back(Step.AttackedPiece);
+        Step.AttackedPiece->IsDead = false;
     }
 }
 
