@@ -70,7 +70,7 @@ void ADealerHand::MoveToLocation(const FVector& Point)
     {
         MovementComponent->bControlSpeedAtStart = false;
     }
-    
+
     MovementComponent->OnApproach.AddDynamic(this, &ADealerHand::GrabWithHand);
     MovementComponent->MoveToLocation(Point);
 }
@@ -88,15 +88,17 @@ void ADealerHand::MoveToBase()
     MovementComponent->OnApproach.Clear();
     MovementComponent->MoveToLocation(CurrentChessManGenerator->GetActorLocation());
 
-    if (GetActorRotation() != FRotator::ZeroRotator
-        && GetActorLocation() == CurrentChessManGenerator->GetActorLocation())
-    {
-        SetActorRotation(FRotator::ZeroRotator);
-    }
+    MovementComponent->OnCompletedMove.AddDynamic(this, &ADealerHand::ResetRotation);
 }
 
 void ADealerHand::GrabWithHand()
 {
     OnGrabWithHand.Broadcast();
+}
+
+void ADealerHand::ResetRotation()
+{
+    SetActorRotation(FRotator::ZeroRotator);
+    MovementComponent->OnCompletedMove.Clear();
 }
 //--------------------------------------------------------------------------------------

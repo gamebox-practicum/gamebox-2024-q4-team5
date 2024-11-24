@@ -195,6 +195,7 @@ void AChessManGenerator::CreateGeneratedPlayers(const TArray<FPlayerData*>& iPla
 
             if (lNewPlayer)
             {
+                // Добавление данных для игрока
                 lNewPlayer->SetPointerToOperator(CurrentOperator);
                 lNewPlayer->SetCurrentChessManGenerator(this);
                 lNewPlayer->CurrentPosition = lData->Position;
@@ -202,16 +203,31 @@ void AChessManGenerator::CreateGeneratedPlayers(const TArray<FPlayerData*>& iPla
 
                 // Добавление в массив Игроков
                 AllPlayers.Add(lNewPlayer);
-
-                // Автоподхват Игрока
                 lNewPlayer->AutoPossessPlayer = EAutoReceiveInput::Type(uint8(AllPlayers.Num()));
 
-                lNewPlayer->CharacterDataInit();
+                // Автоподхват Игрока
+                lNewPlayer->Initialize();
             }
         }
 
         // Warning: Требуется проверка клетки на доступность (свободна ли она)
     }
+}
+
+ASK_Character* AChessManGenerator::GetFirstPlayer()
+{
+    ASK_Character* lResult = nullptr;
+
+    for (ASK_Character* Player : AllPlayers)
+    {
+        if (Player)
+        {
+            lResult = Player;
+            break;
+        }
+    }
+
+    return lResult;
 }
 
 void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
@@ -254,6 +270,8 @@ void AChessManGenerator::CreateGeneratedChessMans(const TArray<FChessManData*>& 
             lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
 
             AllChessMans.Add(lNewChessMan);
+
+            lNewChessMan->Initialize();
         }
         else
         {

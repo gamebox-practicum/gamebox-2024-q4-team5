@@ -126,5 +126,9 @@ private:
     /** Событие: Захватить рукой */
     UFUNCTION()
     void GrabWithHand();
+
+    /** Событие: Сбросить ротацию */
+    UFUNCTION()
+    void ResetRotation();
     //-------------------------------------------
 };

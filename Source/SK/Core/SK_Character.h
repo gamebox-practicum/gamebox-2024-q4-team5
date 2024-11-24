@@ -99,7 +99,7 @@ public:
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
     /** Инициализация данных */
-    void CharacterDataInit();
+    void Initialize();
     //-------------------------------------------
 
 
@@ -216,7 +216,7 @@ private:
     void MovementForTick(const float& DeltaTime);
 
     /**	Управление мышью */
-    void EnableMouse(bool bEnabled);
+    void EnableMouse(const bool& bEnabled);
     //-------------------------------------------
 
 
