@@ -153,6 +153,22 @@ public:
     // Смещение локации для создаваемого Актора
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation")
     FVector ActorLocationOffset = FVector::ZeroVector;
+
+    // Созданный Актор
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation",
+        meta = (AllowPrivateAccess = true))
+    AActor* CreatedActor = nullptr;
+
+    //
+
+    /** Событие при завершении создания Актора */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Base",
+        meta = (DisplayName = "On Actor Creation"))
+    void EventOnActorCreation();
+
+    /** Получить информацию о типе текущей клетки (чёрная/белая) */
+    UFUNCTION(BlueprintCallable, Category = "Settings|Type")
+    int32 GetCurrentSquareType() const;
     //-------------------------------------------
 
 
@@ -214,13 +230,6 @@ private:
 
 
     /* ---   Actor Creation   --- */
-
-    // Созданный Актор
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
-        meta = (AllowPrivateAccess = true))
-    AActor* CreatedActor = nullptr;
-
-    //
 
     /** Создать Актор над текущей Клеткой */
     void CreateActorOverSquare();

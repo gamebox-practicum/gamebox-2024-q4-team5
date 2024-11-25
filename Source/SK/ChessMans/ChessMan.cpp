@@ -110,7 +110,12 @@ void AChessMan::Initialize()
     RotationInit();
     SubscribeToDelegates();
 
-    // По завершении создания и инициализации, повернуть в сторону игрока
+    /* ---   По завершении создания и инициализации:   --- */
+
+    // Задействовать событие завершении Инициализации
+    EventOnInitializeComplete();
+
+    // Повернуть в сторону игрока
     RotateToFirstPlayer();
 }
 //--------------------------------------------------------------------------------------
@@ -154,15 +159,31 @@ void AChessMan::NotifyActorOnClicked(FKey ButtonReleased)
 
 
 
-/* ---   Movement   --- */
+/* ---   Type   --- */
 
-// Warning: Предварительный вариант.
-// В будущем планируется переделать в имитацию "переноса" рукой "Дилера"
+int32 AChessMan::GetCurrentSquareType() const
+{
+    if (CurrentSquare)
+    {
+        return CurrentSquare->GetMaterialType();
+    }
+    return -1;
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Movement   --- */
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
-    if (!bIsMovingToNewLocation && ToSquare)
+    if (ToSquare)
     {
+        if (ToSquare->GetData().WarringPartiesType == EWarringPartiesType::White)
+        {
+            RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
+        }
+
         bIsMovingToNewLocation = true;
 
         SetCurrentSquare(ToSquare);

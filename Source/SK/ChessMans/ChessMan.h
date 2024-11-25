@@ -108,6 +108,11 @@ public:
 
     /** Инициализация всех данных */
     void Initialize();
+
+    /** Событие при завершении инициализации */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Base",
+        meta = (DisplayName = "On Initialize Complete"))
+    void EventOnInitializeComplete();
     //-------------------------------------------
 
 
@@ -131,6 +136,12 @@ public:
     // Текущая информация о данной Фигуре
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Type")
     FChessManData CurrentData;
+
+    //
+
+    /** Получить информацию о типе текущей клетки (чёрная/белая) */
+    UFUNCTION(BlueprintCallable, Category = "Settings|Type")
+    int32 GetCurrentSquareType() const;
     //-------------------------------------------
 
 
@@ -237,8 +248,6 @@ private:
 
     /** Получение ближайшей к игроку локации */
     FVector GetClosestToPlayer(const TArray<FIndex2D>& Variants);
-
-
     //-------------------------------------------
 
 

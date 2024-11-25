@@ -14,6 +14,9 @@
 
 /* ---   Delegates   --- */
 
+// Делегат: При Готовности захватывать рукой
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReadyToGrabWithHand);
+
 // Делегат: При Захвате рукой
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGrabWithHand);
 
@@ -40,6 +43,10 @@ class SK_API ADealerHand : public APawn
 public:
 
     /* ---   Delegates   --- */
+
+    // Делегат: При Захвате рукой
+    UPROPERTY(BlueprintAssignable)
+    FOnReadyToGrabWithHand OnReadyToGrabWithHand;
 
     // Делегат: При Захвате рукой
     UPROPERTY(BlueprintAssignable)
@@ -122,6 +129,10 @@ private:
     bool bOriginalMeaning_ControlSpeedAtStart = false;
 
     //
+
+    /** Событие: Захватить рукой */
+    UFUNCTION()
+    void ReadyToGrabWithHand();
 
     /** Событие: Захватить рукой */
     UFUNCTION()

@@ -84,6 +84,11 @@ public:
     // Материал клетки: Тип B
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
     UMaterialInterface* BlockMaterialsB;
+
+    //
+
+    /** Получить номер типа материала */
+    int32 GetMaterialType() const;
     //-------------------------------------------
 
 
@@ -122,6 +127,6 @@ private:
     //
 
     /** Установка материала по номеру */
-    void UpdateMaterialByType(int32& NumType);
+    void UpdateMaterialByType(const int32& NumType);
     //-------------------------------------------
 };

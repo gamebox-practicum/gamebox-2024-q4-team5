@@ -100,7 +100,7 @@ void ASquare::NotifyActorOnClicked(FKey ButtonReleased)
 
 /* ---   Generator   --- */
 
-void ASquare::UpdateMaterialByType(int32& iNumType)
+void ASquare::UpdateMaterialByType(const int32& iNumType)
 {
     if (BlockMesh)
     {
@@ -122,6 +122,21 @@ void ASquare::UpdateMaterialByType(int32& iNumType)
 
 
 /* ---   Data   --- */
+
+int32 ASquare::GetMaterialType() const
+{
+    int32 oNumType = 0;
+
+    if (BlockMesh)
+    {
+        if (BlockMesh->GetMaterial(0) == BlockMaterialsB)
+        {
+            oNumType = 1;
+        }
+    }
+
+    return oNumType;
+}
 
 void ASquare::SetData(const FSquareData& iData)
 {
