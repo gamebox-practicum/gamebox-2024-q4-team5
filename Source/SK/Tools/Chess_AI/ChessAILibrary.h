@@ -7,6 +7,7 @@
 #include "UChessPieceInfo.h"
 #include "FChessPieceStep.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "SK/Core/SK_GameMode.h"
 #include "ChessAILibrary.generated.h"
 
 
@@ -15,6 +16,8 @@ UDELEGATE()
 /**
  *
  */
+
+
 UCLASS()
 class SK_API UChessAILibrary : public UBlueprintFunctionLibrary
 {
@@ -36,6 +39,9 @@ public:
     static void GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth,
         const FOnStepCalculatedSignature& OnProcessRequestComplete);
 
+    static constexpr int LastLineBonus = 0;
+
+    static constexpr int MaxFiguresInterval = 100;
     ///Utils---------------
 
 private:
@@ -46,9 +52,8 @@ private:
         int depth,
         float& TotalScore);
 
-    static constexpr float DepthCoefficient = 0.999f;
 
-    static constexpr int LastLineBonus = 100;
+    static constexpr float DepthCoefficient = 0.999f;
 
     static void DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardInfo,
     std::vector<UChessPieceInfo*>& DefensiveFigures);

@@ -106,10 +106,6 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
 
     for (auto figure : AttackingFigures)
     {
-        if(figure->IsDead)
-        {
-            continue;
-        }
 
         //ugly on application ending check
         if(!IsValid(figure) || !IsValid(ChessBoardInfo))
@@ -119,16 +115,32 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
             return Result;
         }
 
+        if(figure->IsDead)
+        {
+            continue;
+        }
+
+
         auto steps{*((figure->GetLegalMoves(ChessBoardInfo)).get())};
         for (auto step : steps)
         {
+
+            //черные фигуры "не хотят" наступать на клетки,
+            //которые позади игрока более чем на UChessAILibrary::MaxFiguresInterval
+            if(figure->Color == PIECE_COLOR::BLACK &&
+                IsValid(DefensiveFigures[0]) &&
+                (DefensiveFigures[0]->CurrentCell.Y - step.NewPosition.Y) > UChessAILibrary::MaxFiguresInterval )
+            {
+                continue;
+            }
+
             float currentScore = step.GetStepScore();
 
             if(figure->Color == PIECE_COLOR::WHITE)
             {
                 if(step.NewPosition.Y >= ChessBoardInfo->GetSizeY() - 2)
                 {
-                    currentScore += LastLineBonus;
+                    currentScore += UChessAILibrary::LastLineBonus;
                 }
             }
 
