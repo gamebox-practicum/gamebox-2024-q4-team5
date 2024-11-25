@@ -150,6 +150,15 @@ void USquareComponent::ReactionToEndOverlap(
 
 /* ---   Actor Creation   --- */
 
+int32 USquareComponent::GetCurrentSquareType() const
+{
+    if (CurrentSquare)
+    {
+        return CurrentSquare->GetMaterialType();
+    }
+    return -1;
+}
+
 void USquareComponent::CreateActorOverSquare()
 {
     if (bCreatesActor)
@@ -166,6 +175,8 @@ void USquareComponent::CreateActorOverSquare()
                     CreatedActorType.Get(),
                     CurrentSquare->GetActorLocation(),
                     FRotator::ZeroRotator);
+
+                EventOnActorCreation();
             }
         }
         else if (!CurrentSquare)
