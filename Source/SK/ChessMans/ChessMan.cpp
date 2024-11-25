@@ -133,10 +133,13 @@ void AChessMan::NotifyActorBeginCursorOver()
         return;
     }
 
-    if (ChessmanSkeletalMesh)
-        ChessmanSkeletalMesh->SetRenderCustomDepth(true);
-    if (ChessmanStaticMesh)
-        ChessmanStaticMesh->SetRenderCustomDepth(true);
+    if (!bIsDead)
+    {
+        if (ChessmanSkeletalMesh)
+            ChessmanSkeletalMesh->SetRenderCustomDepth(true);
+        if (ChessmanStaticMesh)
+            ChessmanStaticMesh->SetRenderCustomDepth(true);
+    }
 }
 
 void AChessMan::NotifyActorEndCursorOver()
@@ -385,12 +388,14 @@ void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 
 void AChessMan::ChessManDeath()
 {
-    if (!bIsMovingToNewLocation)
+    if (!bIsMovingToNewLocation && !bIsDead)
     {
         if (CurrentChessManGenerator)
         {
             CurrentChessManGenerator->RemoveChessMan(this);
         }
+
+        CurrentSquare->OccupySquare(EWarringPartiesType::Corpse);
 
         for (auto& lSquareComponent : SquareComponentsTypes)
         {
@@ -403,7 +408,21 @@ void AChessMan::ChessManDeath()
                     false));
         }
 
-        Destroy();
+        bIsDead = true;
+
+        if (ChessmanSkeletalMesh)
+            ChessmanSkeletalMesh->SetRenderCustomDepth(false);
+        if (ChessmanStaticMesh)
+            ChessmanStaticMesh->SetRenderCustomDepth(false);
+
+        UnsubscribeToDelegates();
+
+        OnDeath.Broadcast();
     }
+}
+
+void AChessMan::UnsubscribeToDelegates()
+{
+    CurrentOperator->OnPlayersMove.RemoveAll(this);
 }
 //--------------------------------------------------------------------------------------

@@ -15,6 +15,14 @@
 
 
 
+/* ---   Delegates   --- */
+
+// Делегат: При Смерти фигуры
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+// ----------------------------------------------------------------------------------------------------
+
+
+
 /* ---   Pre-declaration of classes and structures   --- */
 
 // UE:
@@ -42,6 +50,15 @@ class SK_API AChessMan : public APawn
     GENERATED_BODY()
 
 public:
+
+    /* ---   Delegates   --- */
+
+    // Делегат: При Смерти фигуры
+    UPROPERTY(BlueprintAssignable)
+    FOnDeath OnDeath;
+    //-------------------------------------------
+
+
 
     /* ---   Constructors   --- */
 
@@ -259,9 +276,15 @@ private:
         meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator = nullptr;
 
+    // Флаг контроля действий при смерти данной Шахматной фигуры
+    bool bIsDead = false;
+
     //
 
     /** Смерть шахматной фигуры */
     void ChessManDeath();
+
+    /** Отписаться от делегатов */
+    void UnsubscribeToDelegates();
     //-------------------------------------------
 };
