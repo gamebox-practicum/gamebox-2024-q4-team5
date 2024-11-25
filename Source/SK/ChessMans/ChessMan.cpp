@@ -13,6 +13,7 @@
 #include "SK/ChessBoard/SquareComponent.h"
 #include "SK/ChessOperators/ChessOperator.h"
 #include "SK/ChessOperators/DealerHand.h"
+#include "SK/Core/SK_Character.h"
 
 // Tools:
 #include "SK/Tools/ActorComponents/ActorMovementComponent.h"
@@ -75,7 +76,6 @@ void AChessMan::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
-    RotationInit();
 }
 
 // Called every frame
@@ -103,6 +103,15 @@ void AChessMan::Cleaning()
     {
         ChessmanStaticMesh->DestroyComponent();
     }
+}
+
+void AChessMan::Initialize()
+{
+    RotationInit();
+    SubscribeToDelegates();
+
+    // По завершении создания и инициализации, повернуть в сторону игрока
+    RotateToFirstPlayer();
 }
 //--------------------------------------------------------------------------------------
 
@@ -210,7 +219,7 @@ void AChessMan::MovementEnd()
     // Разрешить взаимодействие с данной фигурой
     bIsMovingToNewLocation = false;
 
-    // Поворот в сторону игрока с учётом выбранного типа поворота
+    // Повернуть фигуру в сторону игрока
     RotateToFirstPlayer();
 }
 //--------------------------------------------------------------------------------------
@@ -219,77 +228,102 @@ void AChessMan::MovementEnd()
 
 /* ---   Rotation   --- */
 
-void AChessMan::RotationInit()
+void AChessMan::SubscribeToDelegates()
 {
-    CurrentFirstPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+    if (CurrentOperator)
+    {
+        // Поворот в сторону игрока с учётом выбранного типа поворота
+        CurrentOperator->OnPlayersMove.AddUObject(this, &AChessMan::RotateToFirstPlayer);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
+            *GetNameSafe(this));
+    }
 }
 
-void AChessMan::RotateToFirstPlayer()
+void AChessMan::RotationInit()
 {
-    if (CurrentFirstPlayer
-        && RotationType != EChessManRotationType::NONE)
+    if (!CurrentFirstPlayer)
     {
-        if (RotationType == EChessManRotationType::ToCharacter)
-        {
-            RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
-        }
-        else
-        {
-            FVector lRotateTo;
+        CurrentFirstPlayer = CurrentChessManGenerator->GetFirstPlayer();
+    }
 
-            switch (RotationType)
+    if (!CurrentFirstPlayer)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': CurrentFirstPlayer is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+void AChessMan::RotateToFirstPlayer(const bool& bIsPlayersMove)
+{
+    if (!bIsPlayersMove && RotationType != EChessManRotationType::NONE)
+    {
+        if (CurrentFirstPlayer)
+        {
+            if (RotationType == EChessManRotationType::ToCharacter)
             {
-            case EChessManRotationType::Knight:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D { 1, 2 },
-                        FIndex2D { 1, -2 },
-                        FIndex2D { -1, 2 },
-                        FIndex2D { -1, -2 },
-
-                        FIndex2D { 2, 1 },
-                        FIndex2D { 2, -1 },
-                        FIndex2D { -2, 1 },
-                        FIndex2D { -2, -1 },
-                    });
-                break;
-
-            case EChessManRotationType::Bishop:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 1 },
-                        FIndex2D { 1, -1 },
-                        FIndex2D { -1, -1 },
-                        FIndex2D { -1, 1 }
-                    });
-                break;
-
-            case EChessManRotationType::Rook:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 0 },
-                        FIndex2D { -1, 0 },
-                        FIndex2D { 0, 1 },
-                        FIndex2D { 0, -1 }
-                    });
-                break;
-
-            case EChessManRotationType::Queen:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 1 },
-                        FIndex2D { 1, -1 },
-                        FIndex2D { -1, -1 },
-                        FIndex2D { -1, 1 },
-                        FIndex2D{ 1, 0 },
-                        FIndex2D { -1, 0 },
-                        FIndex2D { 0, 1 },
-                        FIndex2D { 0, -1 }
-                    });
-                break;
+                RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
             }
+            else
+            {
+                FVector lRotateTo;
 
-            RotationComponent->RotateToLocation(lRotateTo);
+                switch (RotationType)
+                {
+                case EChessManRotationType::Knight:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D { 1, 2 },
+                            FIndex2D { 1, -2 },
+                            FIndex2D { -1, 2 },
+                            FIndex2D { -1, -2 },
+
+                            FIndex2D { 2, 1 },
+                            FIndex2D { 2, -1 },
+                            FIndex2D { -2, 1 },
+                            FIndex2D { -2, -1 },
+                        });
+                    break;
+
+                case EChessManRotationType::Bishop:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 1 },
+                            FIndex2D { 1, -1 },
+                            FIndex2D { -1, -1 },
+                            FIndex2D { -1, 1 }
+                        });
+                    break;
+
+                case EChessManRotationType::Rook:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 0 },
+                            FIndex2D { -1, 0 },
+                            FIndex2D { 0, 1 },
+                            FIndex2D { 0, -1 }
+                        });
+                    break;
+
+                case EChessManRotationType::Queen:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 1 },
+                            FIndex2D { 1, -1 },
+                            FIndex2D { -1, -1 },
+                            FIndex2D { -1, 1 },
+                            FIndex2D{ 1, 0 },
+                            FIndex2D { -1, 0 },
+                            FIndex2D { 0, 1 },
+                            FIndex2D { 0, -1 }
+                        });
+                    break;
+                }
+
+                RotationComponent->RotateToLocation(lRotateTo);
+            }
         }
     }
 }

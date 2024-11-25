@@ -7,11 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpearlightKing.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/SK/Tools/Chess_AI/ChessAILibrary.h" afterDir="false" />
-    </list>
+    <list default="true" id="51901acf-6c62-4731-b858-3086e79e54e1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -146,6 +142,7 @@
       <workItem from="1732302661278" duration="1511000" />
       <workItem from="1732305261433" duration="2482000" />
       <workItem from="1732349283298" duration="1849000" />
+      <workItem from="1732442622317" duration="1081000" />
     </task>
     <servers />
   </component>

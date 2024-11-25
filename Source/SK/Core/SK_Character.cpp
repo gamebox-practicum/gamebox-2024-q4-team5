@@ -1,4 +1,4 @@
-// 
+//
 
 // Base:
 #include "SK_Character.h"
@@ -66,7 +66,9 @@ void ASK_Character::BeginPlay()
 {
     Super::BeginPlay();
 
-    CharacterDataInit();
+    Cleaning();
+
+    Initialize();
 }
 
 void ASK_Character::Tick(float DeltaTime)
@@ -91,14 +93,17 @@ void ASK_Character::NotifyActorBeginOverlap(AActor* OtherActor)
     }
 }
 
-void ASK_Character::CharacterDataInit()
+void ASK_Character::Initialize()
 {
-    Cleaning();
     SubscribeToDelegates();
 
-    if (!CurrentPlayerController)
+    // Подтянуть игрока
+    if (!CurrentPlayerController
+        && AutoPossessPlayer != EAutoReceiveInput::Disabled)
     {
-        APlayerController* PC = GetWorld()->GetFirstPlayerController();
+        const int32 PlayerIndex = int32(AutoPossessPlayer.GetValue()) - 1;
+
+        APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
         if (PC)
         {
             PC->Possess(this);
@@ -205,6 +210,8 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         UE_LOG(LogTemp, Error, TEXT("'%s': ToSquare is NOT"),
             *GetNameSafe(this));
     }
+
+    OnMove();
 }
 
 FIndex2D ASK_Character::GetCurrentPosition() const
@@ -238,12 +245,11 @@ void ASK_Character::MovementForTick(const float& lDeltaTime)
     }
 }
 
-void ASK_Character::EnableMouse(bool bEnabled)
+void ASK_Character::EnableMouse(const bool& bEnabled)
 {
     if (CurrentPlayerController)
     {
-        CurrentPlayerController->bEnableClickEvents = bEnabled;
-        CurrentPlayerController->bEnableTouchEvents = bEnabled;
+        CurrentPlayerController->EnableMouseEvents(bEnabled);
     }
 }
 //--------------------------------------------------------------------------------------
@@ -298,6 +304,11 @@ void ASK_Character::SubscribeToDelegates()
     if (CurrentOperator)
     {
         CurrentOperator->OnPlayersMove.AddUObject(this, &ASK_Character::PlayerMovesSequence);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
+            *GetNameSafe(this));
     }
 }
 //--------------------------------------------------------------------------------------

@@ -56,13 +56,13 @@ struct FLevelData
 
     /* ---   ChessMan Generator Data   --- */
 
-    // Массив данных Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<FChessManData> ChessMansData;
-
     // Массив данных Игроков
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<FPlayerData> PlayersData;
+
+    // Массив данных Шахматных фигур
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<FChessManData> ChessMansData;
     //-------------------------------------------
 
 
@@ -93,8 +93,8 @@ __declspec(selectany) const FLevelData FLevelData::Empty
     //-------------------------------------------
 
     /* ---   Square Generator Data   --- */
-    TArray<FChessManData>(), // Массив данных Шахматных фигур
     TArray<FPlayerData>(),   // Массив данных Игроков
+    TArray<FChessManData>(), // Массив данных Шахматных фигур
     //-------------------------------------------
 };
 //--------------------------------------------------------------------------------------

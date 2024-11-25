@@ -278,7 +278,7 @@ private:
 
 
 
-    /* ---   Primitive AI   --- */
+    /* ---   AI   --- */
 
     // Массив из всех Шахматных фигур
     TArray<AChessMan*>* PointerToAllChessMans = nullptr;
@@ -347,4 +347,11 @@ private:
 
     //для запрета вызова рассчета хода если не рассчитался предыдущий
     bool StepIsCalculatedNow = false;
+
+public:
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnKingAttacked();
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnNextStage();
 };

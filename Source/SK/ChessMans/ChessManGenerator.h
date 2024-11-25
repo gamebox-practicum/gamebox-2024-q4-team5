@@ -110,6 +110,9 @@ public:
 
     /** Запуск генерации Фигур игроков по данным из Массива */
     void CreateGeneratedPlayers(const TArray<FPlayerData*>& PlayersData);
+
+    /** Получить первого игрока из списка */
+    ASK_Character* GetFirstPlayer();
     //-------------------------------------------
 
 

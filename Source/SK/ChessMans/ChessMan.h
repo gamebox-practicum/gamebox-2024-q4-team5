@@ -25,6 +25,7 @@ class AChessManGenerator;
 class AChessOperator;
 class ADealerHand;
 class ACharacter;
+class ASK_Character;
 class ASquare;
 class USquareComponent;
 
@@ -104,6 +105,9 @@ public:
 
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+    /** Инициализация всех данных */
+    void Initialize();
     //-------------------------------------------
 
 
@@ -216,18 +220,25 @@ private:
     /* ---   Rotation   --- */
 
     // Указатель на игрока, в сторону которого происходит поворот
-    ACharacter* CurrentFirstPlayer = nullptr;
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ASK_Character* CurrentFirstPlayer = nullptr;
 
     //
 
-    // Инициализация данных для Ротации
+    /**	Подписаться на делегаты */
+    void SubscribeToDelegates();
+
+    /** Инициализация данных для Ротации */
     void RotationInit();
 
-    // Поворот в сторону игрока с учётом выбранного типа поворота
-    void RotateToFirstPlayer();
+    /** Поворот в сторону игрока с учётом выбранного типа поворота */
+    void RotateToFirstPlayer(const bool& bIsPlayersMove = false);
 
-    // Получение ближайшей к игроку локации
+    /** Получение ближайшей к игроку локации */
     FVector GetClosestToPlayer(const TArray<FIndex2D>& Variants);
+
+
     //-------------------------------------------
 
 
