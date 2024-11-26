@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Interaction:
 #include "SK_PlayerController.h"
@@ -76,6 +77,7 @@ void ASK_Character::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     MovementForTick(DeltaTime);
+    RotateToChessManForTick(DeltaTime);
 }
 
 void ASK_Character::PossessedBy(AController* NewController)
@@ -162,14 +164,20 @@ void ASK_Character::MoveRight(float Value)
 
 void ASK_Character::TurnAtRate(float Rate)
 {
-    // Вычисление дельты для текущего кадра на основе информации о скорости
-    AddControllerYawInput(Rate * BaseTurnRate);
+    if (!bPlayerControlLock)
+    {
+        // Вычисление дельты для текущего кадра на основе информации о скорости
+        AddControllerYawInput(Rate * BaseTurnRate);
+    }
 }
 
 void ASK_Character::LookUpAtRate(float Rate)
 {
-    // Вычисление дельты для текущего кадра на основе информации о скорости
-    AddControllerPitchInput(-Rate * BaseLookUpRate);
+    if (!bPlayerControlLock)
+    {
+        // Вычисление дельты для текущего кадра на основе информации о скорости
+        AddControllerPitchInput(-Rate * BaseLookUpRate);
+    }
 }
 //--------------------------------------------------------------------------------------
 
@@ -309,6 +317,34 @@ void ASK_Character::SubscribeToDelegates()
     {
         UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
             *GetNameSafe(this));
+    }
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Rotation   --- */
+
+void ASK_Character::RotateToChessMan(AChessMan* bIsPlayersMove)
+{
+    if (bIsPlayersMove)
+    {
+        ChessManForRotation = bIsPlayersMove;
+
+        bPlayerControlLock = true;
+    }
+}
+
+void ASK_Character::RotateToChessManForTick(const float& lDeltaTime)
+{
+    if (bPlayerControlLock)
+    {
+        FRotator lViewRotation = CurrentPlayerController->GetControlRotation();
+        FRotator lEndRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ChessManForRotation->GetActorLocation());
+
+        FRotator lResult = UKismetMathLibrary::RInterpTo(lViewRotation, lEndRotation, lDeltaTime, 1.f);
+
+        CurrentPlayerController->SetControlRotation(lResult);
     }
 }
 //--------------------------------------------------------------------------------------

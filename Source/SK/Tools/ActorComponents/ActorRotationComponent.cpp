@@ -80,10 +80,6 @@ void UActorRotationComponent::RotateToLocation(const FVector& iPoint)
         StartRotation = CurrentActor->GetActorRotation().Yaw;
         EndRotation = UKismetMathLibrary::FindLookAtRotation(CurrentActor->GetActorLocation(), iPoint).Yaw;
         bIsRotatedToNewRotation = true;
-
-        //UE_LOG(LogTemp, Error, TEXT("'%s': EndRotation = %f"),
-        //    *GetNameSafe(this), EndRotation);
-
     }
 }
 
