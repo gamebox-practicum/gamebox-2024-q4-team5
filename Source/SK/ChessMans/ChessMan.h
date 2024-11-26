@@ -172,17 +172,34 @@ public:
 
     /* ---   Movement   --- */
 
+    // Игнорировать тип Клетки
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    bool bOnlyToUp = false;
+
+    // Высота подъёма при перемещении
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    float LiftingHeight = 200.f;
+
+    // Расстояние смены варианта хода на вариант хода сверху
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    FIndex2D DistanceToUp = FIndex2D(2);
+
+    //
+
     /** Переместиться к указанной Клетке */
     void MoveToSquare(ASquare* ToSquare);
 
     /** Установить указатель на новую Клетку */
-    void SetCurrentSquare(ASquare* ToSquare);
+    void SetCurrentSquare(ASquare* NewSquare);
 
     /** Установить указатель на текущий Оператор */
     void SetPointerToOperator(AChessOperator* CurrentOperator);
 
     /** Установить указатель на текущую Руку Дилера */
     void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+
+    /* Проверка и изменение типа перемещения */
+    void CheckMovementType(ASquare* NewSquare);
     //-------------------------------------------
 
 
@@ -229,6 +246,9 @@ private:
     // Флаг контроля при перемещении Актора
     bool bIsMovingToNewLocation = false;
 
+    // Флаг типа перемещения
+    bool bMovementTypeToUp = false;
+
     // Указатель на текущего Оператора
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
@@ -248,6 +268,14 @@ private:
     /** Событие при завершении перемещения */
     UFUNCTION()
     void MovementEnd();
+
+    /** Событие при завершении перемещения вверх */
+    UFUNCTION()
+    void MovementEnd_Up();
+
+    /** Запуск перемещения на клетку */
+    UFUNCTION()
+    void MovementEnd_ToSquare();
     //-------------------------------------------
 
 

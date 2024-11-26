@@ -83,6 +83,10 @@ public:
 
     /* ---   ChessMan Rotate   --- */
 
+    // Флаг контроля вращения
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Rotation")
+    bool bIsRotatedToNewRotation = false;
+
     // Максимальная скорость вращения
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Rotation|Speed")
     float MaxSpeed = 100.f;
@@ -130,9 +134,6 @@ private:
 
 
     /* ---   ChessMan Rotate   --- */
-
-    // Флаг контроля вращения
-    bool bIsRotatedToNewRotation = false;
 
     // Стартовая ротация (начало) вращения
     float StartRotation;
