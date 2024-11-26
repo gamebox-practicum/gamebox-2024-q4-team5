@@ -409,8 +409,6 @@ void AChessOperator::TimerAction_PlayersMove() const
 
 void AChessOperator::ToNextStage()
 {
-    //bSkipOperatorTurn = true;
-
     ++CurrentStageNum;
 
     // Проверка выигрышного этапа
@@ -434,6 +432,9 @@ void AChessOperator::ToNextStage()
     }
     else
     {
+        // Блокировать ход Вражеских фигур, чтобы в конце игры не убивали ГГ
+        bSkipOperatorTurn = true;
+
         // Если этапы закончились, то заверщить игру с победой
         Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetWinningGame();
     }
@@ -516,20 +517,6 @@ void AChessOperator::SaveLevelData() const
         //-------------------------------------------
 
 
-        /* ---   ChessMan Generator Data | ChessMans Data   --- */
-        {
-            TArray<FChessManData> lChessMansData;
-
-            for (AChessMan*& lChessMan : CurrentChessManGenerator->GetAllActors<AChessMan>(CurrentChessManGenerator->VerificationTag))
-            {
-                lChessMansData.Add(lChessMan->CurrentData);
-            }
-
-            lCurrentData.ChessMansData = lChessMansData;
-        }
-        //-------------------------------------------
-
-
         /* ---   ChessMan Generator Data | Players Data   --- */
         {
             TArray<FPlayerData> lPlayersData;
@@ -543,6 +530,20 @@ void AChessOperator::SaveLevelData() const
             }
 
             lCurrentData.PlayersData = lPlayersData;
+        }
+        //-------------------------------------------
+
+
+        /* ---   ChessMan Generator Data | ChessMans Data   --- */
+        {
+            TArray<FChessManData> lChessMansData;
+
+            for (AChessMan*& lChessMan : CurrentChessManGenerator->GetAllActors<AChessMan>(CurrentChessManGenerator->VerificationTag))
+            {
+                lChessMansData.Add(lChessMan->CurrentData);
+            }
+
+            lCurrentData.ChessMansData = lChessMansData;
         }
         //-------------------------------------------
 
@@ -592,24 +593,6 @@ void AChessOperator::UploadLevelData()
             //-------------------------------------------
 
 
-            /* ---   ChessMan Generator Data | ChessMans Data   --- */
-            {
-                // Массив указателей на данные
-                TArray<FChessManData*> lChessMansData;
-                for (auto& lData : lCurrentData.ChessMansData)
-                {
-                    lChessMansData.Add(&lData);
-                    /* PS: Перестройка массива на массив указателей где-то да необходим:
-                    * Ситуация аналогична с lSquareComponentsData
-                    */
-                }
-
-                CurrentChessManGenerator->DeleteAllChessMans();
-                CurrentChessManGenerator->CreateGeneratedChessMans(lChessMansData);
-            }
-            //-------------------------------------------
-
-
             /* ---   ChessMan Generator Data | Players Data   --- */
             {
                 // Массив указателей на данные
@@ -624,6 +607,24 @@ void AChessOperator::UploadLevelData()
 
                 CurrentChessManGenerator->DeleteAllPlayers();
                 CurrentChessManGenerator->CreateGeneratedPlayers(lPlayersData);
+            }
+            //-------------------------------------------
+
+
+            /* ---   ChessMan Generator Data | ChessMans Data   --- */
+            {
+                // Массив указателей на данные
+                TArray<FChessManData*> lChessMansData;
+                for (auto& lData : lCurrentData.ChessMansData)
+                {
+                    lChessMansData.Add(&lData);
+                    /* PS: Перестройка массива на массив указателей где-то да необходим:
+                    * Ситуация аналогична с lSquareComponentsData
+                    */
+                }
+
+                CurrentChessManGenerator->DeleteAllChessMans();
+                CurrentChessManGenerator->CreateGeneratedChessMans(lChessMansData);
             }
             //-------------------------------------------
         }
@@ -644,7 +645,7 @@ void AChessOperator::SavedDataInit()
 
 
 
-/* ---   Primitive AI   --- */
+/* ---   AI   --- */
 
 void AChessOperator::PrimitiveAI_Init()
 {
@@ -785,7 +786,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     //вызывается ивент, если белый король на прицеле
     if (AllPlayers->Num() > 0)
     {
-        if((*AllPlayers)[0]->GetCurrentPosition() == FIndex2D{newPosition.X, newPosition.Y})
+        if ((*AllPlayers)[0]->GetCurrentPosition() == FIndex2D { newPosition.X, newPosition.Y })
         {
             OnKingAttacked();
         }

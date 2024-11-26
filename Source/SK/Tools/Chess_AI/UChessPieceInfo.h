@@ -40,6 +40,9 @@ public:
 
     virtual FString GetLogView();
 
+    //service variable for UChessAILibrary::GetBestStep
+    bool IsDead = false;
+
 protected:
     void PushStepIfValid(UChessBoardInfo* ChessBoardInfo, FCellIndex Target,
     std::vector<FChessPieceStep>* Result);

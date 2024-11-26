@@ -13,6 +13,7 @@
 #include "SK/ChessBoard/SquareComponent.h"
 #include "SK/ChessOperators/ChessOperator.h"
 #include "SK/ChessOperators/DealerHand.h"
+#include "SK/Core/SK_Character.h"
 
 // Tools:
 #include "SK/Tools/ActorComponents/ActorMovementComponent.h"
@@ -54,7 +55,7 @@ AChessMan::AChessMan()
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
     CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));
-    CapturePoint->SetupAttachment(ChessmanSkeletalMesh, FName(TEXT("Custom_CaptureSocket")));
+    CapturePoint->SetupAttachment(RootComponent);
 
     // Компонент перемещения данного Актора
     MovementComponent = CreateDefaultSubobject<UActorMovementComponent>(TEXT("Movement Component"));
@@ -75,7 +76,6 @@ void AChessMan::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
-    RotationInit();
 }
 
 // Called every frame
@@ -104,6 +104,20 @@ void AChessMan::Cleaning()
         ChessmanStaticMesh->DestroyComponent();
     }
 }
+
+void AChessMan::Initialize()
+{
+    RotationInit();
+    SubscribeToDelegates();
+
+    /* ---   По завершении создания и инициализации:   --- */
+
+    // Задействовать событие завершении Инициализации
+    EventOnInitializeComplete();
+
+    // Повернуть в сторону игрока
+    RotateToFirstPlayer();
+}
 //--------------------------------------------------------------------------------------
 
 
@@ -119,10 +133,13 @@ void AChessMan::NotifyActorBeginCursorOver()
         return;
     }
 
-    if (ChessmanSkeletalMesh)
-        ChessmanSkeletalMesh->SetRenderCustomDepth(true);
-    if (ChessmanStaticMesh)
-        ChessmanStaticMesh->SetRenderCustomDepth(true);
+    if (!bIsDead)
+    {
+        if (ChessmanSkeletalMesh)
+            ChessmanSkeletalMesh->SetRenderCustomDepth(true);
+        if (ChessmanStaticMesh)
+            ChessmanStaticMesh->SetRenderCustomDepth(true);
+    }
 }
 
 void AChessMan::NotifyActorEndCursorOver()
@@ -145,16 +162,35 @@ void AChessMan::NotifyActorOnClicked(FKey ButtonReleased)
 
 
 
-/* ---   Movement   --- */
+/* ---   Type   --- */
 
-// Warning: Предварительный вариант.
-// В будущем планируется переделать в имитацию "переноса" рукой "Дилера"
+int32 AChessMan::GetCurrentSquareType() const
+{
+    if (CurrentSquare)
+    {
+        return CurrentSquare->GetMaterialType();
+    }
+    return -1;
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Movement   --- */
 
 void AChessMan::MoveToSquare(ASquare* ToSquare)
 {
-    if (!bIsMovingToNewLocation && ToSquare)
+    if (ToSquare)
     {
+        if (ToSquare->GetData().WarringPartiesType == EWarringPartiesType::White)
+        {
+            RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
+            OnEatingChessman.Broadcast();
+        }
+
         bIsMovingToNewLocation = true;
+
+        CheckMovementType(ToSquare);
 
         SetCurrentSquare(ToSquare);
 
@@ -167,14 +203,14 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
     }
 }
 
-void AChessMan::SetCurrentSquare(ASquare* ToSquare)
+void AChessMan::SetCurrentSquare(ASquare* NewSquare)
 {
     // Освободить предыдущую клетку и занять новую
     if (CurrentSquare)
         CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
-    ToSquare->OccupySquare(EWarringPartiesType::Black);
+    NewSquare->OccupySquare(EWarringPartiesType::Black);
 
-    CurrentSquare = ToSquare;
+    CurrentSquare = NewSquare;
 }
 
 void AChessMan::SetPointerToOperator(AChessOperator* iCurrentOperator)
@@ -187,14 +223,39 @@ void AChessMan::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
     CurrentDealerHand = iCurrentDealerHand;
 }
 
+void AChessMan::CheckMovementType(ASquare* NewSquare)
+{
+    FSquareData lNewSquareData = NewSquare->GetData();
+
+    if (bOnlyToUp
+        || (CurrentSquare->GetData().PositionNumber.Distance(lNewSquareData.PositionNumber) <= DistanceToUp
+            && lNewSquareData.WarringPartiesType == EWarringPartiesType::White))
+    {
+        bMovementTypeToUp = true;
+    }
+    else
+    {
+        bMovementTypeToUp = false;
+    }
+}
+
 void AChessMan::DealerHandMovementEnd()
 {
     // Привязка данной Руки Дилера к компоненту Точки Захвата
     CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::KeepWorldTransform);
 
+    CurrentDealerHand->bIsDragging = !bMovementTypeToUp;
+
     // Запуск перемещения Фигуры
-    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
-    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
+    if (bMovementTypeToUp)
+    {
+        MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd_Up);
+        MovementComponent->MoveToLocation(GetActorLocation() + FVector(0.f, 0.f, LiftingHeight));
+    }
+    else
+    {
+        MovementEnd_ToSquare();
+    }
 }
 
 void AChessMan::MovementEnd()
@@ -204,14 +265,28 @@ void AChessMan::MovementEnd()
     CurrentDealerHand->MoveToBase();
 
     // Завершить перемещение и передать ход игроку
-    MovementComponent->OnCompletedMove.Clear();
+    MovementComponent->OnCompletedMove.RemoveAll(this);
     CurrentOperator->OnPlayersMove.Broadcast(true);
 
     // Разрешить взаимодействие с данной фигурой
     bIsMovingToNewLocation = false;
 
-    // Поворот в сторону игрока с учётом выбранного типа поворота
+    // Повернуть фигуру в сторону игрока
     RotateToFirstPlayer();
+}
+
+void AChessMan::MovementEnd_Up()
+{
+    MovementComponent->OnCompletedMove.RemoveAll(this);
+    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd_ToSquare);
+    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation() + FVector(0.f, 0.f, LiftingHeight));
+}
+
+void AChessMan::MovementEnd_ToSquare()
+{
+    MovementComponent->OnCompletedMove.RemoveAll(this);
+    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
+    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
 }
 //--------------------------------------------------------------------------------------
 
@@ -219,77 +294,102 @@ void AChessMan::MovementEnd()
 
 /* ---   Rotation   --- */
 
-void AChessMan::RotationInit()
+void AChessMan::SubscribeToDelegates()
 {
-    CurrentFirstPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+    if (CurrentOperator)
+    {
+        // Поворот в сторону игрока с учётом выбранного типа поворота
+        CurrentOperator->OnPlayersMove.AddUObject(this, &AChessMan::RotateToFirstPlayer);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
+            *GetNameSafe(this));
+    }
 }
 
-void AChessMan::RotateToFirstPlayer()
+void AChessMan::RotationInit()
 {
-    if (CurrentFirstPlayer
-        && RotationType != EChessManRotationType::NONE)
+    if (!CurrentFirstPlayer)
     {
-        if (RotationType == EChessManRotationType::ToCharacter)
-        {
-            RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
-        }
-        else
-        {
-            FVector lRotateTo;
+        CurrentFirstPlayer = CurrentChessManGenerator->GetFirstPlayer();
+    }
 
-            switch (RotationType)
+    if (!CurrentFirstPlayer)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s': CurrentFirstPlayer is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+void AChessMan::RotateToFirstPlayer(const bool& bIsPlayersMove)
+{
+    if (!bIsPlayersMove && RotationType != EChessManRotationType::NONE)
+    {
+        if (CurrentFirstPlayer)
+        {
+            if (RotationType == EChessManRotationType::ToCharacter)
             {
-            case EChessManRotationType::Knight:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D { 1, 2 },
-                        FIndex2D { 1, -2 },
-                        FIndex2D { -1, 2 },
-                        FIndex2D { -1, -2 },
-
-                        FIndex2D { 2, 1 },
-                        FIndex2D { 2, -1 },
-                        FIndex2D { -2, 1 },
-                        FIndex2D { -2, -1 },
-                    });
-                break;
-
-            case EChessManRotationType::Bishop:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 1 },
-                        FIndex2D { 1, -1 },
-                        FIndex2D { -1, -1 },
-                        FIndex2D { -1, 1 }
-                    });
-                break;
-
-            case EChessManRotationType::Rook:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 0 },
-                        FIndex2D { -1, 0 },
-                        FIndex2D { 0, 1 },
-                        FIndex2D { 0, -1 }
-                    });
-                break;
-
-            case EChessManRotationType::Queen:
-                lRotateTo = GetClosestToPlayer(
-                    {
-                        FIndex2D{ 1, 1 },
-                        FIndex2D { 1, -1 },
-                        FIndex2D { -1, -1 },
-                        FIndex2D { -1, 1 },
-                        FIndex2D{ 1, 0 },
-                        FIndex2D { -1, 0 },
-                        FIndex2D { 0, 1 },
-                        FIndex2D { 0, -1 }
-                    });
-                break;
+                RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
             }
+            else
+            {
+                FVector lRotateTo;
 
-            RotationComponent->RotateToLocation(lRotateTo);
+                switch (RotationType)
+                {
+                case EChessManRotationType::Knight:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D { 1, 2 },
+                            FIndex2D { 1, -2 },
+                            FIndex2D { -1, 2 },
+                            FIndex2D { -1, -2 },
+
+                            FIndex2D { 2, 1 },
+                            FIndex2D { 2, -1 },
+                            FIndex2D { -2, 1 },
+                            FIndex2D { -2, -1 },
+                        });
+                    break;
+
+                case EChessManRotationType::Bishop:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 1 },
+                            FIndex2D { 1, -1 },
+                            FIndex2D { -1, -1 },
+                            FIndex2D { -1, 1 }
+                        });
+                    break;
+
+                case EChessManRotationType::Rook:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 0 },
+                            FIndex2D { -1, 0 },
+                            FIndex2D { 0, 1 },
+                            FIndex2D { 0, -1 }
+                        });
+                    break;
+
+                case EChessManRotationType::Queen:
+                    lRotateTo = GetClosestToPlayer(
+                        {
+                            FIndex2D{ 1, 1 },
+                            FIndex2D { 1, -1 },
+                            FIndex2D { -1, -1 },
+                            FIndex2D { -1, 1 },
+                            FIndex2D{ 1, 0 },
+                            FIndex2D { -1, 0 },
+                            FIndex2D { 0, 1 },
+                            FIndex2D { 0, -1 }
+                        });
+                    break;
+                }
+
+                RotationComponent->RotateToLocation(lRotateTo);
+            }
         }
     }
 }
@@ -330,12 +430,14 @@ void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
 
 void AChessMan::ChessManDeath()
 {
-    if (!bIsMovingToNewLocation)
+    if (!bIsMovingToNewLocation && !bIsDead)
     {
         if (CurrentChessManGenerator)
         {
             CurrentChessManGenerator->RemoveChessMan(this);
         }
+
+        CurrentSquare->OccupySquare(EWarringPartiesType::Corpse);
 
         for (auto& lSquareComponent : SquareComponentsTypes)
         {
@@ -348,7 +450,23 @@ void AChessMan::ChessManDeath()
                     false));
         }
 
-        Destroy();
+        bIsDead = true;
+
+        RotationComponent->bIsRotatedToNewRotation = false;
+
+        if (ChessmanSkeletalMesh)
+            ChessmanSkeletalMesh->SetRenderCustomDepth(false);
+        if (ChessmanStaticMesh)
+            ChessmanStaticMesh->SetRenderCustomDepth(false);
+
+        UnsubscribeToDelegates();
+
+        OnDeath.Broadcast();
     }
+}
+
+void AChessMan::UnsubscribeToDelegates()
+{
+    CurrentOperator->OnPlayersMove.RemoveAll(this);
 }
 //--------------------------------------------------------------------------------------

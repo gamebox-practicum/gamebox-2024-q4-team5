@@ -278,7 +278,7 @@ private:
 
 
 
-    /* ---   Primitive AI   --- */
+    /* ---   AI   --- */
 
     // Массив из всех Шахматных фигур
     TArray<AChessMan*>* PointerToAllChessMans = nullptr;

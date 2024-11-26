@@ -54,7 +54,6 @@ public:
 
     UFUNCTION(BlueprintImplementableEvent)
     void OnWindowsGainFocus();
-
 private:
 
     void OnWindowFocusChanged(bool bIsFocused);

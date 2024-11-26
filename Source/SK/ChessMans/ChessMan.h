@@ -15,6 +15,17 @@
 
 
 
+/* ---   Delegates   --- */
+
+// Делегат: При Смерти фигуры
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
+// Делегат: При "Поедании" Шахматной фигуры
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEatingChessman);
+// ----------------------------------------------------------------------------------------------------
+
+
+
 /* ---   Pre-declaration of classes and structures   --- */
 
 // UE:
@@ -25,6 +36,7 @@ class AChessManGenerator;
 class AChessOperator;
 class ADealerHand;
 class ACharacter;
+class ASK_Character;
 class ASquare;
 class USquareComponent;
 
@@ -41,6 +53,19 @@ class SK_API AChessMan : public APawn
     GENERATED_BODY()
 
 public:
+
+    /* ---   Delegates   --- */
+
+    // Делегат: При Смерти фигуры
+    UPROPERTY(BlueprintAssignable)
+    FOnDeath OnDeath;
+
+    // Делегат: При "Поедании" Шахматной фигуры
+    UPROPERTY(BlueprintAssignable)
+    FOnEatingChessman OnEatingChessman;
+    //-------------------------------------------
+
+
 
     /* ---   Constructors   --- */
 
@@ -104,6 +129,14 @@ public:
 
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+    /** Инициализация всех данных */
+    void Initialize();
+
+    /** Событие при завершении инициализации */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Base",
+        meta = (DisplayName = "On Initialize Complete"))
+    void EventOnInitializeComplete();
     //-------------------------------------------
 
 
@@ -127,23 +160,46 @@ public:
     // Текущая информация о данной Фигуре
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Type")
     FChessManData CurrentData;
+
+    //
+
+    /** Получить информацию о типе текущей клетки (чёрная/белая) */
+    UFUNCTION(BlueprintCallable, Category = "Settings|Type")
+    int32 GetCurrentSquareType() const;
     //-------------------------------------------
 
 
 
     /* ---   Movement   --- */
 
+    // Игнорировать тип Клетки
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    bool bOnlyToUp = false;
+
+    // Высота подъёма при перемещении
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    float LiftingHeight = 200.f;
+
+    // Расстояние смены варианта хода на вариант хода сверху
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    FIndex2D DistanceToUp = FIndex2D(2);
+
+    //
+
     /** Переместиться к указанной Клетке */
     void MoveToSquare(ASquare* ToSquare);
 
     /** Установить указатель на новую Клетку */
-    void SetCurrentSquare(ASquare* ToSquare);
+    void SetCurrentSquare(ASquare* NewSquare);
 
     /** Установить указатель на текущий Оператор */
     void SetPointerToOperator(AChessOperator* CurrentOperator);
 
     /** Установить указатель на текущую Руку Дилера */
     void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+
+    /* Проверка и изменение типа перемещения */
+    void CheckMovementType(ASquare* NewSquare);
     //-------------------------------------------
 
 
@@ -190,6 +246,9 @@ private:
     // Флаг контроля при перемещении Актора
     bool bIsMovingToNewLocation = false;
 
+    // Флаг типа перемещения
+    bool bMovementTypeToUp = false;
+
     // Указатель на текущего Оператора
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
@@ -209,6 +268,14 @@ private:
     /** Событие при завершении перемещения */
     UFUNCTION()
     void MovementEnd();
+
+    /** Событие при завершении перемещения вверх */
+    UFUNCTION()
+    void MovementEnd_Up();
+
+    /** Запуск перемещения на клетку */
+    UFUNCTION()
+    void MovementEnd_ToSquare();
     //-------------------------------------------
 
 
@@ -216,17 +283,22 @@ private:
     /* ---   Rotation   --- */
 
     // Указатель на игрока, в сторону которого происходит поворот
-    ACharacter* CurrentFirstPlayer = nullptr;
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ASK_Character* CurrentFirstPlayer = nullptr;
 
     //
 
-    // Инициализация данных для Ротации
+    /**	Подписаться на делегаты */
+    void SubscribeToDelegates();
+
+    /** Инициализация данных для Ротации */
     void RotationInit();
 
-    // Поворот в сторону игрока с учётом выбранного типа поворота
-    void RotateToFirstPlayer();
+    /** Поворот в сторону игрока с учётом выбранного типа поворота */
+    void RotateToFirstPlayer(const bool& bIsPlayersMove = false);
 
-    // Получение ближайшей к игроку локации
+    /** Получение ближайшей к игроку локации */
     FVector GetClosestToPlayer(const TArray<FIndex2D>& Variants);
     //-------------------------------------------
 
@@ -239,9 +311,15 @@ private:
         meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator = nullptr;
 
+    // Флаг контроля действий при смерти данной Шахматной фигуры
+    bool bIsDead = false;
+
     //
 
     /** Смерть шахматной фигуры */
     void ChessManDeath();
+
+    /** Отписаться от делегатов */
+    void UnsubscribeToDelegates();
     //-------------------------------------------
 };

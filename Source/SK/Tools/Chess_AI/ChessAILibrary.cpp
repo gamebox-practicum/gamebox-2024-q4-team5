@@ -106,6 +106,7 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
 
     for (auto figure : AttackingFigures)
     {
+
         //ugly on application ending check
         if(!IsValid(figure) || !IsValid(ChessBoardInfo))
         {
@@ -114,10 +115,34 @@ FChessPieceStep UChessAILibrary::GetBestStep(UChessBoardInfo* ChessBoardInfo,
             return Result;
         }
 
+        if(figure->IsDead)
+        {
+            continue;
+        }
+
+
         auto steps{*((figure->GetLegalMoves(ChessBoardInfo)).get())};
         for (auto step : steps)
         {
+
+            //черные фигуры "не хотят" наступать на клетки,
+            //которые позади игрока более чем на UChessAILibrary::MaxFiguresInterval
+            if(figure->Color == PIECE_COLOR::BLACK &&
+                IsValid(DefensiveFigures[0]) &&
+                (DefensiveFigures[0]->CurrentCell.Y - step.NewPosition.Y) > UChessAILibrary::MaxFiguresInterval )
+            {
+                continue;
+            }
+
             float currentScore = step.GetStepScore();
+
+            if(figure->Color == PIECE_COLOR::WHITE)
+            {
+                if(step.NewPosition.Y >= ChessBoardInfo->GetSizeY() - 2)
+                {
+                    currentScore += UChessAILibrary::LastLineBonus;
+                }
+            }
 
             if(depth > 0)
             {
@@ -162,7 +187,7 @@ void UChessAILibrary::DoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoardIn
 
     if(Step.AttackedPiece)
     {
-        std::_Erase_remove(DefensiveFigures, Step.AttackedPiece);
+        Step.AttackedPiece->IsDead = true;
     }
 }
 
@@ -185,7 +210,7 @@ void UChessAILibrary::UndoStep(FChessPieceStep Step, UChessBoardInfo* ChessBoard
     if(IsValid(Step.AttackedPiece))
     {
         ChessBoardInfo->Set(Step.NewPosition.Y, Step.NewPosition.X, Step.AttackedPiece);
-        DefensiveFigures.push_back(Step.AttackedPiece);
+        Step.AttackedPiece->IsDead = false;
     }
 }
 
