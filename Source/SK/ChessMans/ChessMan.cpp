@@ -55,7 +55,7 @@ AChessMan::AChessMan()
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
     CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));
-    CapturePoint->SetupAttachment(ChessmanSkeletalMesh, FName(TEXT("Custom_CaptureSocket")));
+    CapturePoint->SetupAttachment(RootComponent);
 
     // Компонент перемещения данного Актора
     MovementComponent = CreateDefaultSubobject<UActorMovementComponent>(TEXT("Movement Component"));
@@ -185,6 +185,7 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         if (ToSquare->GetData().WarringPartiesType == EWarringPartiesType::White)
         {
             RotationComponent->RotateToLocation(CurrentFirstPlayer->GetActorLocation());
+            OnEatingChessman.Broadcast();
         }
 
         bIsMovingToNewLocation = true;

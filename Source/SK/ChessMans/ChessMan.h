@@ -19,6 +19,9 @@
 
 // Делегат: При Смерти фигуры
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
+// Делегат: При "Поедании" Шахматной фигуры
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEatingChessman);
 // ----------------------------------------------------------------------------------------------------
 
 
@@ -56,6 +59,10 @@ public:
     // Делегат: При Смерти фигуры
     UPROPERTY(BlueprintAssignable)
     FOnDeath OnDeath;
+
+    // Делегат: При "Поедании" Шахматной фигуры
+    UPROPERTY(BlueprintAssignable)
+    FOnEatingChessman OnEatingChessman;
     //-------------------------------------------
 
 
