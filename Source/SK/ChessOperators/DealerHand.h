@@ -104,6 +104,12 @@ public:
 
     /* ---   Movement   --- */
 
+    // Рука волочет фигуру по доске
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    bool bIsDragging = true;
+
+    //
+
     /** Установить указатель на текущий Генератор Шахматных фигур */
     void SetCurrentChessManGenerator(AChessManGenerator* Generator);
 

@@ -42,6 +42,31 @@ bool FIndex2D::operator!=(const FIndex2D& Second)
 
 
 
+/* ---   Operators | ><   --- */
+
+bool FIndex2D::operator>(const FIndex2D& Second)
+{
+    return X > Second.X && Y > Second.Y;
+}
+
+bool FIndex2D::operator>=(const FIndex2D& Second)
+{
+    return X >= Second.X && Y >= Second.Y;
+}
+
+bool FIndex2D::operator<(const FIndex2D& Second)
+{
+    return X < Second.X && Y < Second.Y;
+}
+
+bool FIndex2D::operator<=(const FIndex2D& Second)
+{
+    return X <= Second.X && Y <= Second.Y;
+}
+//--------------------------------------------------------------------------------------
+
+
+
 /* ---   Operators | +   --- */
 
 const FIndex2D FIndex2D::operator+(const FIndex2D& Second) const
@@ -105,7 +130,12 @@ FIndex2D FIndex2D::operator--(int32)
 bool FIndex2D::Within(const FIndex2D& V) const
 {
     return X > V.X && Y > V.Y;
-};
+}
+
+FIndex2D FIndex2D::Distance(const FIndex2D& V) const
+{
+    return FIndex2D(abs(X - V.X), abs(Y - V.Y));
+}
 //--------------------------------------------------------------------------------------
 
 

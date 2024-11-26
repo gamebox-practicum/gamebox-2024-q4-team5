@@ -44,6 +44,17 @@ struct FIndex2D
 
 
 
+    /* ---   Operators | ><   --- */
+
+    bool operator>(const FIndex2D& Second);
+    bool operator>=(const FIndex2D& Second);
+
+    bool operator<(const FIndex2D& Second);
+    bool operator<=(const FIndex2D& Second);
+    //-------------------------------------------
+
+
+
     /* ---   Operators | +   --- */
 
     const FIndex2D operator+(const FIndex2D& Second) const;
@@ -69,6 +80,9 @@ struct FIndex2D
     // Проверка "Внутри" ли указанная позиция
     // (не выходит ли за количество)
     bool Within(const FIndex2D& V) const;
+
+    // Расстояние между индексами
+    FIndex2D Distance(const FIndex2D& V) const;
     //-------------------------------------------
 };
 

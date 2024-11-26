@@ -190,6 +190,8 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 
         bIsMovingToNewLocation = true;
 
+        CheckMovementType(ToSquare);
+
         SetCurrentSquare(ToSquare);
 
         // Сохранение данных
@@ -201,14 +203,14 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
     }
 }
 
-void AChessMan::SetCurrentSquare(ASquare* ToSquare)
+void AChessMan::SetCurrentSquare(ASquare* NewSquare)
 {
     // Освободить предыдущую клетку и занять новую
     if (CurrentSquare)
         CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
-    ToSquare->OccupySquare(EWarringPartiesType::Black);
+    NewSquare->OccupySquare(EWarringPartiesType::Black);
 
-    CurrentSquare = ToSquare;
+    CurrentSquare = NewSquare;
 }
 
 void AChessMan::SetPointerToOperator(AChessOperator* iCurrentOperator)
@@ -221,14 +223,39 @@ void AChessMan::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
     CurrentDealerHand = iCurrentDealerHand;
 }
 
+void AChessMan::CheckMovementType(ASquare* NewSquare)
+{
+    FSquareData lNewSquareData = NewSquare->GetData();
+
+    if (bOnlyToUp
+        || (CurrentSquare->GetData().PositionNumber.Distance(lNewSquareData.PositionNumber) <= DistanceToUp
+            && lNewSquareData.WarringPartiesType == EWarringPartiesType::White))
+    {
+        bMovementTypeToUp = true;
+    }
+    else
+    {
+        bMovementTypeToUp = false;
+    }
+}
+
 void AChessMan::DealerHandMovementEnd()
 {
     // Привязка данной Руки Дилера к компоненту Точки Захвата
     CurrentDealerHand->AttachToComponent(CapturePoint, FAttachmentTransformRules::KeepWorldTransform);
 
+    CurrentDealerHand->bIsDragging = !bMovementTypeToUp;
+
     // Запуск перемещения Фигуры
-    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
-    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
+    if (bMovementTypeToUp)
+    {
+        MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd_Up);
+        MovementComponent->MoveToLocation(GetActorLocation() + FVector(0.f, 0.f, LiftingHeight));
+    }
+    else
+    {
+        MovementEnd_ToSquare();
+    }
 }
 
 void AChessMan::MovementEnd()
@@ -238,7 +265,7 @@ void AChessMan::MovementEnd()
     CurrentDealerHand->MoveToBase();
 
     // Завершить перемещение и передать ход игроку
-    MovementComponent->OnCompletedMove.Clear();
+    MovementComponent->OnCompletedMove.RemoveAll(this);
     CurrentOperator->OnPlayersMove.Broadcast(true);
 
     // Разрешить взаимодействие с данной фигурой
@@ -246,6 +273,20 @@ void AChessMan::MovementEnd()
 
     // Повернуть фигуру в сторону игрока
     RotateToFirstPlayer();
+}
+
+void AChessMan::MovementEnd_Up()
+{
+    MovementComponent->OnCompletedMove.RemoveAll(this);
+    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd_ToSquare);
+    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation() + FVector(0.f, 0.f, LiftingHeight));
+}
+
+void AChessMan::MovementEnd_ToSquare()
+{
+    MovementComponent->OnCompletedMove.RemoveAll(this);
+    MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::MovementEnd);
+    MovementComponent->MoveToLocation(CurrentSquare->GetActorLocation());
 }
 //--------------------------------------------------------------------------------------
 
@@ -410,6 +451,8 @@ void AChessMan::ChessManDeath()
         }
 
         bIsDead = true;
+
+        RotationComponent->bIsRotatedToNewRotation = false;
 
         if (ChessmanSkeletalMesh)
             ChessmanSkeletalMesh->SetRenderCustomDepth(false);
