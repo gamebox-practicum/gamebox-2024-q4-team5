@@ -237,6 +237,11 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
     {
         bMovementTypeToUp = false;
     }
+
+    if (lNewSquareData.WarringPartiesType == EWarringPartiesType::White)
+    {
+        CurrentFirstPlayer->RotateToChessMan(this);
+    }
 }
 
 void AChessMan::DealerHandMovementEnd()

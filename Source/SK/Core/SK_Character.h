@@ -137,13 +137,13 @@ public:
 
     //
 
-    // Переместиться к указанной клетке
+    /** Переместиться к указанной клетке */
     void MoveToSquare(ASquare* ToSquare);
 
     UFUNCTION(BlueprintImplementableEvent)
     void OnMove();
 
-    // Получить текущую позицию на Шахматной доске
+    /** Получить текущую позицию на Шахматной доске */
     FIndex2D GetCurrentPosition() const;
     //-------------------------------------------
 
@@ -163,6 +163,14 @@ public:
 
     /** Запустить метод смерти ГГ */
     void CharacterDeath();
+    //-------------------------------------------
+
+
+
+    /* ---   Rotation   --- */
+
+    /** Поворот в сторону игрока с учётом выбранного типа поворота */
+    void RotateToChessMan(AChessMan* bIsPlayersMove);
     //-------------------------------------------
 
 
@@ -210,6 +218,9 @@ private:
     // Флаг разрешения хода Игрока
     bool bIsMoveAllowed = true;
 
+    // Флаг блокировки управления игрока
+    bool bPlayerControlLock = false;
+
     //
 
     /**	Расчёт передвижения на каждый кадр */
@@ -237,5 +248,18 @@ private:
 
     /**	Подписаться на делегаты */
     void SubscribeToDelegates();
+    //-------------------------------------------
+
+
+
+    /* ---   Rotation   --- */
+
+    // Шахматная фигура, на которую поворачиваем камеру
+    AChessMan* ChessManForRotation = nullptr;
+
+    //
+
+    /** Поворот в сторону игрока с учётом выбранного типа поворота */
+    void RotateToChessManForTick(const float& lDeltaTime);
     //-------------------------------------------
 };
