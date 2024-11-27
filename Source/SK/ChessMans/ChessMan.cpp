@@ -232,10 +232,12 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
             && lNewSquareData.WarringPartiesType == EWarringPartiesType::White))
     {
         bMovementTypeToUp = true;
+        bIsFigureBeingCrushed = lNewSquareData.WarringPartiesType == EWarringPartiesType::White;
     }
     else
     {
         bMovementTypeToUp = false;
+        bIsFigureBeingCrushed = false;
     }
 
     if (lNewSquareData.WarringPartiesType == EWarringPartiesType::White)
@@ -265,6 +267,11 @@ void AChessMan::DealerHandMovementEnd()
 
 void AChessMan::MovementEnd()
 {
+    if (bMovementTypeToUp)
+    {
+        EventOnSteppingFromAbove(bIsFigureBeingCrushed);
+    }
+
     // Отвязать и отправить на "Базу" Руку Дилера
     CurrentDealerHand->DetachRootComponentFromParent();
     CurrentDealerHand->MoveToBase();

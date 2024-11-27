@@ -227,6 +227,21 @@ public:
 
 
 
+    /* ---   Sounds   --- */
+
+    // Флаг, сигнализирующий о "раздавливании" на белую фигуру
+    bool bIsFigureBeingCrushed = false;
+
+    //
+
+    /** Событие при завершении хода сверху (шага) */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Sounds",
+        meta = (DisplayName = "On Stepping from Above"))
+    void EventOnSteppingFromAbove(bool IsFigureBeingCrushed);
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Base   --- */
