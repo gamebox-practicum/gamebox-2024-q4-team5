@@ -219,7 +219,7 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
             *GetNameSafe(this));
     }
 
-    OnMove();
+    EventOnMove();
 }
 
 FIndex2D ASK_Character::GetCurrentPosition() const
@@ -290,23 +290,6 @@ void ASK_Character::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
     CurrentChessManGenerator = iGenerator;
 }
 
-void ASK_Character::CharacterDeath()
-{
-    if (CurrentOperator)
-    {
-        CurrentOperator->StopTimer_MovesSequence();
-    }
-
-    if (CurrentChessManGenerator)
-    {
-        CurrentChessManGenerator->RemovePlayer(this);
-    }
-
-    Destroy();
-
-    Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetLosingGame();
-}
-
 void ASK_Character::SubscribeToDelegates()
 {
     if (CurrentOperator)
@@ -346,5 +329,26 @@ void ASK_Character::RotateToChessManForTick(const float& lDeltaTime)
 
         CurrentPlayerController->SetControlRotation(lResult);
     }
+}
+//--------------------------------------------------------------------------------------
+
+
+/* ---   Death   --- */
+
+void ASK_Character::CharacterDeath()
+{
+    if (CurrentOperator)
+    {
+        CurrentOperator->StopTimer_MovesSequence();
+    }
+
+    if (CurrentChessManGenerator)
+    {
+        CurrentChessManGenerator->RemovePlayer(this);
+    }
+
+    EventOnDeath();
+
+    Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetLosingGame();
 }
 //--------------------------------------------------------------------------------------

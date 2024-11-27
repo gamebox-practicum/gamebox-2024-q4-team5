@@ -140,8 +140,10 @@ public:
     /** Переместиться к указанной клетке */
     void MoveToSquare(ASquare* ToSquare);
 
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnMove();
+    /** Событие при передвижении персонажа */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Movement",
+        meta = (DisplayName = "On Move"))
+    void EventOnMove();
 
     /** Получить текущую позицию на Шахматной доске */
     FIndex2D GetCurrentPosition() const;
@@ -160,9 +162,6 @@ public:
 
     /** Записать Указатель на "родительский" Генератор Шахматных фигур */
     void SetCurrentChessManGenerator(AChessManGenerator* Generator);
-
-    /** Запустить метод смерти ГГ */
-    void CharacterDeath();
     //-------------------------------------------
 
 
@@ -171,6 +170,19 @@ public:
 
     /** Поворот в сторону игрока с учётом выбранного типа поворота */
     void RotateToChessMan(AChessMan* bIsPlayersMove);
+    //-------------------------------------------
+
+
+
+    /* ---   Death   --- */
+
+    /** Запустить метод смерти ГГ */
+    void CharacterDeath();
+
+    /** Событие при смерти персонажа */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Death",
+        meta = (DisplayName = "On Death"))
+    void EventOnDeath();
     //-------------------------------------------
 
 

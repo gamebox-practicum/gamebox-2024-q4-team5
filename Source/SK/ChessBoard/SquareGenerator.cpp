@@ -103,7 +103,10 @@ void ASquareGenerator::DeleteAllSquareComponents()
         lComponent = Cast<USquareComponent>(lSquare->GetComponentByClass(USquareComponent::StaticClass()));
 
         if (lComponent)
+        {
             lComponent->DestroyComponent();
+            lSquare->OccupySquare(EWarringPartiesType::NONE);
+        }
     }
 }
 
