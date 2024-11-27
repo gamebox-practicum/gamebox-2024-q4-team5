@@ -158,6 +158,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators",
         meta = (RequiredAssetDataTags = "RowStructure=ChessOperatorData"))
     UDataTable* OperatorTable;
+
+    // Номер текущего этапа
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generators",
+        meta = (RequiredAssetDataTags = "RowStructure=ChessOperatorData"))
+    int32 CurrentStageNum = 0;
     //-------------------------------------------
 
 
@@ -212,9 +217,6 @@ private:
 
     // Массив данных конструирования уровня, полученный из Таблицы данных "OperatorTable"
     TArray<FChessOperatorData*> CurrentOperatorData;
-
-    // Номер текущего этапа
-    int32 CurrentStageNum = 0;
 
     //
 
