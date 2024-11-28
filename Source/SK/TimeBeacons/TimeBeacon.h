@@ -42,11 +42,6 @@ public:
         meta = (AllowPrivateAccess = "true"))
     USkeletalMeshComponent* ColumnSkeletalMesh;
 
-    // Статичный Меш Основания Колонны
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    UStaticMeshComponent* BochekStaticMesh;
-
     // Статичный Меш Колонны
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
         meta = (AllowPrivateAccess = "true"))

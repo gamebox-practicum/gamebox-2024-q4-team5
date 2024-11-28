@@ -26,11 +26,6 @@ ATimeBeacon::ATimeBeacon()
     ColumnSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Column Skeletal Mesh"));
     ColumnSkeletalMesh->SetupAttachment(RootComponent);
 
-    // Статичный Меш Основания Колонны
-    BochekStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bochek Static Mesh"));
-    BochekStaticMesh->SetupAttachment(RootComponent);
-    BochekStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-
     // Статичный Меш Колонны
     ColumnStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Column Static Mesh"));
     ColumnStaticMesh->SetupAttachment(RootComponent);
