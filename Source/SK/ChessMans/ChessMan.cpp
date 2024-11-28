@@ -91,6 +91,13 @@ void AChessMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AChessMan::Destroyed()
+{
+    CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+
+    Super::Destroyed();
+}
+
 void AChessMan::Cleaning()
 {
     if (ChessmanSkeletalMesh && !(ChessmanSkeletalMesh->SkeletalMesh))
