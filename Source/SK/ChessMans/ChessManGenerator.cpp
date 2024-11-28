@@ -257,29 +257,7 @@ void AChessManGenerator::CreateGeneratedChessMans(const TArray<FChessManData*>& 
     // Создать Шахматную фигуру согласно данным
     for (auto& lData : iChessMansData)
     {
-        // Создание Вражеской фигуры
-        AChessMan* lNewChessMan = CreateFigureOnChessboard<AChessMan>(ChessManType[uint8(lData->Type)], lData->Position);
-
-        if (lNewChessMan)
-        {
-            lNewChessMan->CurrentData = *lData;
-            lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(lData->Position));
-            lNewChessMan->SetCurrentChessManGenerator(this);
-            lNewChessMan->SetPointerToOperator(CurrentOperator);
-            lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
-            lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
-
-            AllChessMans.Add(lNewChessMan);
-
-            lNewChessMan->Initialize();
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("'%s': lNewChessMan is InValid: '%s'"),
-                *GetNameSafe(this), *GetNameSafe(lNewChessMan));
-        }
-
-        // Warning: Требуется проверка клетки на доступность (свободна ли она)
+        CreateChessMansFromData(*lData);
     }
 }
 
@@ -297,6 +275,31 @@ void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
         iChessMansTable->GetAllRows<FChessManData>(lContext, lChessManData);
 
         CreateGeneratedChessMans(lChessManData);
+    }
+}
+
+void AChessManGenerator::CreateChessMansFromData(const FChessManData& iData)
+{
+    // Создание Вражеской фигуры
+    AChessMan* lNewChessMan = CreateFigureOnChessboard<AChessMan>(ChessManType[uint8(iData.Type)], iData.Position);
+
+    if (lNewChessMan)
+    {
+        lNewChessMan->CurrentData = iData;
+        lNewChessMan->SetCurrentSquare(PointerToAllSquares->GetByIndex(iData.Position));
+        lNewChessMan->SetCurrentChessManGenerator(this);
+        lNewChessMan->SetPointerToOperator(CurrentOperator);
+        lNewChessMan->SetCurrentDealerHand(CurrentDealerHand);
+        lNewChessMan->AddActorWorldRotation(FRotator(0.f, -180.f, 0.f));
+
+        AllChessMans.Add(lNewChessMan);
+
+        lNewChessMan->Initialize();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s': lNewChessMan is InValid: '%s'"),
+            *GetNameSafe(this), *GetNameSafe(lNewChessMan));
     }
 }
 //--------------------------------------------------------------------------------------

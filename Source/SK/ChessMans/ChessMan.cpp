@@ -16,6 +16,7 @@
 #include "SK/Core/SK_Character.h"
 
 // Tools:
+#include "SK/Tools/MyRandom.h"
 #include "SK/Tools/ActorComponents/ActorMovementComponent.h"
 #include "SK/Tools/ActorComponents/ActorRotationComponent.h"
 //--------------------------------------------------------------------------------------
@@ -256,6 +257,29 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
     }
 }
 
+bool AChessMan::PawnTransformation()
+{
+    if (CurrentData.Type == EChessManType::Pawn
+        && CurrentData.Position.X == 0)
+    {
+        CurrentData.Type = EChessManType(GetRandom(3, 1));
+
+        if (CurrentChessManGenerator)
+        {
+            CurrentChessManGenerator->RemoveChessMan(this);
+            CurrentChessManGenerator->CreateChessMansFromData(CurrentData);
+        }
+
+        UnsubscribeToDelegates();
+
+        Destroy();
+
+        return true;
+    }
+
+    return false;
+}
+
 void AChessMan::DealerHandMovementEnd()
 {
     // Привязка данной Руки Дилера к компоненту Точки Захвата
@@ -290,11 +314,14 @@ void AChessMan::MovementEnd()
     MovementComponent->OnCompletedMove.RemoveAll(this);
     CurrentOperator->OnPlayersMove.Broadcast(true);
 
-    // Разрешить взаимодействие с данной фигурой
-    bIsMovingToNewLocation = false;
+    if (!PawnTransformation())
+    {
+        // Разрешить взаимодействие с данной фигурой
+        bIsMovingToNewLocation = false;
 
-    // Повернуть фигуру в сторону игрока
-    RotateToFirstPlayer();
+        // Повернуть фигуру в сторону игрока
+        RotateToFirstPlayer();
+    }
 }
 
 void AChessMan::MovementEnd_Up()
