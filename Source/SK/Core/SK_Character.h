@@ -113,6 +113,13 @@ public:
     // Базовая скорость обзора вверх/вниз в градусах в секунду
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
     float BaseLookUpRate = 1.f;
+
+    //
+
+    /** Событие при атаке (нанесении удара врагу) */
+    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Input Action",
+        meta = (DisplayName = "On Attack"))
+    void EventOnAttack();
     //-------------------------------------------
 
 

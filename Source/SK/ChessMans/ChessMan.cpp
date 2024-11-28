@@ -444,6 +444,11 @@ void AChessMan::ChessManDeath()
 {
     if (!bIsMovingToNewLocation && !bIsDead)
     {
+        if (CurrentFirstPlayer)
+        {
+            CurrentFirstPlayer->EventOnAttack();
+        }
+
         if (CurrentChessManGenerator)
         {
             CurrentChessManGenerator->RemoveChessMan(this);
