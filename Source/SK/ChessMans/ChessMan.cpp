@@ -48,10 +48,10 @@ AChessMan::AChessMan()
     ChessmanSkeletalMesh->SetCustomDepthStencilValue(1);
 
     // Статичный Меш Шахматной Фигуры
-    ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
-    ChessmanStaticMesh->SetupAttachment(RootComponent);
-    ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-    ChessmanStaticMesh->SetCustomDepthStencilValue(1);
+    //ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
+    //ChessmanStaticMesh->SetupAttachment(RootComponent);
+    //ChessmanStaticMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+    //ChessmanStaticMesh->SetCustomDepthStencilValue(1);
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
     CapturePoint = CreateDefaultSubobject<USceneComponent>(TEXT("Capture Point"));
@@ -93,7 +93,10 @@ void AChessMan::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AChessMan::Destroyed()
 {
-    CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+    if (CurrentSquare)
+    {
+        CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+    }
 
     Super::Destroyed();
 }
@@ -106,10 +109,10 @@ void AChessMan::Cleaning()
         CapsuleComponent->DestroyComponent();
     }
 
-    if (ChessmanStaticMesh && !(ChessmanStaticMesh->GetStaticMesh()))
-    {
-        ChessmanStaticMesh->DestroyComponent();
-    }
+    //if (ChessmanStaticMesh && !(ChessmanStaticMesh->GetStaticMesh()))
+    //{
+    //    ChessmanStaticMesh->DestroyComponent();
+    //}
 }
 
 void AChessMan::Initialize()
@@ -144,8 +147,8 @@ void AChessMan::NotifyActorBeginCursorOver()
     {
         if (ChessmanSkeletalMesh)
             ChessmanSkeletalMesh->SetRenderCustomDepth(true);
-        if (ChessmanStaticMesh)
-            ChessmanStaticMesh->SetRenderCustomDepth(true);
+        //if (ChessmanStaticMesh)
+        //    ChessmanStaticMesh->SetRenderCustomDepth(true);
     }
 }
 
@@ -155,8 +158,8 @@ void AChessMan::NotifyActorEndCursorOver()
 
     if (ChessmanSkeletalMesh)
         ChessmanSkeletalMesh->SetRenderCustomDepth(false);
-    if (ChessmanStaticMesh)
-        ChessmanStaticMesh->SetRenderCustomDepth(false);
+    //if (ChessmanStaticMesh)
+    //    ChessmanStaticMesh->SetRenderCustomDepth(false);
 }
 
 void AChessMan::NotifyActorOnClicked(FKey ButtonReleased)
@@ -480,8 +483,8 @@ void AChessMan::ChessManDeath()
 
         if (ChessmanSkeletalMesh)
             ChessmanSkeletalMesh->SetRenderCustomDepth(false);
-        if (ChessmanStaticMesh)
-            ChessmanStaticMesh->SetRenderCustomDepth(false);
+        //if (ChessmanStaticMesh)
+        //    ChessmanStaticMesh->SetRenderCustomDepth(false);
 
         UnsubscribeToDelegates();
 

@@ -88,9 +88,9 @@ public:
     USkeletalMeshComponent* ChessmanSkeletalMesh;
 
     // Статичный Меш Шахматной Фигуры
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    UStaticMeshComponent* ChessmanStaticMesh;
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    //    meta = (AllowPrivateAccess = "true"))
+    //UStaticMeshComponent* ChessmanStaticMesh;
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,

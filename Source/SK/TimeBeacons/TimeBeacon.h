@@ -38,9 +38,9 @@ public:
     /* ---   Components   --- */
 
     // Меш Колонны со скелетом
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    USkeletalMeshComponent* ColumnSkeletalMesh;
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    //    meta = (AllowPrivateAccess = "true"))
+    //USkeletalMeshComponent* ColumnSkeletalMesh;
 
     // Статичный Меш Колонны
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,

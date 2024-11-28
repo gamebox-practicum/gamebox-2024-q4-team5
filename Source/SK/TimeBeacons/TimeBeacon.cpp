@@ -23,8 +23,8 @@ ATimeBeacon::ATimeBeacon()
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
     // Меш Колонны со скелетом
-    ColumnSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Column Skeletal Mesh"));
-    ColumnSkeletalMesh->SetupAttachment(RootComponent);
+    //ColumnSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Column Skeletal Mesh"));
+    //ColumnSkeletalMesh->SetupAttachment(RootComponent);
 
     // Статичный Меш Колонны
     ColumnStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Column Static Mesh"));
@@ -47,10 +47,10 @@ void ATimeBeacon::BeginPlay()
 
 void ATimeBeacon::Cleaning()
 {
-    if (ColumnSkeletalMesh && !(ColumnSkeletalMesh->SkeletalMesh))
-    {
-        ColumnSkeletalMesh->DestroyComponent();
-    }
+    //if (ColumnSkeletalMesh && !(ColumnSkeletalMesh->SkeletalMesh))
+    //{
+    //    ColumnSkeletalMesh->DestroyComponent();
+    //}
 
     if (ColumnStaticMesh && !(ColumnStaticMesh->GetStaticMesh()))
     {
