@@ -55,14 +55,14 @@ public:
     UCameraComponent* FirstPersonCameraComponent;
 
     // Меш Шахматной Фигуры со скелетом
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    USkeletalMeshComponent* ChessmanSkeletalMesh;
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    //    meta = (AllowPrivateAccess = "true"))
+    //USkeletalMeshComponent* ChessmanSkeletalMesh;
 
     // Статичный Меш Шахматной Фигуры
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
-        meta = (AllowPrivateAccess = "true"))
-    UStaticMeshComponent* ChessmanStaticMesh;
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    //    meta = (AllowPrivateAccess = "true"))
+    //UStaticMeshComponent* ChessmanStaticMesh;
     //-------------------------------------------
 
 

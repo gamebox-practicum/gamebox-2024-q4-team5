@@ -48,13 +48,13 @@ ASK_Character::ASK_Character()
     FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
     // Меш Шахматной Фигуры со скелетом
-    ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
-    ChessmanSkeletalMesh->SetupAttachment(GetCapsuleComponent());
+    //ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
+    //ChessmanSkeletalMesh->SetupAttachment(GetCapsuleComponent());
 
     // Статичный Меш Шахматной Фигуры
-    ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
-    ChessmanStaticMesh->SetupAttachment(GetCapsuleComponent());
-    ChessmanStaticMesh->SetGenerateOverlapEvents(false);
+    //ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
+    //ChessmanStaticMesh->SetupAttachment(GetCapsuleComponent());
+    //ChessmanStaticMesh->SetGenerateOverlapEvents(false);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
@@ -115,15 +115,15 @@ void ASK_Character::Initialize()
 
 void ASK_Character::Cleaning()
 {
-    if (ChessmanSkeletalMesh && !(ChessmanSkeletalMesh->SkeletalMesh))
-    {
-        ChessmanSkeletalMesh->DestroyComponent();
-    }
+    //if (ChessmanSkeletalMesh && !(ChessmanSkeletalMesh->SkeletalMesh))
+    //{
+    //    ChessmanSkeletalMesh->DestroyComponent();
+    //}
 
-    if (ChessmanStaticMesh && !(ChessmanStaticMesh->GetStaticMesh()))
-    {
-        ChessmanStaticMesh->DestroyComponent();
-    }
+    //if (ChessmanStaticMesh && !(ChessmanStaticMesh->GetStaticMesh()))
+    //{
+    //    ChessmanStaticMesh->DestroyComponent();
+    //}
 }
 //--------------------------------------------------------------------------------------
 
