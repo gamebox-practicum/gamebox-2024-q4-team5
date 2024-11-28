@@ -200,8 +200,11 @@ public:
     /** Установить указатель на текущую Руку Дилера */
     void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
 
-    /* Проверка и изменение типа перемещения */
+    /** Проверка и изменение типа перемещения */
     void CheckMovementType(ASquare* NewSquare);
+
+    /** Преобразование пешки в другую рандомную фигуру */
+    bool PawnTransformation();
     //-------------------------------------------
 
 

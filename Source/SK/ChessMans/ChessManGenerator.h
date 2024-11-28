@@ -136,6 +136,9 @@ public:
 
     /** Запуск генерации Шахматных фигур по данным из Массива */
     void CreateGeneratedChessMans(const TArray<FChessManData*>& ChessMansData);
+
+    /** Запуск генерации Шахматных фигур по данным */
+    void CreateChessMansFromData(const FChessManData& Data);
     //-------------------------------------------
 
 
