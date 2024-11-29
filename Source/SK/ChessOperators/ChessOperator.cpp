@@ -380,13 +380,15 @@ void AChessOperator::TimerAction_OperatorMove() const
     }
     else
     {
-        for (int32 i = 0; i < AllPlayers->Num(); ++i)
-        {
-            if ((*AllPlayers)[i])
-            {
-                (*AllPlayers)[i]->CharacterDeath();
-            }
-        }
+        (*AllPlayers)[0]->DeathByDealerHand();
+
+        //for (int32 i = 0; i < AllPlayers->Num(); ++i)
+        //{
+        //    if ((*AllPlayers)[i])
+        //    {
+        //        (*AllPlayers)[i]->DeathByDealerHand();
+        //    }
+        //}
         /* PS: В данном случае нельзя использовать следующий вариант: for (auto& Player : *AllPlayers)
         * При вызове CharacterDeath() происходит изменение массива AllPlayers
         * что вызывает ошибку при таком варианте использования "for".

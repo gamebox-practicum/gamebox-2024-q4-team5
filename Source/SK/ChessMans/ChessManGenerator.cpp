@@ -198,6 +198,7 @@ void AChessManGenerator::CreateGeneratedPlayers(const TArray<FPlayerData*>& iPla
                 // Добавление данных для игрока
                 lNewPlayer->SetPointerToOperator(CurrentOperator);
                 lNewPlayer->SetCurrentChessManGenerator(this);
+                lNewPlayer->SetCurrentDealerHand(CurrentDealerHand);
                 lNewPlayer->CurrentPosition = lData->Position;
                 lNewPlayer->CurrentSquare = PointerToAllSquares->GetByIndex(lData->Position);
 

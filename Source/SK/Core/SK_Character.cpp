@@ -16,6 +16,10 @@
 #include "SK/ChessMans/ChessMan.h"
 #include "SK/ChessMans/ChessManGenerator.h"
 #include "SK/ChessOperators/ChessOperator.h"
+#include "SK/ChessOperators/DealerHand.h"
+
+// Tools:
+#include "SK/Tools/ActorComponents/ActorMovementComponent.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -77,7 +81,7 @@ void ASK_Character::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     MovementForTick(DeltaTime);
-    RotateToChessManForTick(DeltaTime);
+    RotateToActorForTick(DeltaTime);
 }
 
 void ASK_Character::PossessedBy(AController* NewController)
@@ -308,22 +312,22 @@ void ASK_Character::SubscribeToDelegates()
 
 /* ---   Rotation   --- */
 
-void ASK_Character::RotateToChessMan(AChessMan* bIsPlayersMove)
+void ASK_Character::RotateToActor(AActor* iActor)
 {
-    if (bIsPlayersMove)
+    if (iActor)
     {
-        ChessManForRotation = bIsPlayersMove;
+        ActorForRotation = iActor;
 
         bPlayerControlLock = true;
     }
 }
 
-void ASK_Character::RotateToChessManForTick(const float& lDeltaTime)
+void ASK_Character::RotateToActorForTick(const float& lDeltaTime)
 {
     if (bPlayerControlLock)
     {
         FRotator lViewRotation = CurrentPlayerController->GetControlRotation();
-        FRotator lEndRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ChessManForRotation->GetActorLocation());
+        FRotator lEndRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ActorForRotation->GetActorLocation());
 
         FRotator lResult = UKismetMathLibrary::RInterpTo(lViewRotation, lEndRotation, lDeltaTime, 1.f);
 
@@ -334,6 +338,32 @@ void ASK_Character::RotateToChessManForTick(const float& lDeltaTime)
 
 
 /* ---   Death   --- */
+
+void ASK_Character::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
+{
+    CurrentDealerHand = iCurrentDealerHand;
+}
+
+void ASK_Character::DeathByDealerHand()
+{
+    if (CurrentDealerHand)
+    {
+        RotateToActor(CurrentDealerHand);
+
+        // Запуск перемещения Руки Дилера
+        CurrentDealerHand->bIsDragging = false;
+        CurrentDealerHand->MovementComponent->MaxSpeed = 1000.f;
+        CurrentDealerHand->MovementComponent->ApproachDistance = 1000.f;
+        CurrentDealerHand->MovementComponent->OnCompletedMove.Clear();
+        CurrentDealerHand->MovementComponent->OnCompletedMove.AddDynamic(this, &ASK_Character::CharacterDeath);
+        CurrentDealerHand->MoveToLocation(GetActorLocation());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s'::SetCurrentDealerHand: CurrentDealerHand is NOT"),
+            *GetNameSafe(this));
+    }
+}
 
 void ASK_Character::CharacterDeath()
 {

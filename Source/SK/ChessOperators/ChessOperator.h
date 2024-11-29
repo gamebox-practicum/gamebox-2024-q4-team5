@@ -191,7 +191,6 @@ public:
     void SaveLevelData() const;
 
     /** Выгрузить сохранённых данных уровня */
-    //UFUNCTION(BlueprintCallable, Category = "Level Saving")
     void UploadLevelData();
     //-------------------------------------------
 
