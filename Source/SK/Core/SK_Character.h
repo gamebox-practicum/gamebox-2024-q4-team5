@@ -26,6 +26,7 @@ class UCameraComponent;
 // Interaction:
 class AChessOperator;
 class AChessManGenerator;
+class ADealerHand;
 class ASquare;
 class ASK_PlayerController;
 //--------------------------------------------------------------------------------------
@@ -176,14 +177,21 @@ public:
     /* ---   Rotation   --- */
 
     /** Поворот в сторону игрока с учётом выбранного типа поворота */
-    void RotateToChessMan(AChessMan* bIsPlayersMove);
+    void RotateToActor(AActor* Actor);
     //-------------------------------------------
 
 
 
     /* ---   Death   --- */
 
+    /** Установить указатель на текущую Руку Дилера */
+    void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+
+    /** Запуск смерти от Руки Дилера */
+    void DeathByDealerHand();
+
     /** Запустить метод смерти ГГ */
+    UFUNCTION()
     void CharacterDeath();
 
     /** Событие при смерти персонажа */
@@ -274,11 +282,21 @@ private:
     /* ---   Rotation   --- */
 
     // Шахматная фигура, на которую поворачиваем камеру
-    AChessMan* ChessManForRotation = nullptr;
+    AActor* ActorForRotation = nullptr;
 
     //
 
     /** Поворот в сторону игрока с учётом выбранного типа поворота */
-    void RotateToChessManForTick(const float& lDeltaTime);
+    void RotateToActorForTick(const float& lDeltaTime);
+    //-------------------------------------------
+
+
+
+    /* ---   Death   --- */
+
+    // Указатель на текущую Руку Дилера
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+        meta = (AllowPrivateAccess = true))
+    ADealerHand* CurrentDealerHand = nullptr;
     //-------------------------------------------
 };

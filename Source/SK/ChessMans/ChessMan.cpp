@@ -253,7 +253,7 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
 
     if (lNewSquareData.WarringPartiesType == EWarringPartiesType::White)
     {
-        CurrentFirstPlayer->RotateToChessMan(this);
+        CurrentFirstPlayer->RotateToActor(this);
     }
 }
 
