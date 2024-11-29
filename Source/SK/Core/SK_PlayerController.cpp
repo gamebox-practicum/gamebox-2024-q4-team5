@@ -24,10 +24,11 @@ ASK_PlayerController::ASK_PlayerController()
     HitResultTraceDistance = 280.f;
 
     EnableMouseEvents(true);
+
+    ClickEventKeys.Add(EKeys::RightMouseButton);
     //-------------------------------------------
 }
 //--------------------------------------------------------------------------------------
-
 
 
 
