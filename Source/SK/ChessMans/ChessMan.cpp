@@ -167,7 +167,10 @@ void AChessMan::NotifyActorOnClicked(FKey ButtonReleased)
 {
     Super::NotifyActorOnClicked(ButtonReleased);
 
-    ChessManDeath();
+    if (ButtonReleased == EKeys::LeftMouseButton)
+    {
+        ChessManDeath();
+    }
 }
 //--------------------------------------------------------------------------------------
 

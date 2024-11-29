@@ -78,7 +78,8 @@ void ASquare::NotifyActorOnClicked(FKey ButtonReleased)
     Super::NotifyActorOnClicked(ButtonReleased);
 
     // Проверка разрешения на ход игроку
-    if (GetData().WarringPartiesType == EWarringPartiesType::NONE)
+    if (ButtonReleased == EKeys::RightMouseButton
+        && GetData().WarringPartiesType == EWarringPartiesType::NONE)
     {
         // Предварительное присвоение
         ASK_Character* lCharacter = Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn());
