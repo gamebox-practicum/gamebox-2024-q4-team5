@@ -118,8 +118,15 @@ void AChessMan::Cleaning()
 
 void AChessMan::Initialize()
 {
-    RotationInit();
-    SubscribeToDelegates();
+    if (CurrentData.bIsDead)
+    {
+        ChessManDeath();
+    }
+    else
+    {
+        RotationInit();
+        SubscribeToDelegates();
+    }
 
     /* ---   По завершении создания и инициализации:   --- */
 
@@ -508,6 +515,8 @@ void AChessMan::ChessManDeath()
         }
 
         bIsDead = true;
+
+        CurrentData.bIsDead = true;
 
         RotationComponent->bIsRotatedToNewRotation = false;
 

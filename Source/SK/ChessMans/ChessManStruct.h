@@ -120,6 +120,10 @@ struct FChessManData : public FTableRowBase
     // Возможные позиции для хода
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FIndex2D> AvailablePositions;
+
+    // Флаг состояния смерти данной Шахматной фигуры
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bIsDead = false;
     //-------------------------------------------
 
 
