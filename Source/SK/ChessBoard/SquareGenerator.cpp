@@ -96,16 +96,16 @@ void ASquareGenerator::DeleteAllSquares()
 
 void ASquareGenerator::DeleteAllSquareComponents()
 {
-    USquareComponent* lComponent = nullptr;
+    TArray<UActorComponent*> AllSquareComponents;
 
     for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
     {
-        lComponent = Cast<USquareComponent>(lSquare->GetComponentByClass(USquareComponent::StaticClass()));
+        AllSquareComponents = lSquare->GetComponentsByClass(USquareComponent::StaticClass());
+        lSquare->OccupySquare(EWarringPartiesType::NONE);
 
-        if (lComponent)
+        for (auto& Component : AllSquareComponents)
         {
-            lComponent->DestroyComponent();
-            lSquare->OccupySquare(EWarringPartiesType::NONE);
+            Component->DestroyComponent();
         }
     }
 }

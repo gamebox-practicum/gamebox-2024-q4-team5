@@ -503,16 +503,22 @@ void AChessOperator::SaveLevelData() const
             TArray<FSquareComponentData> lSquareComponentsData;
             USquareComponent* lComponent = nullptr;
             FSquareComponentData lComponentData;
+            TArray<UActorComponent*> AllComponents;
 
             for (ASquare*& lSquare : CurrentSquareGenerator->GetAllActors<ASquare>(CurrentSquareGenerator->VerificationTag))
             {
-                lComponent = Cast<USquareComponent>(lSquare->GetComponentByClass(USquareComponent::StaticClass()));
+                AllComponents = lSquare->GetComponentsByClass(USquareComponent::StaticClass());
 
-                if (lComponent)
+                for (UActorComponent* Data : AllComponents)
                 {
-                    lComponentData.Type = lComponent->GetClass();
-                    lComponentData.Position = lSquare->GetData().PositionNumber;
-                    lSquareComponentsData.Add(lComponentData);
+                    lComponent = Cast<USquareComponent>(Data);
+
+                    if (lComponent)
+                    {
+                        lComponentData.Type = lComponent->GetClass();
+                        lComponentData.Position = lSquare->GetData().PositionNumber;
+                        lSquareComponentsData.Add(lComponentData);
+                    }
                 }
             }
 
