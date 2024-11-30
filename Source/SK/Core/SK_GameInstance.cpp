@@ -28,32 +28,32 @@ void USK_GameInstance::Init()
 
 void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
 {
-    if (false) // Отключено!
-        if (SaveLevel)
-        {
-            SaveLevel->LevelData = iLevelData;
+    //if (false)
+    if (SaveLevel)
+    {
+        SaveLevel->LevelData = iLevelData;
 
-            UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("'%s'::SaveLevelData: SaveLevel is NOT"),
-                *GetNameSafe(this));
-        }
+        UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s'::SaveLevelData: SaveLevel is NOT"),
+            *GetNameSafe(this));
+    }
 }
 
 FLevelData USK_GameInstance::LoadLevelData() const
 {
-    if (false) // Отключено!
-        if (SaveLevel)
-        {
-            return SaveLevel->LevelData;
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("'%s'::LoadLevelData: SaveLevel is NOT"),
-                *GetNameSafe(this));
-        }
+    //if (false)
+    if (SaveLevel)
+    {
+        return SaveLevel->LevelData;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s'::LoadLevelData: SaveLevel is NOT"),
+            *GetNameSafe(this));
+    }
 
     return FLevelData::Empty;
 }
