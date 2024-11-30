@@ -85,6 +85,9 @@ public:
 
     /** Запустить таймер Генератора Маяков */
     void PlayTimeBeaconGenerator();
+
+    /** Обновить этап на всех колоннах */
+    void UpdateStage(const int32& CurrentStageNum);
     //-------------------------------------------
 
 

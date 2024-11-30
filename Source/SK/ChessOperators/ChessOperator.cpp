@@ -430,6 +430,8 @@ void AChessOperator::ToNextStage()
         // Проверка атаки на игрока
         PlayingAttackSound();
 
+        CurrentTimeBeaconGenerator->UpdateStage(CurrentStageNum);
+
         OnNextStage();
     }
     else

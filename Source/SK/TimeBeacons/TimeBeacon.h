@@ -92,6 +92,10 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "Timer",
         meta = (DisplayName = "Stop Timer"))
     void EventStopTimer();
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "Timer",
+        meta = (DisplayName = "On Next Stage"))
+    void EventOnNextStage(const int32& StageNum);
     //-------------------------------------------
 
 

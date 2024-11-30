@@ -128,6 +128,14 @@ void ATimeBeaconGenerator::PlayTimeBeaconGenerator()
         0.0f); // Запустить реакцию таймера сразу
 }
 
+void ATimeBeaconGenerator::UpdateStage(const int32& CurrentStageNum)
+{
+    for (auto& Beacon : AllTimeBeacon)
+    {
+        Beacon->EventOnNextStage(CurrentStageNum);
+    }
+}
+
 FVector ATimeBeaconGenerator::GetLocationForTimeBeacon(const int32& iInd)
 {
     // Очерёдность индекса: Слева направо, снизу вверх
