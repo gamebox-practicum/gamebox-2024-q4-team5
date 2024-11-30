@@ -12,6 +12,8 @@ ANote0::ANote0()
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
+    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));;
+
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Block Mesh"));
     Mesh->SetupAttachment(RootComponent);
 }
