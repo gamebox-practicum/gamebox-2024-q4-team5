@@ -54,7 +54,8 @@ void ANote0::NotifyActorOnClicked(FKey ButtonReleased)
 {
     Super::NotifyActorOnClicked(ButtonReleased);
 
-    if(IsCloseEnough())
+    if (ButtonReleased == EKeys::LeftMouseButton
+        && IsCloseEnough())
     {
         OnPicked();
 
@@ -65,8 +66,8 @@ void ANote0::NotifyActorOnClicked(FKey ButtonReleased)
 bool ANote0::IsCloseEnough()
 {
     return
-    FVector::Distance(
-        Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetActorLocation(),
-        GetActorLocation()) < PickMaxDistance;
+        FVector::Distance(
+            Cast<ASK_Character>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetActorLocation(),
+            GetActorLocation()) < PickMaxDistance;
 }
 
