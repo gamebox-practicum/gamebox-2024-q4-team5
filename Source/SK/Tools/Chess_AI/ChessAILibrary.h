@@ -39,7 +39,7 @@ public:
     static void GetNextStepAsync(UChessBoardInfo* ChessBoardInfo, PIECE_COLOR CurrentStepColor, int depth,
         const FOnStepCalculatedSignature& OnProcessRequestComplete);
 
-    static constexpr int LastLineBonus = 4;
+    static constexpr int LastLineBonus = 10;
 
     static constexpr int MaxFiguresInterval = 100;
     ///Utils---------------
