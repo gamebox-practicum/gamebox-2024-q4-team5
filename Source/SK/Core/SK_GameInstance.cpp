@@ -42,6 +42,12 @@ void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
     }
 }
 
+void USK_GameInstance::ClearLevelData()
+{
+    if (IsGameSaved())
+        SaveLevelData(FLevelData::Empty);
+}
+
 FLevelData USK_GameInstance::LoadLevelData() const
 {
     //if (false)
@@ -58,14 +64,14 @@ FLevelData USK_GameInstance::LoadLevelData() const
     return FLevelData::Empty;
 }
 
-bool USK_GameInstance::IsEmpty()
+bool USK_GameInstance::IsGameSaved()
 {
     if (SaveLevel)
     {
-        return SaveLevel->LevelData.PlayersData.Num() == 0;
+        return SaveLevel->LevelData.PlayersData.Num() != 0;
     }
 
-    return true;
+    return false;
 }
 
 void USK_GameInstance::LevelSavingInit()
@@ -79,11 +85,6 @@ void USK_GameInstance::LevelSavingInit()
 
         ClearLevelData();
     }
-}
-
-void USK_GameInstance::ClearLevelData()
-{
-    SaveLevelData(FLevelData::Empty);
 }
 //--------------------------------------------------------------------------------------
 

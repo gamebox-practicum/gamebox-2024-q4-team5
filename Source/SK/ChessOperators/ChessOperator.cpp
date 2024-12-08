@@ -58,12 +58,24 @@ void AChessOperator::BeginPlay()
 
     SavedDataInit();
 
-    if (CurrentGameInstance && !CurrentGameInstance->bIsNewGame)
+    if (CurrentGameInstance)
     {
-        CurrentChessManGenerator->SetPointerToAllSquares(
-            CurrentSquareGenerator->GetPointerToAllSquares());
+        if (CurrentGameInstance->bIsNewGame)
+        {
+            CurrentGameInstance->ClearLevelData();
+        }
+        else
+        {
+            CurrentGameInstance->bIsNewGame = true;
 
-        UploadLevelData();
+            if (CurrentGameInstance->IsGameSaved())
+            {
+                CurrentChessManGenerator->SetPointerToAllSquares(
+                    CurrentSquareGenerator->GetPointerToAllSquares());
+
+                UploadLevelData();
+            }
+        }
     }
 }
 
