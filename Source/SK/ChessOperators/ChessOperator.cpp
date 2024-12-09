@@ -273,13 +273,16 @@ void AChessOperator::UpdateCurrentTimeBeaconGenerator(const FVector& iBlockSize)
 {
     if (GetCurrentTimeBeaconGenerator())
     {
-        // Передать данные для генерации
-        CurrentTimeBeaconGenerator->BeaconType = BeaconType;
-        CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
-        CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
+        if (CurrentTimeBeaconGenerator->BlockSize != iBlockSize)
+        {
+            // Передать данные для генерации
+            CurrentTimeBeaconGenerator->BeaconType = BeaconType;
+            CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
+            CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
 
-        // Обновить генератор
-        CurrentTimeBeaconGenerator->ReGenerate();
+            // Обновить генератор
+            CurrentTimeBeaconGenerator->ReGenerate();
+        }
     }
     else
     {

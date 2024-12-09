@@ -47,6 +47,7 @@ AChessMan::AChessMan()
     ChessmanSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chessman Skeletal Mesh"));
     ChessmanSkeletalMesh->SetupAttachment(CapsuleComponent);
     ChessmanSkeletalMesh->SetCustomDepthStencilValue(1);
+    ChessmanSkeletalMesh->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 
     // Статичный Меш Шахматной Фигуры
     //ChessmanStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Chessman Static Mesh"));
@@ -120,21 +121,21 @@ void AChessMan::Initialize()
 {
     if (CurrentData.bIsDead)
     {
-        ChessManDeath();
+        ChessManPreDeath();
+
+        OnOriginallyDeath.Broadcast();
     }
     else
     {
         RotationInit();
         SubscribeToDelegates();
+        RotateToFirstPlayer();
     }
 
     /* ---   По завершении создания и инициализации:   --- */
 
     // Задействовать событие завершении Инициализации
     EventOnInitializeComplete();
-
-    // Повернуть в сторону игрока
-    RotateToFirstPlayer();
 }
 //--------------------------------------------------------------------------------------
 
@@ -491,44 +492,40 @@ void AChessMan::ChessManDeath()
 {
     if (!bIsMovingToNewLocation && !bIsDead)
     {
+        ChessManPreDeath();
+
         if (CurrentFirstPlayer)
         {
             CurrentFirstPlayer->EventOnAttack();
         }
 
-        if (CurrentChessManGenerator)
-        {
-            CurrentChessManGenerator->RemoveChessMan(this);
-        }
-
-        CurrentSquare->OccupySquare(EWarringPartiesType::Corpse);
-
-        for (auto& lSquareComponent : SquareComponentsTypes)
-        {
-            // Создаём компонент, который всё остальное сделает сам
-            Cast<USquareComponent>(
-                CurrentSquare->AddComponentByClass(
-                    lSquareComponent.Get(),
-                    false,
-                    FTransform(),
-                    false));
-        }
-
-        bIsDead = true;
-
-        CurrentData.bIsDead = true;
-
-        RotationComponent->bIsRotatedToNewRotation = false;
-
-        if (ChessmanSkeletalMesh)
-            ChessmanSkeletalMesh->SetRenderCustomDepth(false);
-        //if (ChessmanStaticMesh)
-        //    ChessmanStaticMesh->SetRenderCustomDepth(false);
+        OnDeath.Broadcast();
 
         UnsubscribeToDelegates();
-
-        OnDeath.Broadcast();
     }
+}
+
+void AChessMan::ChessManPreDeath()
+{
+    CurrentSquare->OccupySquare(EWarringPartiesType::Corpse);
+
+    if (CurrentChessManGenerator)
+    {
+        CurrentChessManGenerator->RemoveChessMan(this);
+    }
+
+    bIsDead = true;
+    CurrentData.bIsDead = true;
+
+    if (ChessmanSkeletalMesh)
+    {
+        ChessmanSkeletalMesh->SetRenderCustomDepth(false);
+        ChessmanSkeletalMesh->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+    }
+
+    CapturePoint->DestroyComponent();
+    MovementComponent->DestroyComponent();
+    RotationComponent->DestroyComponent();
 }
 
 void AChessMan::UnsubscribeToDelegates()
