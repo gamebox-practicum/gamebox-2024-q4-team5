@@ -323,7 +323,7 @@ ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
 
 /* ---   Player Moves Sequence   --- */
 
-void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
+void AChessOperator::PlayerMovesSequence(const bool& ibIsPlayersMove)
 {
     if (AllPlayers->Num())
     {
@@ -331,7 +331,7 @@ void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
         {
             CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-            if (!bIsPlayersMove)
+            if (!ibIsPlayersMove)
             {
                 if (bSkipOperatorTurn)
                 {
@@ -505,6 +505,7 @@ void AChessOperator::SaveLevelData() const
 
         /* ---   Chess Operator Data   --- */
 
+        lCurrentData.bIsPlayersMove = bIsPlayersMove;
         lCurrentData.CurrentStageNum = CurrentStageNum;
         lCurrentData.MoveLimitTime = MoveLimitTime;
         lCurrentData.OperatorTable = OperatorTable;
@@ -651,6 +652,13 @@ void AChessOperator::UploadLevelData()
                 CurrentChessManGenerator->DeleteAllChessMans();
                 CurrentChessManGenerator->CreateGeneratedChessMans(lChessMansData);
             }
+            //-------------------------------------------
+
+
+            /* ---   Chess Operator Data   --- */
+
+            // Передача хода
+            OnPlayersMove.Broadcast(lCurrentData.bIsPlayersMove);
             //-------------------------------------------
         }
     }

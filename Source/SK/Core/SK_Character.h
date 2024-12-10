@@ -127,12 +127,16 @@ public:
 
     /* ---   Movement   --- */
 
+    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
+    ASquare* CurrentSquare = nullptr;
+
+    // Флаг блокировки управления игрока
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    bool bPlayerControlLock = false;
+
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FIndex2D CurrentPosition;
-
-    // Указатель на текущую ячейку (необходимо исключения передвижения на ту же клетку)
-    ASquare* CurrentSquare = nullptr;
 
     // Скорость перемещения
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
@@ -244,9 +248,6 @@ private:
 
     // Флаг разрешения хода Игрока
     bool bIsMoveAllowed = true;
-
-    // Флаг блокировки управления игрока
-    bool bPlayerControlLock = false;
 
     //
 

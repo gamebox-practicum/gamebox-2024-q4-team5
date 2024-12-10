@@ -27,6 +27,10 @@ struct FLevelData
 
     /* ---   Chess Operator Data   --- */
 
+    // Флаг отслеживания хода игрока
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsPlayersMove = true;
+
     // Номер текущего этапа
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 CurrentStageNum = 0;
@@ -82,6 +86,7 @@ struct FLevelData
 __declspec(selectany) const FLevelData FLevelData::Empty
 {
     /* ---   Chess Operator Data   --- */
+    true,    // Флаг отслеживания хода игрока
     0,       // Номер текущего этапа
     0,       // Время таймера в секундах
     nullptr, // Таблица данных конструирования уровня

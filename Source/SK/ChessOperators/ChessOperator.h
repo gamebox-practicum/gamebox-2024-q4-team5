@@ -140,6 +140,9 @@ public:
 
     /* ---   Player Moves Sequence   --- */
 
+    // Флаг отслеживания хода игрока (необходимо для сохранения)
+    bool bIsPlayersMove = true;
+
     // Время таймера в секундах
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Moves Sequence")
     float MoveLimitTime = 20.f;

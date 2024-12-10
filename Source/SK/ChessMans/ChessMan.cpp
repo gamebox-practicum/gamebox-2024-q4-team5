@@ -219,6 +219,11 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         // Сохранение данных
         CurrentData.Position = CurrentSquare->GetData().PositionNumber;
 
+        if (CurrentOperator)
+        {
+            CurrentOperator->bIsPlayersMove = true;
+        }
+
         // Запуск перемещения Руки Дилера
         CurrentDealerHand->MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::DealerHandMovementEnd);
         CurrentDealerHand->MoveToLocation(CapturePoint->GetComponentLocation());
