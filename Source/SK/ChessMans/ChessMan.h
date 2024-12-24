@@ -20,6 +20,9 @@
 // Делегат: При Смерти фигуры
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
+// Делегат: При инициализации Изначально (уже) мёртв
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOriginallyDeath);
+
 // Делегат: При "Поедании" Шахматной фигуры
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEatingChessman);
 // ----------------------------------------------------------------------------------------------------
@@ -59,6 +62,10 @@ public:
     // Делегат: При Смерти фигуры
     UPROPERTY(BlueprintAssignable)
     FOnDeath OnDeath;
+
+    // Делегат: При инициализации Уже мёртв
+    UPROPERTY(BlueprintAssignable)
+    FOnOriginallyDeath OnOriginallyDeath;
 
     // Делегат: При "Поедании" Шахматной фигуры
     UPROPERTY(BlueprintAssignable)
@@ -220,12 +227,6 @@ public:
 
     /* ---   Death   --- */
 
-    // Массив Типов Компонентов Клетки, создаваемые при смерти данной Шахматной фигуры
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Death")
-    TArray<TSubclassOf<USquareComponent>> SquareComponentsTypes;
-
-    //
-
     /** Записать Указатель на "родительский" Генератор Шахматных фигур */
     void SetCurrentChessManGenerator(AChessManGenerator* Generator);
     //-------------------------------------------
@@ -338,6 +339,9 @@ private:
 
     /** Смерть шахматной фигуры */
     void ChessManDeath();
+
+    /** Изменение данных перед смертью */
+    void ChessManPreDeath();
 
     /** Отписаться от делегатов */
     void UnsubscribeToDelegates();

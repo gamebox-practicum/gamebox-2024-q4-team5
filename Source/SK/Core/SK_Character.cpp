@@ -199,6 +199,7 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
         if (CurrentOperator)
         {
             CurrentOperator->StopTimer_MovesSequence();
+            CurrentOperator->bIsPlayersMove = false;
         }
 
         // Освободить предыдущую клетку и занять новую

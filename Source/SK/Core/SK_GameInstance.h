@@ -57,22 +57,26 @@ public:
 
     /* ---   Level Saving   --- */
 
-    // Флаг новой игры. Если false, то игра будет зашружена из последнего сохранения
+    // Флаг новой игры. Если false, то игра будет загружена из последнего сохранения (если оно есть)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Level Saving")
-    bool bIsNewGame = true;
+    bool bIsNewGame = false;
 
     //
 
     /** Сохранение данных уровня (Отключено!) */
     void SaveLevelData(const FLevelData& LevelData) const;
 
+    /**	Обнуление данных уровня */
+    UFUNCTION(BlueprintCallable, Category = "Level Saving")
+    void ClearLevelData();
+
     /** Получение сохранённых данных уровня (Отключено!) */
     FLevelData LoadLevelData() const;
 
     /** Проверка на наличие сохранения */
     UFUNCTION(BlueprintPure, Category = "Level Saving",
-        meta = (CompactNodeTitle = "Is Empty?"))
-    bool IsEmpty();
+        meta = (CompactNodeTitle = "Is Game Saved?"))
+    bool IsGameSaved();
     //-------------------------------------------
 
 
@@ -93,7 +97,5 @@ private:
     /** Инициализация сохранения данных уровня */
     void LevelSavingInit();
 
-    /**	Обнуление данных уровня */
-    void ClearLevelData();
     //-------------------------------------------
 };

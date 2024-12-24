@@ -58,12 +58,24 @@ void AChessOperator::BeginPlay()
 
     SavedDataInit();
 
-    if (CurrentGameInstance && !CurrentGameInstance->bIsNewGame)
+    if (CurrentGameInstance)
     {
-        CurrentChessManGenerator->SetPointerToAllSquares(
-            CurrentSquareGenerator->GetPointerToAllSquares());
+        if (CurrentGameInstance->bIsNewGame)
+        {
+            CurrentGameInstance->ClearLevelData();
+        }
+        else
+        {
+            CurrentGameInstance->bIsNewGame = true;
 
-        UploadLevelData();
+            if (CurrentGameInstance->IsGameSaved())
+            {
+                CurrentChessManGenerator->SetPointerToAllSquares(
+                    CurrentSquareGenerator->GetPointerToAllSquares());
+
+                UploadLevelData();
+            }
+        }
     }
 }
 
@@ -261,13 +273,16 @@ void AChessOperator::UpdateCurrentTimeBeaconGenerator(const FVector& iBlockSize)
 {
     if (GetCurrentTimeBeaconGenerator())
     {
-        // Передать данные для генерации
-        CurrentTimeBeaconGenerator->BeaconType = BeaconType;
-        CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
-        CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
+        if (CurrentTimeBeaconGenerator->BlockSize != iBlockSize)
+        {
+            // Передать данные для генерации
+            CurrentTimeBeaconGenerator->BeaconType = BeaconType;
+            CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
+            CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
 
-        // Обновить генератор
-        CurrentTimeBeaconGenerator->ReGenerate();
+            // Обновить генератор
+            CurrentTimeBeaconGenerator->ReGenerate();
+        }
     }
     else
     {
@@ -308,7 +323,7 @@ ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
 
 /* ---   Player Moves Sequence   --- */
 
-void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
+void AChessOperator::PlayerMovesSequence(const bool& ibIsPlayersMove)
 {
     if (AllPlayers->Num())
     {
@@ -316,7 +331,7 @@ void AChessOperator::PlayerMovesSequence(const bool& bIsPlayersMove)
         {
             CurrentChessManGenerator->UpdateAllAvailableChessMan();
 
-            if (!bIsPlayersMove)
+            if (!ibIsPlayersMove)
             {
                 if (bSkipOperatorTurn)
                 {
@@ -490,6 +505,7 @@ void AChessOperator::SaveLevelData() const
 
         /* ---   Chess Operator Data   --- */
 
+        lCurrentData.bIsPlayersMove = bIsPlayersMove;
         lCurrentData.CurrentStageNum = CurrentStageNum;
         lCurrentData.MoveLimitTime = MoveLimitTime;
         lCurrentData.OperatorTable = OperatorTable;
@@ -636,6 +652,13 @@ void AChessOperator::UploadLevelData()
                 CurrentChessManGenerator->DeleteAllChessMans();
                 CurrentChessManGenerator->CreateGeneratedChessMans(lChessMansData);
             }
+            //-------------------------------------------
+
+
+            /* ---   Chess Operator Data   --- */
+
+            // Передача хода
+            OnPlayersMove.Broadcast(lCurrentData.bIsPlayersMove);
             //-------------------------------------------
         }
     }
