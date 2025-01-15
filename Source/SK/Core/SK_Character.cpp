@@ -301,11 +301,11 @@ void ASK_Character::SubscribeToDelegates()
     {
         CurrentOperator->OnPlayersMove.AddUObject(this, &ASK_Character::PlayerMovesSequence);
     }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
-            *GetNameSafe(this));
-    }
+    //else
+    //{
+    //    UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
+    //        *GetNameSafe(this));
+    //}
 }
 //--------------------------------------------------------------------------------------
 

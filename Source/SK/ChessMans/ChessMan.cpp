@@ -225,6 +225,7 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
         }
 
         // Запуск перемещения Руки Дилера
+        OnSelected.Broadcast();
         CurrentDealerHand->MovementComponent->OnCompletedMove.AddDynamic(this, &AChessMan::DealerHandMovementEnd);
         CurrentDealerHand->MoveToLocation(CapturePoint->GetComponentLocation());
     }

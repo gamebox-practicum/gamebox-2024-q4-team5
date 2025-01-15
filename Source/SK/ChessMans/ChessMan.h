@@ -25,6 +25,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOriginallyDeath);
 
 // Делегат: При "Поедании" Шахматной фигуры
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEatingChessman);
+
+// Делегат: При Выборе данной фигуры (при начале движения руки для взятия данной фигуры)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelected);
 // ----------------------------------------------------------------------------------------------------
 
 
@@ -70,6 +73,10 @@ public:
     // Делегат: При "Поедании" Шахматной фигуры
     UPROPERTY(BlueprintAssignable)
     FOnEatingChessman OnEatingChessman;
+
+    // Делегат: При Выборе данной фигуры (при начале движения руки для взятия данной фигуры)
+    UPROPERTY(BlueprintAssignable)
+    FOnSelected OnSelected;
     //-------------------------------------------
 
 

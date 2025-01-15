@@ -50,7 +50,6 @@ void AChessManGenerator::OnConstruction(const FTransform& Transform)
 
 
 /* ---   Re Generate   --- */
-// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void AChessManGenerator::ReGenerate()
 {
