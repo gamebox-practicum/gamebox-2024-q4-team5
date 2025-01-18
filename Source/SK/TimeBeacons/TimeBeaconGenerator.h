@@ -4,7 +4,6 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "SK/ChessOperators/ChessGenerator.h"
 
 // Tools:
 #include "SK/Tools/Index2D.h"
@@ -24,7 +23,7 @@ class ATimeBeacon;
 
 
 UCLASS()
-class SK_API ATimeBeaconGenerator : public AChessGenerator
+class SK_API ATimeBeaconGenerator : public AActor
 {
     GENERATED_BODY()
 

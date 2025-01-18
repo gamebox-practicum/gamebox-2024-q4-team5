@@ -5,6 +5,7 @@
 
 // UE:
 #include "Engine/DataTable.h"
+#include "Kismet/GameplayStatics.h"
 
 // Interaction:
 #include "Square.h"
@@ -87,7 +88,11 @@ void ASquareGenerator::ReGenerate()
 
 void ASquareGenerator::DeleteAllSquares()
 {
-    for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASquare::StaticClass(), VerificationTag, lResultActors);
+
+    for (auto& lSquare : lResultActors)
     {
         lSquare->Destroy();
     }
@@ -96,12 +101,15 @@ void ASquareGenerator::DeleteAllSquares()
 
 void ASquareGenerator::DeleteAllSquareComponents()
 {
+    TArray<AActor*> lResultActors;
     TArray<UActorComponent*> AllSquareComponents;
 
-    for (auto& lSquare : GetAllActors<ASquare>(VerificationTag))
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASquare::StaticClass(), VerificationTag, lResultActors);
+
+    for (auto& lSquare : lResultActors)
     {
         AllSquareComponents = lSquare->GetComponentsByClass(USquareComponent::StaticClass());
-        lSquare->OccupySquare(EWarringPartiesType::NONE);
+        Cast<ASquare>(lSquare)->OccupySquare(EWarringPartiesType::NONE);
 
         for (auto& Component : AllSquareComponents)
         {
@@ -112,7 +120,11 @@ void ASquareGenerator::DeleteAllSquareComponents()
 
 void ASquareGenerator::DeleteStageTriggers()
 {
-    for (auto& lTrigger : GetAllActors<AStageTrigger>(VerificationTag))
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AStageTrigger::StaticClass(), VerificationTag, lResultActors);
+
+    for (auto& lTrigger : lResultActors)
     {
         lTrigger->Destroy();
     }

@@ -8,6 +8,7 @@
 
 // Interaction:
 #include "LevelData.h"
+#include "LevelSelectionData.h"
 
 // Generated:
 #include "SavedLevelData.generated.h"
@@ -22,7 +23,12 @@ class SK_API USavedLevelData : public USaveGame
 
 public:
 
+    // Данные о выборе уровня
+    UPROPERTY(BlueprintReadOnly)
+    FLevelSelectionData LevelSelectionData;
+
     // Данные уровня для последующего сохранения
     UPROPERTY(BlueprintReadOnly)
     FLevelData LevelData;
 };
+//--------------------------------------------------------------------------------------

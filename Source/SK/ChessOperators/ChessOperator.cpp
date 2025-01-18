@@ -454,7 +454,7 @@ void AChessOperator::ToNextStage()
         // Блокировать ход Вражеских фигур, чтобы в конце игры не убивали ГГ
         bSkipOperatorTurn = true;
 
-        // Если этапы закончились, то заверщить игру с победой
+        // Если этапы закончились, то завершить игру с победой
         Cast<ASK_GameMode>(GetWorld()->GetAuthGameMode())->SetWinningGame();
     }
 }
@@ -477,10 +477,7 @@ void AChessOperator::PlayingAttackSound()
                     UGameplayStatics::PlaySoundAtLocation(
                         GetWorld(),
                         WalkingSound,
-                        (*AllPlayers)[0]->GetActorLocation(),
-                        1.f,  // Default
-                        1.f,  // Default
-                        0.f); // Default
+                        (*AllPlayers)[0]->GetActorLocation());
                 }
             }
         }
@@ -502,6 +499,7 @@ void AChessOperator::SaveLevelData() const
     if (CurrentGameInstance)
     {
         FLevelData lCurrentData;
+        TArray<AActor*> lResultActors;
 
         /* ---   Chess Operator Data   --- */
 
@@ -520,12 +518,17 @@ void AChessOperator::SaveLevelData() const
             USquareComponent* lComponent = nullptr;
             FSquareComponentData lComponentData;
             TArray<UActorComponent*> AllComponents;
+            ASquare* lSquare = nullptr;
 
-            for (ASquare*& lSquare : CurrentSquareGenerator->GetAllActors<ASquare>(CurrentSquareGenerator->VerificationTag))
+            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASquare::StaticClass(), CurrentSquareGenerator->VerificationTag, lResultActors);
+
+            for (auto& lActor : lResultActors)
             {
+                lSquare = Cast<ASquare>(lActor);
+
                 AllComponents = lSquare->GetComponentsByClass(USquareComponent::StaticClass());
 
-                for (UActorComponent* Data : AllComponents)
+                for (auto& Data : AllComponents)
                 {
                     lComponent = Cast<USquareComponent>(Data);
 
@@ -547,9 +550,14 @@ void AChessOperator::SaveLevelData() const
         {
             TArray<FPlayerData> lPlayersData;
             FPlayerData lPlayerData;
+            ASK_Character* lPlayer = nullptr;
 
-            for (ASK_Character*& lPlayer : CurrentChessManGenerator->GetAllActors<ASK_Character>(CurrentChessManGenerator->VerificationTag))
+            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASK_Character::StaticClass(), CurrentChessManGenerator->VerificationTag, lResultActors);
+
+            for (auto& lActor : lResultActors)
             {
+                lPlayer = Cast<ASK_Character>(lActor);
+
                 lPlayerData.Type = lPlayer->GetClass();
                 lPlayerData.Position = lPlayer->GetCurrentPosition();
                 lPlayersData.Add(lPlayerData);
@@ -564,9 +572,11 @@ void AChessOperator::SaveLevelData() const
         {
             TArray<FChessManData> lChessMansData;
 
-            for (AChessMan*& lChessMan : CurrentChessManGenerator->GetAllActors<AChessMan>(CurrentChessManGenerator->VerificationTag))
+            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AChessMan::StaticClass(), CurrentChessManGenerator->VerificationTag, lResultActors);
+
+            for (auto& lActor : lResultActors)
             {
-                lChessMansData.Add(lChessMan->CurrentData);
+                lChessMansData.Add(Cast<AChessMan>(lActor)->CurrentData);
             }
 
             lCurrentData.ChessMansData = lChessMansData;

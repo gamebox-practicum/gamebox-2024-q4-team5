@@ -28,9 +28,17 @@ void USK_GameInstance::Init()
 
 void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
 {
-    //if (false)
     if (SaveLevel)
     {
+        // Сбор данных об уровне
+        FLevelSelectionData lLevelSelectionData;
+        lLevelSelectionData.LevelsTable = StoryLevels;
+        lLevelSelectionData.LevelNumber = NextLevelNumber;
+
+        // Данные об уровне
+        SaveLevel->LevelSelectionData = lLevelSelectionData;
+
+        // Данные уровня
         SaveLevel->LevelData = iLevelData;
 
         UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
@@ -45,12 +53,19 @@ void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
 void USK_GameInstance::ClearLevelData()
 {
     if (IsGameSaved())
-        SaveLevelData(FLevelData::Empty);
+    {
+        // Данные об уровне
+        SaveLevel->LevelSelectionData = FLevelSelectionData::Empty;
+
+        // Данные уровня
+        SaveLevel->LevelData = FLevelData::Empty;
+
+        UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
+    }
 }
 
 FLevelData USK_GameInstance::LoadLevelData() const
 {
-    //if (false)
     if (SaveLevel)
     {
         return SaveLevel->LevelData;
@@ -62,6 +77,21 @@ FLevelData USK_GameInstance::LoadLevelData() const
     }
 
     return FLevelData::Empty;
+}
+
+FLevelSelectionData USK_GameInstance::LoadLevelSelectionData() const
+{
+    if (SaveLevel)
+    {
+        return SaveLevel->LevelSelectionData;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("'%s'::LoadLevelData: SaveLevel is NOT"),
+            *GetNameSafe(this));
+    }
+
+    return FLevelSelectionData::Empty;
 }
 
 bool USK_GameInstance::IsGameSaved()
@@ -90,3 +120,65 @@ void USK_GameInstance::LevelSavingInit()
 
 
 
+/* ---   Level Selection   --- */
+
+void USK_GameInstance::ResumeGame()
+{
+    FLevelSelectionData lLevelSelectionData = LoadLevelSelectionData();
+    StoryLevels = lLevelSelectionData.LevelsTable;
+    NextLevelNumber = lLevelSelectionData.LevelNumber - 1;
+
+    NextLevel();
+}
+
+void USK_GameInstance::NewGame()
+{
+    bIsNewGame = true;
+    NextLevelNumber = 0;
+
+    NextLevel();
+}
+
+void USK_GameInstance::NextLevel()
+{
+    if (StoryLevels)
+    {
+        // Массив данных, получаемых из DataTable
+        TArray<FLevelTableRow*> lLevels;
+        // Карта, получаемая из Массива
+        TSoftObjectPtr<UWorld> lNewLevel;
+
+        StoryLevels->GetAllRows("USK_GameInstance::NextLevel", lLevels);
+
+        while (!lNewLevel.GetAssetName().Len() && NextLevelNumber < lLevels.Num())
+        {
+            lNewLevel = lLevels[NextLevelNumber++]->Map;
+        };
+
+        if (lNewLevel.GetAssetName().Len())
+        {
+            UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), lNewLevel);
+        }
+        else
+        {
+            if (bIsGoodEnd && MapGoodEnd.GetAssetName().Len())
+            {
+                UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MapGoodEnd);
+            }
+            else if (!bIsGoodEnd && MapBadEnd.GetAssetName().Len())
+            {
+                UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MapBadEnd);
+            }
+            else if (MenuMap.GetAssetName().Len())
+            {
+                UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuMap);
+            }
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s'::NextLevel: StoryLevels is NOT"),
+            *GetNameSafe(this));
+    }
+}
+//--------------------------------------------------------------------------------------

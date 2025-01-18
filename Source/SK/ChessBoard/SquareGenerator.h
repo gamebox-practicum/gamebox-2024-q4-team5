@@ -4,7 +4,6 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "SK/ChessOperators/ChessGenerator.h"
 
 // Tools:
 #include "SK/Tools/Index2D.h"
@@ -34,7 +33,7 @@ struct FSquareComponentData;
 
 
 UCLASS()
-class SK_API ASquareGenerator : public AChessGenerator
+class SK_API ASquareGenerator : public AActor
 {
     GENERATED_BODY()
 

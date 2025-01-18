@@ -5,6 +5,7 @@
 
 // UE:
 #include "Engine/DataTable.h"
+#include "Kismet/GameplayStatics.h"
 
 // Interaction:
 #include "ChessMan.h"
@@ -67,8 +68,12 @@ void AChessManGenerator::ReGenerate()
 
 void AChessManGenerator::DeleteAllPlayers()
 {
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASK_Character::StaticClass(), VerificationTag, lResultActors);
+
     // Удаление всех Фигур Игроков, созданных Генератором
-    for (auto& lPlayer : GetAllActors<ASK_Character>(VerificationTag))
+    for (auto& lPlayer : lResultActors)
     {
         lPlayer->Destroy();
     }
@@ -79,8 +84,12 @@ void AChessManGenerator::DeleteAllPlayers()
 
 void AChessManGenerator::DeleteAllChessMans()
 {
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AChessMan::StaticClass(), VerificationTag, lResultActors);
+
     // Удаление всех Шахматных фигур, созданных Генератором
-    for (auto& lChessMan : GetAllActors<AChessMan>(VerificationTag))
+    for (auto& lChessMan : lResultActors)
     {
         lChessMan->Destroy();
     }
@@ -152,8 +161,12 @@ void AChessManGenerator::CreateGeneratedDealerHand()
 {
     if (!CurrentDealerHand)
     {
+        TArray<AActor*> lResultActors;
+
+        UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ASquare::StaticClass(), VerificationTag, lResultActors);
+
         // Удаление всех рук Дилера, созданных Генератором
-        for (auto& lHand : GetAllActors<ADealerHand>(VerificationTag))
+        for (auto& lHand : lResultActors)
         {
             lHand->Destroy();
         }

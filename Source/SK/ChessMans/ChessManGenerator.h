@@ -4,7 +4,6 @@
 
 // Base:
 #include "CoreMinimal.h"
-#include "SK/ChessOperators/ChessGenerator.h"
 
 // Tools:
 #include "SK/Tools/Index2D.h"
@@ -34,7 +33,7 @@ class ASK_Character;
 
 
 UCLASS()
-class SK_API AChessManGenerator : public AChessGenerator
+class SK_API AChessManGenerator : public AActor
 {
     GENERATED_BODY()
 

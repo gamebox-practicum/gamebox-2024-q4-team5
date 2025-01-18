@@ -3,6 +3,9 @@
 // Base:
 #include "TimeBeaconGenerator.h"
 
+// UE:
+#include "Kismet/GameplayStatics.h"
+
 // Interaction:
 #include "TimeBeacon.h"
 //--------------------------------------------------------------------------------------
@@ -44,7 +47,11 @@ void ATimeBeaconGenerator::ReGenerate()
 
 void ATimeBeaconGenerator::DeleteAllTimeBeacons()
 {
-    for (auto& lBeacon : GetAllActors<ATimeBeacon>(VerificationTag))
+    TArray<AActor*> lResultActors;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATimeBeacon::StaticClass(), VerificationTag, lResultActors);
+
+    for (auto& lBeacon : lResultActors)
     {
         lBeacon->Destroy();
     }
