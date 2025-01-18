@@ -78,6 +78,7 @@ void AChessMan::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
+    RotateToFirstPlayer();
 }
 
 // Called every frame
@@ -129,7 +130,6 @@ void AChessMan::Initialize()
     {
         RotationInit();
         SubscribeToDelegates();
-        RotateToFirstPlayer();
     }
 
     /* ---   По завершении создания и инициализации:   --- */
