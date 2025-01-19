@@ -77,7 +77,8 @@ public:
     //
 
     /** Перегенерировать (перезапустить) данный Генератор */
-    UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
+    UFUNCTION(BlueprintCallable, CallInEditor,
+        Category = "Settings")
     void ReGenerate();
 
     /** Пересоздать все Клетки */
@@ -89,15 +90,24 @@ public:
     /* ---   Generator   --- */
 
     // Тип генерируемого блока
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly,
+        Category = "Settings|Generator")
     TSubclassOf<ASquare> SquareType;
 
+    // Начинать расставлять доску с белой клетки?
+    UPROPERTY(EditAnywhere, BlueprintReadOnly,
+        Category = "Settings|Generator",
+        meta = (DisplayName = "White First?"))
+    bool bWhiteSquareFirst = false;
+
     // Количество вдоль осей
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly,
+        Category = "Settings|Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
 
     // Тип генерируемого Триггера новой стадии уровня
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly,
+        Category = "Settings|Generator")
     TSubclassOf<AStageTrigger> StageTriggerType;
 
     //
@@ -111,7 +121,8 @@ public:
     /* ---   Generator | SquareData   --- */
 
     // Индексы позиции всех "трупов"
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     TArray<FIndex2D> CorpsesPositionIndex;
 
@@ -129,7 +140,8 @@ public:
     /* ---   Square Components   --- */
 
     // Таблица данных местоположения компонентов Клеток
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Square Components",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Square Components",
         meta = (RequiredAssetDataTags = "RowStructure=SquareComponentData"))
     UDataTable* SquareComponentTable = nullptr;
 
@@ -174,7 +186,8 @@ private:
     FVector PointOffset = FVector::ZeroVector;
 
     // Указатель на оператора, что управляет им
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AChessOperator* CurrentOperator = nullptr;
 
@@ -204,7 +217,8 @@ private:
     /* ---   Generator | SquareData   --- */
 
     // Все клетки в виде двумерного массива
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     FSquareArray2D TDArraySquares;
 
@@ -217,7 +231,7 @@ private:
     FSquareData SquareDataGeneration(const FIndex2D& XY);
 
     /** Генерация номера материала по координатам */
-    int32 GetMaterialNumber(const FIndex2D& XY);
+    bool GetMaterialNumber(const FIndex2D& XY);
     //-------------------------------------------
 
 

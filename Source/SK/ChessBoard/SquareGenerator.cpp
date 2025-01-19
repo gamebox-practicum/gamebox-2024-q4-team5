@@ -293,9 +293,9 @@ FSquareData ASquareGenerator::SquareDataGeneration(const FIndex2D& iXY)
     return rData;
 }
 
-int32 ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
+bool ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
 {
-    return (iXY.X + iXY.Y) % 2;
+    return bool((iXY.X + iXY.Y) % 2) != bWhiteSquareFirst;
 }
 //--------------------------------------------------------------------------------------
 

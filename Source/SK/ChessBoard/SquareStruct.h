@@ -48,7 +48,7 @@ struct FSquareData
 
     // Тип материала блока (номер по порядку: A=0, B=1)
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 TypeBlockMaterial = 0;
+    bool TypeBlockMaterial = 0;
 
     // Тип стороны конфликта
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
