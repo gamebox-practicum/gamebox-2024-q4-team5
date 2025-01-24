@@ -188,16 +188,20 @@ public:
 
     /* ---   Movement   --- */
 
-    // Игнорировать тип Клетки
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
-    bool bOnlyToUp = false;
-
     // Высота подъёма при перемещении
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Movement")
     float LiftingHeight = 200.f;
 
+    // Ходьба только "Шагом" (сверху)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Movement")
+    bool bOnlyToUp = false;
+
     // Расстояние смены варианта хода на вариант хода сверху
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Movement",
+        meta = (EditCondition = "!bOnlyToUp"))
     FIndex2D DistanceToUp = FIndex2D(2);
 
     //
