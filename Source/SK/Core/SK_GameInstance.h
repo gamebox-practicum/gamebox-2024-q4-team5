@@ -136,9 +136,22 @@ public:
 
 
 
+    /* ---   Levels System | Intermediate   --- */
+
+    // Позиция Игрока при переходе между уровнями
+    UPROPERTY(BlueprintReadWrite,
+        Category = "Levels System|Selection")
+    int32 IntermediatePlayerPositionY = -1;
+
+    // Текущее Смещение позиций Игрока по оси Y при переходе с предыдущей карты
+    int32 CurrentOffsetPlayersPositionAlongY = 0;
+    //-------------------------------------------
+
+
+
 private:
 
-    /* ---   Level Saving   --- */
+    /* ---   Levels System | Saving   --- */
 
     // Наименование слотов сохранения данных уровня
     FString LevelDataSlot = "LevelData";
@@ -156,7 +169,7 @@ private:
 
 
 
-    /* ---   Level Selection   --- */
+    /* ---   Levels System | Selection   --- */
 
     // Текущий номер уровня (строки из "StoryLevels")
     int32 NextLevelNumber = 0;

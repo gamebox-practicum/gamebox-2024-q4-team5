@@ -14,15 +14,19 @@
 
 /* ---   Table Row   --- */
 
-// Данные Оператора для генерации
+// Данные Уровня для запуска
 USTRUCT(BlueprintType)
 struct FLevelTableRow : public FTableRowBase
 {
     GENERATED_BODY()
 
-    // Количество добавляемых строк по оси X
+    // Запускаемая Карта уровня
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSoftObjectPtr<UWorld> Map;
+
+    // Смещение позиции Игрока по оси Y, относительно предыдущей Карты уровня
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 OffsetPlayersPositionAlongY = 0;
     //-------------------------------------------
 
 

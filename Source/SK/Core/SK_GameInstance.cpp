@@ -24,7 +24,7 @@ void USK_GameInstance::Init()
 
 
 
-/* ---   Level Saving   --- */
+/* ---   Levels System | Saving   --- */
 
 void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
 {
@@ -120,7 +120,7 @@ void USK_GameInstance::LevelSavingInit()
 
 
 
-/* ---   Level Selection   --- */
+/* ---   Levels System | Selection   --- */
 
 void USK_GameInstance::ResumeGame()
 {
@@ -135,6 +135,7 @@ void USK_GameInstance::NewGame()
 {
     bIsNewGame = true;
     NextLevelNumber = 0;
+    IntermediatePlayerPositionY = -1;
 
     NextLevel();
 }
@@ -152,7 +153,10 @@ void USK_GameInstance::NextLevel()
 
         while (!lNewLevel.GetAssetName().Len() && NextLevelNumber < lLevels.Num())
         {
-            lNewLevel = lLevels[NextLevelNumber++]->Map;
+            lNewLevel = lLevels[NextLevelNumber]->Map;
+            CurrentOffsetPlayersPositionAlongY = lLevels[NextLevelNumber]->OffsetPlayersPositionAlongY;
+
+            NextLevelNumber++;
         };
 
         if (lNewLevel.GetAssetName().Len())

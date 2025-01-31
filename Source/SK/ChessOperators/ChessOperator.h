@@ -92,7 +92,8 @@ public:
     /* ---   Re Generate   --- */
 
     /** Перегенерировать (перезапустить) данный Генератор */
-    UFUNCTION(BlueprintCallable, Category = "Settings", CallInEditor)
+    UFUNCTION(BlueprintCallable, CallInEditor,
+        Category = "Settings")
     void ReGenerate();
     //-------------------------------------------
 
@@ -101,11 +102,13 @@ public:
     /* ---   Generators | Square Generator   --- */
 
     // Указатель на текущий Генератор Клеток
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Generators|Square Generator")
     ASquareGenerator* CurrentSquareGenerator;
 
     // Количество клеток доски вдоль осей
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Square Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Generators|Square Generator")
     FIndex2D NumberAlongAxes = { 10, 10 };
     //-------------------------------------------
 
@@ -114,11 +117,13 @@ public:
     /* ---   Generators | Time Beacon Generator   --- */
 
     // Указатель на текущий Генератор Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|Time Beacon Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Generators|Time Beacon Generator")
     ATimeBeaconGenerator* CurrentTimeBeaconGenerator;
 
     // Тип Маяка времени (Колонны)
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generators|Time Beacon Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly,
+        Category = "Settings|Generators|Time Beacon Generator")
     TSubclassOf<ATimeBeacon> BeaconType;
     //-------------------------------------------
 
@@ -127,7 +132,8 @@ public:
     /* ---   Generators | ChessMan Generator   --- */
 
     // Указатель на текущий Генератор Шахматных фигур
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators|ChessMan Generator")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Generators|ChessMan Generator")
     AChessManGenerator* CurrentChessManGenerator;
 
     //
@@ -144,7 +150,8 @@ public:
     bool bIsPlayersMove = true;
 
     // Время таймера в секундах
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Moves Sequence")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Moves Sequence")
     float MoveLimitTime = 20.f;
 
     //
@@ -158,14 +165,20 @@ public:
     /* ---   Generators   --- */
 
     // Таблица данных конструирования уровня
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generators",
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Generators",
         meta = (RequiredAssetDataTags = "RowStructure=ChessOperatorData"))
     UDataTable* OperatorTable;
 
     // Номер текущего этапа
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Generators",
-        meta = (RequiredAssetDataTags = "RowStructure=ChessOperatorData"))
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Generators|Check")
     int32 CurrentStageNum = 0;
+
+    // Общее количество этапов
+    int32 TotalStageNum = 0;
+    // PS: Используется не только текущим класом-владельцем
+
     //-------------------------------------------
 
 
@@ -181,7 +194,8 @@ public:
     /* ---   Attack   --- */
 
     // Воспроизводимый звук при Атаке
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Attack")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Attack")
     USoundBase* WalkingSound = nullptr;
     //-------------------------------------------
 
@@ -190,7 +204,8 @@ public:
     /* ---   Level Saving   --- */
 
     /** Сохранить данные уровня */
-    UFUNCTION(BlueprintCallable, Category = "Level Saving")
+    UFUNCTION(BlueprintCallable,
+        Category = "Level Saving")
     void SaveLevelData() const;
 
     /** Выгрузить сохранённых данных уровня */

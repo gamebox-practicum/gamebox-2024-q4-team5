@@ -167,6 +167,12 @@ void ASquareGenerator::CreateGeneratedSquares()
             TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
         }
     }
+
+    // Создание "буферного" (не игрового для AI) последнего ряда
+    for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
+    {
+        CreateSquare(FIndex2D(NumberAlongAxes.X, y));
+    }
 }
 
 ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
@@ -207,12 +213,7 @@ void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
 
 FVector ASquareGenerator::GetLocationForSquare(const FIndex2D& iXY) const
 {
-    if (NumberAlongAxes.Within(iXY))
-    {
-        return BlockSize * iXY - PointOffset + GetActorLocation();
-    }
-
-    return FVector::ZeroVector;
+    return BlockSize * iXY - PointOffset + GetActorLocation();
 }
 
 void ASquareGenerator::CreatStageTrigger()
@@ -246,11 +247,21 @@ void ASquareGenerator::CreatStageTrigger()
 FVector ASquareGenerator::GetLocationForStageTrigger()
 {
     // Получение позиции крайней Клетки вдоль оси X
-    float lXPosition = TDArraySquares.GetByIndex(NumberAlongAxes - 1)->GetActorLocation().X;
+    float lXPosition = 0;
+
+    // Проверка последнего этапа
+    if (CurrentOperator->CurrentStageNum == CurrentOperator->TotalStageNum - 1)
+    {
+        lXPosition = GetLocationForSquare(NumberAlongAxes).X;
+    }
+    else
+    {
+        lXPosition = GetLocationForSquare(NumberAlongAxes - 1).X;
+    }
 
     // Возврат локации: Центр последнего ряда
     return FVector(
-        lXPosition,
+        lXPosition, // Позиция крайней Клетки вдоль оси X
         GetActorLocation().Y,
         GetActorLocation().Z);
 }
