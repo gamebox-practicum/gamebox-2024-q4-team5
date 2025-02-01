@@ -132,6 +132,11 @@ public:
     UFUNCTION(BlueprintCallable,
         Category = "Levels System|Selection")
     void NextLevel();
+
+    /** Переход к следующему уровню */
+    UFUNCTION(BlueprintCallable,
+        Category = "Levels System|Selection")
+    void LevelRestart();
     //-------------------------------------------
 
 

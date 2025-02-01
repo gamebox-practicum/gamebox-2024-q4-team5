@@ -156,7 +156,7 @@ void USK_GameInstance::NextLevel()
             lNewLevel = lLevels[NextLevelNumber]->Map;
             CurrentOffsetPlayersPositionAlongY = lLevels[NextLevelNumber]->OffsetPlayersPositionAlongY;
 
-            NextLevelNumber++;
+            ++NextLevelNumber;
         };
 
         if (lNewLevel.GetAssetName().Len())
@@ -184,5 +184,12 @@ void USK_GameInstance::NextLevel()
         UE_LOG(LogTemp, Error, TEXT("'%s'::NextLevel: StoryLevels is NOT"),
             *GetNameSafe(this));
     }
+}
+
+void USK_GameInstance::LevelRestart()
+{
+    --NextLevelNumber;
+
+    NextLevel();
 }
 //--------------------------------------------------------------------------------------
