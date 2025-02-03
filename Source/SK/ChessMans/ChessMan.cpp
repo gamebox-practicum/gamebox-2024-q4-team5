@@ -78,6 +78,7 @@ void AChessMan::BeginPlay()
     Super::BeginPlay();
 
     Cleaning();
+    SubscribeToDelegates();
     RotateToFirstPlayer();
 }
 
@@ -130,6 +131,7 @@ void AChessMan::Initialize()
     {
         RotationInit();
         SubscribeToDelegates();
+        RotateToFirstPlayer();
     }
 
     /* ---   По завершении создания и инициализации:   --- */
@@ -365,11 +367,14 @@ void AChessMan::SubscribeToDelegates()
     if (CurrentOperator)
     {
         // Поворот в сторону игрока с учётом выбранного типа поворота
-        CurrentOperator->OnPlayersMove.AddUObject(this, &AChessMan::RotateToFirstPlayer);
+        if (!CurrentOperator->OnPlayersMove.IsBoundToObject(this))
+        {
+            CurrentOperator->OnPlayersMove.AddUObject(this, &AChessMan::RotateToFirstPlayer);
+        }
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("'%s': CurrentOperator is NOT"),
+        UE_LOG(LogTemp, Warning, TEXT("'%s': CurrentOperator is NOT"),
             *GetNameSafe(this));
     }
 }
