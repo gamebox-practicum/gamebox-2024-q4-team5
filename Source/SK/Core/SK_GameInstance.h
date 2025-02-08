@@ -7,8 +7,8 @@
 #include "Engine/GameInstance.h"
 
 // Structs:
-#include "SK/Tools/Saving/LevelData.h"
-#include "SK/Tools/Saving/LevelSelectionData.h"
+#include "SK/Tools/Saving/Level/LevelData.h"
+#include "SK/Tools/Saving/Level/LevelSelectionData.h"
 
 // Generated:
 #include "SK_GameInstance.generated.h"
@@ -18,7 +18,7 @@
 
 /* ---   Delegates   --- */
 
-// Делегат информирования о сохранении текущего состояния уровня
+// Делегат информирования о сохранении текущего состояния Уровня
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelDataSave);
 //--------------------------------------------------------------------------------------
 
@@ -27,7 +27,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelDataSave);
 /* ---   Pre-declaration of classes   --- */
 
 // Interaction:
-class USavedLevelData;
+class USaveLevel;
+class USaveSettings;
 //--------------------------------------------------------------------------------------
 
 
@@ -41,7 +42,7 @@ public:
 
     /* ---   Delegates   --- */
 
-    // Делегат информирования о сохранении текущего состояния уровня
+    // Делегат информирования о сохранении текущего состояния Уровня
     UPROPERTY(BlueprintAssignable)
     FOnLevelDataSave OnLevelDataSave;
     //-------------------------------------------
@@ -56,6 +57,16 @@ public:
 
 
 
+    /* ---   Settings System | Saving   --- */
+
+    // Сохраняемые данные Настроек
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings System|Saving")
+    USaveSettings* SaveSettings;
+    //-------------------------------------------
+
+
+
     /* ---   Levels System | Saving   --- */
 
     // Флаг новой игры. Если false, то игра будет загружена из последнего сохранения (если оно есть)
@@ -65,21 +76,21 @@ public:
 
     //
 
-    /** Сохранение данных уровня (Отключено!) */
+    /** Сохранение данных Уровня */
     void SaveLevelData(const FLevelData& LevelData) const;
 
-    /**	Обнуление данных уровня */
+    /**	Обнуление данных Уровня */
     UFUNCTION(BlueprintCallable,
         Category = "Levels System|Saving")
     void ClearLevelData();
 
-    /** Получение сохранённых данных уровня */
+    /** Получение сохранённых данных Уровня */
     FLevelData LoadLevelData() const;
 
-    /** Получение сохранённых данных о выборе уровня */
+    /** Получение сохранённых данных о выборе Уровня */
     FLevelSelectionData LoadLevelSelectionData() const;
 
-    /** Проверка на наличие сохранения */
+    /** Проверка на наличие сохранения Уровня */
     UFUNCTION(BlueprintPure,
         Category = "Levels System|Saving",
         meta = (CompactNodeTitle = "Is Game Saved?"))
@@ -90,7 +101,7 @@ public:
 
     /* ---   Levels System | Selection   --- */
 
-    // Таблица порядка прохождения сюжетных уровней
+    // Таблица порядка прохождения сюжетных Уровней
     UPROPERTY(EditAnywhere, BlueprintReadWrite,
         Category = "Levels System|Selection",
         meta = (RequiredAssetDataTags = "RowStructure=LevelTableRow"))
@@ -128,12 +139,12 @@ public:
         Category = "Levels System|Selection")
     void NewGame();
 
-    /** Переход к следующему уровню */
+    /** Переход к следующему Уровню */
     UFUNCTION(BlueprintCallable,
         Category = "Levels System|Selection")
     void NextLevel();
 
-    /** Переход к следующему уровню */
+    /** Переход к следующему Уровню */
     UFUNCTION(BlueprintCallable,
         Category = "Levels System|Selection")
     void LevelRestart();
@@ -143,7 +154,7 @@ public:
 
     /* ---   Levels System | Intermediate   --- */
 
-    // Позиция Игрока при переходе между уровнями
+    // Позиция Игрока при переходе между Уровнями
     UPROPERTY(BlueprintReadWrite,
         Category = "Levels System|Selection")
     int32 IntermediatePlayerPositionY = -1;
@@ -156,27 +167,39 @@ public:
 
 private:
 
-    /* ---   Levels System | Saving   --- */
+    /* ---   Settings System | Saving   --- */
 
-    // Наименование слотов сохранения данных уровня
-    FString LevelDataSlot = "LevelData";
-
-    // Сохраняемые данные уровня
-    UPROPERTY()
-    USavedLevelData* SaveLevel;
+    // Наименование слотов сохранения данных Настроек
+    FString SettingsDataSlot = "SettingsData";
 
     //
 
-    /** Инициализация сохранения данных уровня */
-    void LevelSavingInit();
+    /** Инициализация сохранения данных Настроек */
+    void SettingsSavingInit();
+    //-------------------------------------------
 
+
+
+    /* ---   Levels System | Saving   --- */
+
+    // Наименование слотов сохранения данных Уровня
+    FString LevelDataSlot = "LevelData";
+
+    // Сохраняемые данные Уровня
+    UPROPERTY()
+    USaveLevel* SaveLevel;
+
+    //
+
+    /** Инициализация сохранения данных Уровня */
+    void LevelSavingInit();
     //-------------------------------------------
 
 
 
     /* ---   Levels System | Selection   --- */
 
-    // Текущий номер уровня (строки из "StoryLevels")
+    // Текущий номер Уровня (строки из "StoryLevels")
     int32 NextLevelNumber = 0;
     //-------------------------------------------
 };

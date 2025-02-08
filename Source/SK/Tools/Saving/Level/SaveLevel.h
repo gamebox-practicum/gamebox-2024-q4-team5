@@ -11,13 +11,13 @@
 #include "LevelSelectionData.h"
 
 // Generated:
-#include "SavedLevelData.generated.h"
+#include "SaveLevel.generated.h"
 //--------------------------------------------------------------------------------------
 
 
 
 UCLASS()
-class SK_API USavedLevelData : public USaveGame
+class SK_API USaveLevel : public USaveGame
 {
     GENERATED_BODY()
 

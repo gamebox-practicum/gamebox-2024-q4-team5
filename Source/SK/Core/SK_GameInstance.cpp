@@ -5,9 +5,11 @@
 
 // UE:
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
 
 // Interaction:
-#include "SK/Tools/Saving/SavedLevelData.h"
+#include "SK/Tools/Saving/Level/SaveLevel.h"
+#include "SK/Tools/Saving/Settings/SaveSettings.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -16,9 +18,36 @@
 
 void USK_GameInstance::Init()
 {
-    Super::Init();
-
+    SettingsSavingInit();
     LevelSavingInit();
+
+    Super::Init();
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Settings System | Saving   --- */
+
+void USK_GameInstance::SettingsSavingInit()
+{
+    SaveSettings = Cast<USaveSettings>(UGameplayStatics::LoadGameFromSlot(SettingsDataSlot, 0));
+
+    if (!SaveSettings)
+    {
+        // Автоматическое определение, принятие и сохранение всех Настроек Видео
+        UGameUserSettings* lGameUserSettings = GEngine->GetGameUserSettings();
+        lGameUserSettings->RunHardwareBenchmark();          // Определение
+        lGameUserSettings->ApplyHardwareBenchmarkResults(); // Принятие и Сохранение
+
+        // Создание и сохранение базовых Настроек: Игровой процесс, Звук
+        SaveSettings = Cast<USaveSettings>(UGameplayStatics::CreateSaveGameObject(
+            USaveSettings::StaticClass()));
+
+        UGameplayStatics::SaveGameToSlot(SaveSettings, SettingsDataSlot, 0);
+    }
+
+    // PS: Так как данная функция вызывается в Init(), SaveSettings будет валиден всегда
 }
 //--------------------------------------------------------------------------------------
 
@@ -106,12 +135,12 @@ bool USK_GameInstance::IsGameSaved()
 
 void USK_GameInstance::LevelSavingInit()
 {
-    SaveLevel = Cast<USavedLevelData>(UGameplayStatics::LoadGameFromSlot(LevelDataSlot, 0));
+    SaveLevel = Cast<USaveLevel>(UGameplayStatics::LoadGameFromSlot(LevelDataSlot, 0));
 
     if (!SaveLevel)
     {
-        SaveLevel = Cast<USavedLevelData>(UGameplayStatics::CreateSaveGameObject(
-            USavedLevelData::StaticClass()));
+        SaveLevel = Cast<USaveLevel>(UGameplayStatics::CreateSaveGameObject(
+            USaveLevel::StaticClass()));
 
         ClearLevelData();
     }
