@@ -42,15 +42,15 @@ public:
     /* ---   Settings System | Saving   --- */
 
     // Флаг контроля изменений Настроек Видео
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite,
         Category = "Settings System|Saving",
         meta = (DisplayName = "Is Video Settings Dirty?"))
     bool bIsVideoSettingsDirty = false;
 
     // Сохраняемые данные Настроек
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+    UPROPERTY(BlueprintReadWrite,
         Category = "Settings System|Saving")
-    USaveSettings* SaveSettings;
+    USaveSettings* SaveSettings = nullptr;
 
     //
 
@@ -84,7 +84,7 @@ private:
     FString SettingsDataSlot = "SettingsData";
 
     // "Заместитель" для сохранённых Настроек
-    FSettingsData CurrentSavedSettings;
+    FSettingsData CurrentSettingsData;
 
     //
 

@@ -60,9 +60,16 @@ public:
     /* ---   Settings System | Saving   --- */
 
     // Сохраняемые данные Настроек
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+    UPROPERTY(BlueprintReadWrite,
         Category = "Settings System|Saving")
-    USaveSettings* SaveSettings;
+    USaveSettings* SaveSettings = nullptr;
+
+    //
+
+    // Получить частоту обновления Экрана монитора
+    UFUNCTION(BlueprintCallable,
+        Category = "Settings System")
+    const int32 GetDisplayFrequency() const;
     //-------------------------------------------
 
 
@@ -70,7 +77,7 @@ public:
     /* ---   Levels System | Saving   --- */
 
     // Флаг новой игры. Если false, то игра будет загружена из последнего сохранения (если оно есть)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite,
         Category = "Levels System|Saving")
     bool bIsNewGame = false;
 

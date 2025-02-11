@@ -18,9 +18,9 @@
 
 void USettingsWidget::NativeOnInitialized()
 {
-    Super::NativeOnInitialized();
-
     InitWidgetData();
+
+    Super::NativeOnInitialized();
 }
 
 void USettingsWidget::NativeConstruct()
@@ -35,10 +35,9 @@ void USettingsWidget::NativeConstruct()
 
 void USettingsWidget::LoadSettings()
 {
-    if (CurrentSavedSettings != SaveSettings->SettingsData)
+    if (CurrentSettingsData != SaveSettings->SettingsData)
     {
-        SaveSettings = Cast<USaveSettings>(UGameplayStatics::LoadGameFromSlot(SettingsDataSlot, 0));
-        CurrentSavedSettings = SaveSettings->SettingsData;
+        SaveSettings->SettingsData = CurrentSettingsData;
     }
 
     if (bIsVideoSettingsDirty
@@ -51,10 +50,10 @@ void USettingsWidget::LoadSettings()
 
 void USettingsWidget::ApplySettings()
 {
-    if (CurrentSavedSettings != SaveSettings->SettingsData)
+    if (CurrentSettingsData != SaveSettings->SettingsData)
     {
         UGameplayStatics::SaveGameToSlot(SaveSettings, SettingsDataSlot, 0);
-        CurrentSavedSettings = SaveSettings->SettingsData;
+        CurrentSettingsData = SaveSettings->SettingsData;
     }
 
     if (bIsVideoSettingsDirty
@@ -70,14 +69,14 @@ void USettingsWidget::ApplySettings()
 bool USettingsWidget::IsSettingsDirty()
 {
     return bIsVideoSettingsDirty
-        || CurrentSavedSettings != SaveSettings->SettingsData
+        || CurrentSettingsData != SaveSettings->SettingsData
         || GEngine->GetGameUserSettings()->IsDirty();
 }
 
 void USettingsWidget::InitWidgetData()
 {
     SaveSettings = Cast<USK_GameInstance>(GetGameInstance())->SaveSettings;
-    CurrentSavedSettings = SaveSettings->SettingsData;
+    CurrentSettingsData = SaveSettings->SettingsData;
     GameUserSettings = GEngine->GetGameUserSettings();
 }
 //--------------------------------------------------------------------------------------

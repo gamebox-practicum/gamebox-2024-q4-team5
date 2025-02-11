@@ -3,9 +3,19 @@
 // Base:
 #include "SK_GameInstance.h"
 
+// Win:
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows/PreWindowsApi.h"
+#include <windows.h> // Conflict header file
+#include "Windows/PostWindowsApi.h"
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
+
 // UE:
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Interaction:
 #include "SK/Tools/Saving/Level/SaveLevel.h"
@@ -29,16 +39,54 @@ void USK_GameInstance::Init()
 
 /* ---   Settings System | Saving   --- */
 
+const int32 USK_GameInstance::GetDisplayFrequency() const
+{
+    int32 lFPS = 60;
+
+    // Ограничение по платформе: Только WINDOWS
+#if PLATFORM_WINDOWS
+    DEVMODE dm;
+    dm.dmSize = sizeof(DEVMODE);
+    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+    lFPS = dm.dmDisplayFrequency;
+#endif
+
+    return lFPS;
+}
+
 void USK_GameInstance::SettingsSavingInit()
 {
     SaveSettings = Cast<USaveSettings>(UGameplayStatics::LoadGameFromSlot(SettingsDataSlot, 0));
 
     if (!SaveSettings)
     {
-        // Автоматическое определение, принятие и сохранение всех Настроек Видео
         UGameUserSettings* lGameUserSettings = GEngine->GetGameUserSettings();
+
+        /* ---   Auto settings:   --- */
+        // Автоматическое определение, принятие и сохранение всех Настроек Видео:
         lGameUserSettings->RunHardwareBenchmark();          // Определение
         lGameUserSettings->ApplyHardwareBenchmarkResults(); // Принятие и Сохранение
+        //-------------------------------------------
+
+
+        /* ---   Default settings:   --- */
+
+        // Полный экран
+        lGameUserSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+
+        // Разрешение экрана
+        TArray<FIntPoint> lAllRes; // Все доступные вариации Разрешения экрана (от меньшего к большему)
+        UKismetSystemLibrary::GetSupportedFullscreenResolutions(lAllRes);
+        // Принятие последнего (наибольшего) значения Разрешения экрана
+        lGameUserSettings->SetScreenResolution(lAllRes[lAllRes.Num() - 1]);
+
+        // FPS
+        lGameUserSettings->SetFrameRateLimit(GetDisplayFrequency());
+
+
+        lGameUserSettings->ApplySettings(false);
+        //-------------------------------------------
+
 
         // Создание и сохранение базовых Настроек: Игровой процесс, Звук
         SaveSettings = Cast<USaveSettings>(UGameplayStatics::CreateSaveGameObject(
