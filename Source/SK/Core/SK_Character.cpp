@@ -227,7 +227,7 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
     EventOnMove();
 }
 
-FIndex2D ASK_Character::GetCurrentPosition() const
+FIntPoint ASK_Character::GetCurrentPosition() const
 {
     return CurrentPosition;
 }

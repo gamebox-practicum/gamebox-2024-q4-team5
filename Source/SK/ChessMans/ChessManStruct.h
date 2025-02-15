@@ -3,9 +3,6 @@
 // Base:
 #include "CoreMinimal.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // UE:
 #include "Engine/DataTable.h"
 
@@ -87,7 +84,7 @@ struct FPlayerData : public FTableRowBase
 
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D Position = { 0,0 };
+    FIntPoint Position = { 0,0 };
     //-------------------------------------------
 
 
@@ -96,7 +93,7 @@ struct FPlayerData : public FTableRowBase
 
     FPlayerData() {};
 
-    FPlayerData(TSubclassOf<ASK_Character> iType, FIndex2D iPosition)
+    FPlayerData(TSubclassOf<ASK_Character> iType, FIntPoint iPosition)
         : Type(iType), Position(iPosition) {};
     //-------------------------------------------
 };
@@ -115,11 +112,11 @@ struct FChessManData : public FTableRowBase
 
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D Position = { 0,0 };
+    FIntPoint Position = { 0,0 };
 
     // Возможные позиции для хода
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FIndex2D> AvailablePositions;
+    TArray<FIntPoint> AvailablePositions;
 
     // Флаг состояния смерти данной Шахматной фигуры
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -148,7 +145,7 @@ struct FAttackingChessMansData
 
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D AttackPosition = { 0,0 };
+    FIntPoint AttackPosition = { 0,0 };
     //-------------------------------------------
 
 
@@ -157,7 +154,7 @@ struct FAttackingChessMansData
 
     FAttackingChessMansData() {};
 
-    FAttackingChessMansData(AChessMan* iChessMan, const FIndex2D& iAttackPosition)
+    FAttackingChessMansData(AChessMan* iChessMan, const FIntPoint& iAttackPosition)
         : ChessMan(iChessMan), AttackPosition(iAttackPosition) {};
     //-------------------------------------------
 };
@@ -190,8 +187,8 @@ AChessMan* GetAvailableChessMan(
 
 @return Массив свободных индексов всех Клеток для данной Пешки.
 */
-TArray<FIndex2D> GetSquareForPawn(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForPawn(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 
@@ -201,8 +198,8 @@ TArray<FIndex2D> GetSquareForPawn(
 
 @return Массив свободных индексов всех Клеток для данного Коня
 */
-TArray<FIndex2D> GetSquareForKnight(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForKnight(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 
@@ -212,8 +209,8 @@ TArray<FIndex2D> GetSquareForKnight(
 
 @return Массив свободных индексов всех Клеток для данного Слона
 */
-TArray<FIndex2D> GetSquareForBishop(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForBishop(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 
@@ -223,8 +220,8 @@ TArray<FIndex2D> GetSquareForBishop(
 
 @return Массив свободных индексов всех Клеток для данного Ладьи
 */
-TArray<FIndex2D> GetSquareForRook(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForRook(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 
@@ -234,8 +231,8 @@ TArray<FIndex2D> GetSquareForRook(
 
 @return Массив свободных индексов всех Клеток для данного Ферзя
 */
-TArray<FIndex2D> GetSquareForQueen(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForQueen(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 //--------------------------------------------------------------------------------------
@@ -252,9 +249,9 @@ TArray<FIndex2D> GetSquareForQueen(
 @return oResult     -- Проверенный массив 2D-индексов свободных Клеток
 */
 void CheckPositions(
-    const TArray<FIndex2D>& iNotChecked,
+    const TArray<FIntPoint>& iNotChecked,
     const FSquareArray2D* iAllSquares,
-    TArray<FIndex2D>& oResult,
+    TArray<FIntPoint>& oResult,
     TArray<FAttackingChessMansData>& oAttackingChessMans);
 
 /** Проверка наличия Клетки по индексу
@@ -265,7 +262,7 @@ void CheckPositions(
 @return oSquareData -- Данные Клетки
 */
 bool CheckSquare(
-    const FIndex2D& iPosition,
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     FSquareData& oSquareData);
 //--------------------------------------------------------------------------------------

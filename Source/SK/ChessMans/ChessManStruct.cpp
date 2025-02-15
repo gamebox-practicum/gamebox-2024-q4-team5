@@ -30,7 +30,7 @@ AChessMan* GetAvailableChessMan(
         lData.AvailablePositions.Empty();
 
         // Массив доступных ходов
-        TArray<FIndex2D> lSquaresIndex2D;
+        TArray<FIntPoint> lSquaresIndex2D;
 
         switch (lData.Type)
         {
@@ -97,18 +97,18 @@ AChessMan* GetAvailableChessMan(
 /* ---   Functions | Get Square For ChessMan   --- */
 // PS: Local Functions
 
-TArray<FIndex2D> GetSquareForPawn(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForPawn(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
-    TArray<FIndex2D> lNotChecked;
-    TArray<FIndex2D> lResult;
+    TArray<FIntPoint> lNotChecked;
+    TArray<FIntPoint> lResult;
     FSquareData lSquareData; // Данные Клетки
 
     // Ход вперёд
-    lNotChecked.Add(iPosition + FIndex2D { -1, 0 });
+    lNotChecked.Add(iPosition + FIntPoint { -1, 0 });
 
     // Проверка хода по диагонали (Индивидуально для Пешки)
     for (auto& dPosition : lNotChecked)
@@ -126,8 +126,8 @@ TArray<FIndex2D> GetSquareForPawn(
     lNotChecked.Empty(2);
 
     // Ход по диагонали
-    lNotChecked.Add(iPosition + FIndex2D { -1, 1 });
-    lNotChecked.Add(iPosition + FIndex2D { -1, -1 });
+    lNotChecked.Add(iPosition + FIntPoint { -1, 1 });
+    lNotChecked.Add(iPosition + FIntPoint { -1, -1 });
 
     // Проверка хода по диагонали (Индивидуально для Пешки)
     for (auto& dPosition : lNotChecked)
@@ -145,26 +145,26 @@ TArray<FIndex2D> GetSquareForPawn(
     return lResult;
 }
 
-TArray<FIndex2D> GetSquareForKnight(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForKnight(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
-    TArray<FIndex2D> lNotChecked;
+    TArray<FIntPoint> lNotChecked;
     lNotChecked.Reset(8);
-    TArray<FIndex2D> lResult;
+    TArray<FIntPoint> lResult;
 
     // Просчёт ходов Коня
-    lNotChecked.Add(iPosition + FIndex2D { 1, 2 });
-    lNotChecked.Add(iPosition + FIndex2D { 1, -2 });
-    lNotChecked.Add(iPosition + FIndex2D { -1, 2 });
-    lNotChecked.Add(iPosition + FIndex2D { -1, -2 });
+    lNotChecked.Add(iPosition + FIntPoint { 1, 2 });
+    lNotChecked.Add(iPosition + FIntPoint { 1, -2 });
+    lNotChecked.Add(iPosition + FIntPoint { -1, 2 });
+    lNotChecked.Add(iPosition + FIntPoint { -1, -2 });
     //
-    lNotChecked.Add(iPosition + FIndex2D { 2, 1 });
-    lNotChecked.Add(iPosition + FIndex2D { 2, -1 });
-    lNotChecked.Add(iPosition + FIndex2D { -2, 1 });
-    lNotChecked.Add(iPosition + FIndex2D { -2, -1 });
+    lNotChecked.Add(iPosition + FIntPoint { 2, 1 });
+    lNotChecked.Add(iPosition + FIntPoint { 2, -1 });
+    lNotChecked.Add(iPosition + FIntPoint { -2, 1 });
+    lNotChecked.Add(iPosition + FIntPoint { -2, -1 });
 
     // Проверка ходов Коня
     CheckPositions(
@@ -176,23 +176,23 @@ TArray<FIndex2D> GetSquareForKnight(
     return lResult;
 }
 
-TArray<FIndex2D> GetSquareForBishop(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForBishop(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
-    TArray<FIndex2D> lResult;
+    TArray<FIntPoint> lResult;
     FSquareData lSquareData; // Данные Клетки
-    FIndex2D i;
+    FIntPoint i;
 
     // Проверяемые направления для Слона
-    TArray<FIndex2D> lCheckedDirections =
+    TArray<FIntPoint> lCheckedDirections =
     {
-        FIndex2D{ 1, 1 },
-        FIndex2D { 1, -1 },
-        FIndex2D { -1, -1 },
-        FIndex2D { -1, 1 }
+        FIntPoint{ 1, 1 },
+        FIntPoint { 1, -1 },
+        FIntPoint { -1, -1 },
+        FIntPoint { -1, 1 }
     };
 
     // Флаг выхода из цикла проверки конкретного направления
@@ -233,23 +233,23 @@ TArray<FIndex2D> GetSquareForBishop(
     return lResult;
 }
 
-TArray<FIndex2D> GetSquareForRook(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForRook(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
-    TArray<FIndex2D> lResult;
+    TArray<FIntPoint> lResult;
     FSquareData lSquareData; // Данные Клетки
-    FIndex2D i;
+    FIntPoint i;
 
     // Проверяемые направления для Ладьи
-    TArray<FIndex2D> lCheckedDirections =
+    TArray<FIntPoint> lCheckedDirections =
     {
-        FIndex2D{ 1, 0 },
-        FIndex2D { -1, 0 },
-        FIndex2D { 0, 1 },
-        FIndex2D { 0, -1 }
+        FIntPoint{ 1, 0 },
+        FIntPoint { -1, 0 },
+        FIntPoint { 0, 1 },
+        FIntPoint { 0, -1 }
     };
 
     // Флаг выхода из цикла проверки конкретного направления
@@ -290,13 +290,13 @@ TArray<FIndex2D> GetSquareForRook(
     return lResult;
 }
 
-TArray<FIndex2D> GetSquareForQueen(
-    const FIndex2D& iPosition,
+TArray<FIntPoint> GetSquareForQueen(
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     // Инициализация локальных переменных
-    TArray<FIndex2D> lResult;
+    TArray<FIntPoint> lResult;
 
     lResult = GetSquareForBishop(
         iPosition,
@@ -317,9 +317,9 @@ TArray<FIndex2D> GetSquareForQueen(
 /* ---   Functions | Tools   --- */
 
 void CheckPositions(
-    const TArray<FIndex2D>& iNotChecked,
+    const TArray<FIntPoint>& iNotChecked,
     const FSquareArray2D* iAllSquares,
-    TArray<FIndex2D>& oResult,
+    TArray<FIntPoint>& oResult,
     TArray<FAttackingChessMansData>& oAttackingChessMans)
 {
     FSquareData lSquareData; // Данные Клетки
@@ -341,7 +341,7 @@ void CheckPositions(
 }
 
 bool CheckSquare(
-    const FIndex2D& iPosition,
+    const FIntPoint& iPosition,
     const FSquareArray2D* iAllSquares,
     FSquareData& oSquareData)
 {

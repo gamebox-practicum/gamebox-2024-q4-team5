@@ -15,7 +15,7 @@ bool FSquareArray2D::IsValidIndex(const int32& iX, const int32& iY) const
     return Square2DArray.IsValidIndex(iX) && Square2DArray[iX].SquareArray.IsValidIndex(iY);
 }
 
-bool FSquareArray2D::IsValidIndex(const FIndex2D& iXY) const
+bool FSquareArray2D::IsValidIndex(const FIntPoint& iXY) const
 {
     return IsValidIndex(iXY.X, iXY.Y);
 }
@@ -55,18 +55,18 @@ void FSquareArray2D::SetNum(const int32& iX, const int32& iY)
     }
 }
 
-void FSquareArray2D::SetNum(const FIndex2D& iXY)
+void FSquareArray2D::SetNum(const FIntPoint& iXY)
 {
     SetNum(iXY.X, iXY.Y);
 }
 
-FIndex2D FSquareArray2D::Num() const
+FIntPoint FSquareArray2D::Num() const
 {
-    FIndex2D lResult = FIndex2D(Square2DArray.Num(), 0);
+    FIntPoint lResult = FIntPoint(Square2DArray.Num(), 0);
 
     if (Square2DArray.IsValidIndex(0))
     {
-        lResult += FIndex2D(0, Square2DArray[0].SquareArray.Num());
+        lResult += FIntPoint(0, Square2DArray[0].SquareArray.Num());
     }
 
     return lResult;
@@ -103,7 +103,7 @@ ASquare* FSquareArray2D::GetByIndex(const int32& iX, const int32& iY) const
         return nullptr;
 }
 
-ASquare* FSquareArray2D::GetByIndex(const FIndex2D& iXY) const
+ASquare* FSquareArray2D::GetByIndex(const FIntPoint& iXY) const
 {
     return GetByIndex(iXY.X, iXY.Y);
 }
@@ -118,7 +118,7 @@ bool FSquareArray2D::SetByIndex(ASquare* iSquare, const int32& iX, const int32& 
 
     return false;
 }
-bool FSquareArray2D::SetByIndex(ASquare* iSquare, const FIndex2D& iXY)
+bool FSquareArray2D::SetByIndex(ASquare* iSquare, const FIntPoint& iXY)
 {
     return SetByIndex(iSquare, iXY.X, iXY.Y);
 }

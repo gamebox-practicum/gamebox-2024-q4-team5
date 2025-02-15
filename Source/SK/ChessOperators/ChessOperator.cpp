@@ -142,9 +142,9 @@ void AChessOperator::OperatorDataPreInit()
     TotalStageNum = CurrentOperatorData.Num();
 }
 
-FIndex2D AChessOperator::GetFullNumberAlongAxes()
+FIntPoint AChessOperator::GetFullNumberAlongAxes()
 {
-    FIndex2D lResult = NumberAlongAxes;
+    FIntPoint lResult = NumberAlongAxes;
 
     if (CurrentOperatorData[0]->AddOnX != 0)
     {
@@ -171,7 +171,7 @@ void AChessOperator::UpdateCurrentSquareGenerator()
         // Приоритет размера по оси X у "нулевых" данных Таблицы "OperatorTable"
         if (CurrentOperatorData[0]->AddOnX)
         {
-            CurrentSquareGenerator->NumberAlongAxes = FIndex2D(CurrentOperatorData[0]->AddOnX, NumberAlongAxes.Y);
+            CurrentSquareGenerator->NumberAlongAxes = FIntPoint(CurrentOperatorData[0]->AddOnX, NumberAlongAxes.Y);
         }
         else
         {
@@ -285,16 +285,13 @@ void AChessOperator::UpdateCurrentTimeBeaconGenerator(const FVector& iBlockSize)
 {
     if (GetCurrentTimeBeaconGenerator())
     {
-        if (CurrentTimeBeaconGenerator->BlockSize != iBlockSize)
-        {
-            // Передать данные для генерации
-            CurrentTimeBeaconGenerator->BeaconType = BeaconType;
-            CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
-            CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
+        // Передать данные для генерации
+        CurrentTimeBeaconGenerator->BeaconType = BeaconType;
+        CurrentTimeBeaconGenerator->BlockSize = iBlockSize;
+        CurrentTimeBeaconGenerator->NumberOfSquaresAlongAxes = GetFullNumberAlongAxes();
 
-            // Обновить генератор
-            CurrentTimeBeaconGenerator->ReGenerate();
-        }
+        // Обновить генератор
+        CurrentTimeBeaconGenerator->ReGenerate();
     }
     else
     {
@@ -731,7 +728,7 @@ void AChessOperator::PlayPrimitiveAI()
     }
 
     //инициализируем обьект с данными фигур
-    FIndex2D boardShape { SKUtils::GameToAI(CurrentSquareGenerator->NumberAlongAxes) };
+    FIntPoint boardShape { SKUtils::GameToAI(CurrentSquareGenerator->NumberAlongAxes) };
     ChessBoardInfo->Init(boardShape.Y, boardShape.X);
 
     //размещаем все фигуры
@@ -749,7 +746,7 @@ void AChessOperator::PlayPrimitiveAI()
             PIECE_COLOR::BLACK, this);
         if (IsValid(chessPiece))
         {
-            FIndex2D AICoordinatePosition { SKUtils::GameToAI(figure->CurrentData.Position) };
+            FIntPoint AICoordinatePosition { SKUtils::GameToAI(figure->CurrentData.Position) };
             ChessBoardInfo->Set(AICoordinatePosition.Y, AICoordinatePosition.X, chessPiece);
         }
     }
@@ -835,7 +832,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
     //вызывается ивент, если белый король на прицеле
     if (AllPlayers->Num() > 0)
     {
-        if ((*AllPlayers)[0]->GetCurrentPosition() == FIndex2D { newPosition.X, newPosition.Y })
+        if ((*AllPlayers)[0]->GetCurrentPosition() == FIntPoint { newPosition.X, newPosition.Y })
         {
             OnKingAttacked();
         }
@@ -843,7 +840,7 @@ void AChessOperator::OnBlackStepCalculated(FChessPieceStep Step)
 
     // Переместить выбранную фигуру на выбранную клетку
     ASquare* target = PointerToAllSquares->
-        GetByIndex(FIndex2D { newPosition.X, newPosition.Y });
+        GetByIndex(FIntPoint { newPosition.X, newPosition.Y });
 
     (*figure)->MoveToSquare(target);
 }

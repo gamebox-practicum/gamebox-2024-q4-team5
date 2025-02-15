@@ -3,9 +3,6 @@
 // Base:
 #include "CoreMinimal.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Generated:
 #include "SquareStruct.generated.h"
 //--------------------------------------------------------------------------------------
@@ -44,7 +41,7 @@ struct FSquareData
 
     // Позиционный номер
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D PositionNumber = { 0,0 };
+    FIntPoint PositionNumber = { 0,0 };
 
     // Тип материала блока (номер по порядку: A=0, B=1)
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -123,7 +120,7 @@ struct FSquareArray2D
     /** Проверка валидности индекса массива */
     bool IsValidIndex(const int32& X, const int32& Y) const;
     /** Проверка валидности индекса массива */
-    bool IsValidIndex(const FIndex2D& XY) const;
+    bool IsValidIndex(const FIntPoint& XY) const;
 
     /** Очистка массива  */
     void Empty();
@@ -133,10 +130,10 @@ struct FSquareArray2D
     /** Изменить размер массива на заданное количество элементов */
     void SetNum(const int32& X, const int32& Y);
     /** Изменить размер массива на заданное количество элементов */
-    void SetNum(const FIndex2D& XY);
+    void SetNum(const FIntPoint& XY);
 
     /** Получить 2D-размер массива элементов */
-    FIndex2D Num() const;
+    FIntPoint Num() const;
 
     /** Получить массив с конкретным индексом X */
     TArray<ASquare*> GetArrayByX(const int32& X) const;
@@ -146,12 +143,12 @@ struct FSquareArray2D
     /** Получить элемент по Индексу */
     ASquare* GetByIndex(const int32& X, const int32& Y) const;
     /** Получить элемент по Двумерному Индексу */
-    ASquare* GetByIndex(const FIndex2D& XY) const;
+    ASquare* GetByIndex(const FIntPoint& XY) const;
 
     /** Записать элемент по Индексу */
     bool SetByIndex(ASquare* Square, const int32& X, const int32& Y);
     /** Записать элемент по Двумерному Индексу */
-    bool SetByIndex(ASquare* Square, const FIndex2D& XY);
+    bool SetByIndex(ASquare* Square, const FIntPoint& XY);
     //-------------------------------------------
 
 

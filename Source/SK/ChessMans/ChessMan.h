@@ -211,7 +211,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite,
         Category = "Settings|Movement",
         meta = (EditCondition = "!bOnlyToUp"))
-    FIndex2D DistanceToUp = FIndex2D(2);
+    FIntPoint DistanceToUp = FIntPoint(2);
 
     //
 
@@ -345,7 +345,7 @@ private:
     void RotateToFirstPlayer(const bool& bIsPlayersMove = false);
 
     /** Получение ближайшей к игроку локации */
-    FVector GetClosestToPlayer(const TArray<FIndex2D>& Variants);
+    FVector GetClosestToPlayer(const TArray<FIntPoint>& Variants);
     //-------------------------------------------
 
 

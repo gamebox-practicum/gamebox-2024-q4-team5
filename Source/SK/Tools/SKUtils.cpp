@@ -1,8 +1,8 @@
 #include "SKUtils.h"
 
-FIndex2D SKUtils::GameToAI(FIndex2D index)
+FIntPoint SKUtils::GameToAI(FIntPoint index)
 {
-    return FIndex2D{index.Y, index.X};
+    return FIntPoint{index.Y, index.X};
 }
 
 FCellIndex SKUtils::AIToGame(FCellIndex index)

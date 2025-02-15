@@ -6,9 +6,6 @@
 // UE:
 #include "Engine/DataTable.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Structs:
 #include "SK/ChessBoard/SquareComponent.h"
 #include "SK/ChessMans/ChessManStruct.h"
@@ -50,7 +47,7 @@ struct FLevelData
 
     // Количество клеток вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D NumberAlongAxes = FIndex2D();
+    FIntPoint NumberAlongAxes = FIntPoint();
 
     // Массив данных Компонентов клеток
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -93,7 +90,7 @@ __declspec(selectany) const FLevelData FLevelData::Empty
     //-------------------------------------------
 
     /* ---   Square Generator Data   --- */
-    FIndex2D(), // Количество клеток вдоль осей
+    FIntPoint(), // Количество клеток вдоль осей
     TArray<FSquareComponentData>(), // Массив данных Компонентов клеток
     //-------------------------------------------
 

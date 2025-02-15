@@ -164,18 +164,18 @@ void ASquareGenerator::CreateGeneratedSquares()
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
         {
             // Создание Клетки и добавление её в массив по соответствующему индексу
-            TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
+            TDArraySquares.SetByIndex(CreateSquare(FIntPoint(x, y)), x, y);
         }
     }
 
     // Создание "буферного" (не игрового для AI) последнего ряда
     for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
     {
-        CreateSquare(FIndex2D(NumberAlongAxes.X, y));
+        CreateSquare(FIntPoint(NumberAlongAxes.X, y));
     }
 }
 
-ASquare* ASquareGenerator::CreateSquare(const FIndex2D& iXY)
+ASquare* ASquareGenerator::CreateSquare(const FIntPoint& iXY)
 {
     ASquare* lSquare = nullptr;
 
@@ -211,9 +211,9 @@ void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
     }
 }
 
-FVector ASquareGenerator::GetLocationForSquare(const FIndex2D& iXY) const
+FVector ASquareGenerator::GetLocationForSquare(const FIntPoint& iXY) const
 {
-    return BlockSize * iXY - PointOffset + GetActorLocation();
+    return FVector(BlockSize.X * iXY.X, BlockSize.Y * iXY.Y, BlockSize.Z) - PointOffset + GetActorLocation();
 }
 
 void ASquareGenerator::CreatStageTrigger()
@@ -294,7 +294,7 @@ void ASquareGenerator::SetSquareData(ASquare* iBlock, FSquareData iData)
     }
 }
 
-FSquareData ASquareGenerator::SquareDataGeneration(const FIndex2D& iXY)
+FSquareData ASquareGenerator::SquareDataGeneration(const FIntPoint& iXY)
 {
     FSquareData rData;
 
@@ -304,7 +304,7 @@ FSquareData ASquareGenerator::SquareDataGeneration(const FIndex2D& iXY)
     return rData;
 }
 
-bool ASquareGenerator::GetMaterialNumber(const FIndex2D& iXY)
+bool ASquareGenerator::GetMaterialNumber(const FIntPoint& iXY)
 {
     return bool((iXY.X + iXY.Y) % 2) != bWhiteSquareFirst;
 }
@@ -392,7 +392,7 @@ void ASquareGenerator::CreateGeneratedSquareComponents(UDataTable* iSquareCompon
 
 void ASquareGenerator::AddGeneratedSquares(const int32& iAddOnX, UDataTable* iSquareComponentTable)
 {
-    NumberAlongAxes += FIndex2D(iAddOnX, 0);
+    NumberAlongAxes += FIntPoint(iAddOnX, 0);
 
     // Создание недостающих элементов массива
     TDArraySquares.SetNum(NumberAlongAxes);
@@ -402,14 +402,14 @@ void ASquareGenerator::AddGeneratedSquares(const int32& iAddOnX, UDataTable* iSq
         for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
         {
             // Создание Клетки и добавление её в массив по соответствующему индексу
-            TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
+            TDArraySquares.SetByIndex(CreateSquare(FIntPoint(x, y)), x, y);
         }
     }
 
     // Создание "буферного" (не игрового для AI) последнего ряда
     for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
     {
-        CreateSquare(FIndex2D(NumberAlongAxes.X, y));
+        CreateSquare(FIntPoint(NumberAlongAxes.X, y));
     }
 
     CreateGeneratedSquareComponents(iSquareComponentTable);

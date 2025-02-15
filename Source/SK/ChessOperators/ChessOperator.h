@@ -6,9 +6,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Structs:
 #include "SK/ChessBoard/SquareStruct.h"
 #include "SK/Core/SK_GameInstance.h"
@@ -109,14 +106,14 @@ public:
     // Количество клеток доски вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadWrite,
         Category = "Settings|Generators|Square Generator")
-    FIndex2D NumberAlongAxes = { 10, 10 };
+    FIntPoint NumberAlongAxes = { 10, 10 };
     //-------------------------------------------
 
 
 
     /* ---   Generators | Time Beacon Generator   --- */
 
-    // Указатель на текущий Генератор Шахматных фигур
+    // Указатель на текущий Генератор Колонн
     UPROPERTY(EditAnywhere, BlueprintReadWrite,
         Category = "Settings|Generators|Time Beacon Generator")
     ATimeBeaconGenerator* CurrentTimeBeaconGenerator;
@@ -125,6 +122,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly,
         Category = "Settings|Generators|Time Beacon Generator")
     TSubclassOf<ATimeBeacon> BeaconType;
+
+    //
+
+    /** Обновить данные текущего Генератора Колонн */
+    void UpdateCurrentTimeBeaconGenerator(const FVector& BlockSize);
+
     //-------------------------------------------
 
 
@@ -135,11 +138,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite,
         Category = "Settings|Generators|ChessMan Generator")
     AChessManGenerator* CurrentChessManGenerator;
-
-    //
-
-    /** Обновить данные текущего Генератора Шахматных фигур */
-    void UpdateCurrentTimeBeaconGenerator(const FVector& BlockSize);
     //-------------------------------------------
 
 
@@ -245,7 +243,7 @@ private:
     void OperatorDataPreInit();
 
     /** Получить Абсолютное (полное) количество размера доски */
-    FIndex2D GetFullNumberAlongAxes();
+    FIntPoint GetFullNumberAlongAxes();
     //-------------------------------------------
 
 
@@ -312,7 +310,7 @@ private:
     FSquareArray2D* PointerToAllSquares = nullptr;
 
     // Массив Индексов Позиций всех "Трупов"
-    TArray<FIndex2D>* PointerToAllCorpsesPositionIndex = nullptr;
+    TArray<FIntPoint>* PointerToAllCorpsesPositionIndex = nullptr;
 
     //
 

@@ -40,7 +40,7 @@ struct FSquareComponentData : public FTableRowBase
 
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D Position = { 0,0 };
+    FIntPoint Position = { 0, 0 };
     //-------------------------------------------
 
 
@@ -49,7 +49,7 @@ struct FSquareComponentData : public FTableRowBase
 
     FSquareComponentData() {};
 
-    FSquareComponentData(TSubclassOf<USquareComponent> iType, FIndex2D iPosition)
+    FSquareComponentData(TSubclassOf<USquareComponent> iType, FIntPoint iPosition)
         : Type(iType), Position(iPosition) {};
     //-------------------------------------------
 };

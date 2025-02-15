@@ -5,9 +5,6 @@
 // Base:
 #include "CoreMinimal.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Generated:
 #include "TimeBeaconGenerator.generated.h"
 //--------------------------------------------------------------------------------------
@@ -67,7 +64,7 @@ public:
 
     // Количество клеток доски вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Generator")
-    FIndex2D NumberOfSquaresAlongAxes = { 10, 10 };
+    FIntPoint NumberOfSquaresAlongAxes = { 10, 10 };
 
     // Вычисленный размер блоков Клеток, на которые ориентируется данный генератор
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",

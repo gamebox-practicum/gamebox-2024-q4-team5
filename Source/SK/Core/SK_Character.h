@@ -9,9 +9,6 @@
 // Structs:
 #include "SK/ChessMans/ChessManStruct.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Generated:
 #include "SK_Character.generated.h"
 //--------------------------------------------------------------------------------------
@@ -136,7 +133,7 @@ public:
 
     // Позиция на доске
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FIndex2D CurrentPosition;
+    FIntPoint CurrentPosition;
 
     // Скорость перемещения
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement")
@@ -158,7 +155,7 @@ public:
     void EventOnMove();
 
     /** Получить текущую позицию на Шахматной доске */
-    FIndex2D GetCurrentPosition() const;
+    FIntPoint GetCurrentPosition() const;
     //-------------------------------------------
 
 

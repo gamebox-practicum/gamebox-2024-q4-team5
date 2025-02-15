@@ -258,7 +258,8 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
     FSquareData lNewSquareData = NewSquare->GetData();
 
     if (bOnlyToUp
-        || (CurrentSquare->GetData().PositionNumber.Distance(lNewSquareData.PositionNumber) <= DistanceToUp
+        || (CurrentSquare->GetData().PositionNumber.X - lNewSquareData.PositionNumber.X <= DistanceToUp.X
+            && CurrentSquare->GetData().PositionNumber.Y - lNewSquareData.PositionNumber.Y <= DistanceToUp.Y
             && lNewSquareData.WarringPartiesType == EWarringPartiesType::White))
     {
         bMovementTypeToUp = true;
@@ -412,49 +413,49 @@ void AChessMan::RotateToFirstPlayer(const bool& bIsPlayersMove)
                 case EChessManRotationType::Knight:
                     lRotateTo = GetClosestToPlayer(
                         {
-                            FIndex2D { 1, 2 },
-                            FIndex2D { 1, -2 },
-                            FIndex2D { -1, 2 },
-                            FIndex2D { -1, -2 },
+                            FIntPoint { 1, 2 },
+                            FIntPoint { 1, -2 },
+                            FIntPoint { -1, 2 },
+                            FIntPoint { -1, -2 },
 
-                            FIndex2D { 2, 1 },
-                            FIndex2D { 2, -1 },
-                            FIndex2D { -2, 1 },
-                            FIndex2D { -2, -1 },
+                            FIntPoint { 2, 1 },
+                            FIntPoint { 2, -1 },
+                            FIntPoint { -2, 1 },
+                            FIntPoint { -2, -1 },
                         });
                     break;
 
                 case EChessManRotationType::Bishop:
                     lRotateTo = GetClosestToPlayer(
                         {
-                            FIndex2D{ 1, 1 },
-                            FIndex2D { 1, -1 },
-                            FIndex2D { -1, -1 },
-                            FIndex2D { -1, 1 }
+                            FIntPoint{ 1, 1 },
+                            FIntPoint { 1, -1 },
+                            FIntPoint { -1, -1 },
+                            FIntPoint { -1, 1 }
                         });
                     break;
 
                 case EChessManRotationType::Rook:
                     lRotateTo = GetClosestToPlayer(
                         {
-                            FIndex2D{ 1, 0 },
-                            FIndex2D { -1, 0 },
-                            FIndex2D { 0, 1 },
-                            FIndex2D { 0, -1 }
+                            FIntPoint{ 1, 0 },
+                            FIntPoint { -1, 0 },
+                            FIntPoint { 0, 1 },
+                            FIntPoint { 0, -1 }
                         });
                     break;
 
                 case EChessManRotationType::Queen:
                     lRotateTo = GetClosestToPlayer(
                         {
-                            FIndex2D{ 1, 1 },
-                            FIndex2D { 1, -1 },
-                            FIndex2D { -1, -1 },
-                            FIndex2D { -1, 1 },
-                            FIndex2D{ 1, 0 },
-                            FIndex2D { -1, 0 },
-                            FIndex2D { 0, 1 },
-                            FIndex2D { 0, -1 }
+                            FIntPoint{ 1, 1 },
+                            FIntPoint { 1, -1 },
+                            FIntPoint { -1, -1 },
+                            FIntPoint { -1, 1 },
+                            FIntPoint{ 1, 0 },
+                            FIntPoint { -1, 0 },
+                            FIntPoint { 0, 1 },
+                            FIntPoint { 0, -1 }
                         });
                     break;
                 }
@@ -465,7 +466,7 @@ void AChessMan::RotateToFirstPlayer(const bool& bIsPlayersMove)
     }
 }
 
-FVector AChessMan::GetClosestToPlayer(const TArray<FIndex2D>& iVariants)
+FVector AChessMan::GetClosestToPlayer(const TArray<FIntPoint>& iVariants)
 {
     FVector lResult = GetActorLocation();
     FVector lCurrentLocation = lResult;
@@ -475,7 +476,7 @@ FVector AChessMan::GetClosestToPlayer(const TArray<FIndex2D>& iVariants)
     float lDistanceSquared = (lPlayerLocation - lResult).SizeSquared();
     // PS: SizeSquared() используется для более быстрого счёта
 
-    for (const FIndex2D& lIndex : iVariants)
+    for (const FIntPoint& lIndex : iVariants)
     {
         lChecked = lCurrentLocation + FVector(lIndex.X, lIndex.Y, 0) * 128;
 

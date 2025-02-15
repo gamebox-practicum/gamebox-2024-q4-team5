@@ -5,9 +5,6 @@
 // Base:
 #include "CoreMinimal.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Structs:
 #include "ChessManStruct.h"
 
@@ -188,7 +185,7 @@ private:
     /* ---   Re Generate   --- */
 
     template<class T>
-    T* CreateFigureOnChessboard(const TSubclassOf<AActor>& Type, const FIndex2D& XY);
+    T* CreateFigureOnChessboard(const TSubclassOf<AActor>& Type, const FIntPoint& XY);
     //-------------------------------------------
 
 

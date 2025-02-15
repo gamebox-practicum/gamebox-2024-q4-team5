@@ -5,9 +5,6 @@
 // Base:
 #include "CoreMinimal.h"
 
-// Tools:
-#include "SK/Tools/Index2D.h"
-
 // Structs:
 #include "SquareStruct.h"
 
@@ -103,7 +100,7 @@ public:
     // Количество вдоль осей
     UPROPERTY(EditAnywhere, BlueprintReadOnly,
         Category = "Settings|Generator")
-    FIndex2D NumberAlongAxes = { 10, 10 };
+    FIntPoint NumberAlongAxes = { 10, 10 };
 
     // Тип генерируемого Триггера новой стадии уровня
     UPROPERTY(EditAnywhere, BlueprintReadOnly,
@@ -124,7 +121,7 @@ public:
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
         Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
-    TArray<FIndex2D> CorpsesPositionIndex;
+    TArray<FIntPoint> CorpsesPositionIndex;
 
     //
 
@@ -194,13 +191,13 @@ private:
     //
 
     /** Создать блок в указанной позиции */
-    ASquare* CreateSquare(const FIndex2D& XY);
+    ASquare* CreateSquare(const FIntPoint& XY);
 
     /** Проверить данные, при необходимости обновляет их по Актору */
     void GetSquareSize(const ASquare* Block);
 
     /** Получить локацию блока с указанным индексом матрицы */
-    FVector GetLocationForSquare(const FIndex2D& XY) const;
+    FVector GetLocationForSquare(const FIntPoint& XY) const;
 
     /** Сгенерировать Триггер смены стадии уровня */
     void CreatStageTrigger();
@@ -228,10 +225,10 @@ private:
     void SetSquareData(ASquare* Block, FSquareData Data);
 
     /** Генерация данных Клетки */
-    FSquareData SquareDataGeneration(const FIndex2D& XY);
+    FSquareData SquareDataGeneration(const FIntPoint& XY);
 
     /** Генерация номера материала по координатам */
-    bool GetMaterialNumber(const FIndex2D& XY);
+    bool GetMaterialNumber(const FIntPoint& XY);
     //-------------------------------------------
 
 

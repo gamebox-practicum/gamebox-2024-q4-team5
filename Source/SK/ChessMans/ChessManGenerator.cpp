@@ -100,7 +100,7 @@ void AChessManGenerator::DeleteAllChessMans()
 }
 
 template<class T>
-inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>& iType, const FIndex2D& iXY)
+inline T* AChessManGenerator::CreateFigureOnChessboard(const TSubclassOf<AActor>& iType, const FIntPoint& iXY)
 {
     // Поочерёдная проверка валидности указателей и индексов массива
     if (iType
