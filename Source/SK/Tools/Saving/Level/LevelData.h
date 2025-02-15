@@ -19,7 +19,7 @@
 
 
 
-// Структура данных игры
+// Структура данных Уровня
 USTRUCT(BlueprintType)
 struct FLevelData
 {

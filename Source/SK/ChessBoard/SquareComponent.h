@@ -105,7 +105,8 @@ public:
     /* ---   Reactions   --- */
 
     // Включить Реакции
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Reactions")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Reactions")
     bool bEnableReactions = true;
     //-------------------------------------------
 
@@ -114,7 +115,8 @@ public:
     /* ---   Reactions | Events   --- */
 
     /** Реакция на Перекрытие коллизии */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Reactions",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Reactions",
         meta = (DisplayName = "Reaction to Begin Overlap"))
     void EventReactionToBeginOverlap(
         UPrimitiveComponent* OverlappedComponent,
@@ -125,7 +127,8 @@ public:
         const FHitResult& SweepResult);
 
     /** Реакция на Выход из коллизии */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Reactions",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Reactions",
         meta = (DisplayName = "Reaction to End Overlap"))
     void EventReactionToEndOverlap(
         UPrimitiveComponent* OverlappedComponent,
@@ -139,35 +142,39 @@ public:
     /* ---   Actor Creation   --- */
 
     // Создаёт выбранный Актор
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Actor Creation")
     bool bCreatesActor = false;
 
     // Тип стороны, занимаемая Клетку
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Actor Creation",
+        meta = (EditCondition = bCreatesActor, EditConditionHides))
     EWarringPartiesType PartiesType = EWarringPartiesType::Corpse;
 
     // Создаваемый Актор
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Actor Creation",
+        meta = (EditCondition = bCreatesActor, EditConditionHides))
     TSubclassOf<AActor> CreatedActorType = nullptr;
 
     // Смещение локации для создаваемого Актора
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Actor Creation",
+        meta = (EditCondition = bCreatesActor, EditConditionHides))
     FVector ActorLocationOffset = FVector::ZeroVector;
-
-    // Созданный Актор
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Actor Creation",
-        meta = (AllowPrivateAccess = true))
-    AActor* CreatedActor = nullptr;
 
     //
 
     /** Событие при завершении создания Актора */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Base",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Settings|Base",
         meta = (DisplayName = "On Actor Creation"))
     void EventOnActorCreation();
 
     /** Получить информацию о типе текущей клетки (чёрная/белая) */
-    UFUNCTION(BlueprintCallable, Category = "Settings|Type")
+    UFUNCTION(BlueprintCallable,
+        Category = "Settings|Type")
     int32 GetCurrentSquareType() const;
     //-------------------------------------------
 
@@ -178,7 +185,8 @@ private:
     /* ---   This Component   --- */
 
     // Текущая клетка-владелец
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     ASquare* CurrentSquare = nullptr;
 
@@ -193,8 +201,9 @@ private:
     /* ---   Reactions   --- */
 
     // Компонент реагирования (коллизия)
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
-        meta = (AllowPrivateAccess = true))
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = "Settings|Check",
+        meta = (EditCondition = bEnableReactions, EditConditionHides, AllowPrivateAccess = true))
     UBoxComponent* ResponseBoxComponent = nullptr;
 
     //
@@ -230,6 +239,14 @@ private:
 
 
     /* ---   Actor Creation   --- */
+
+    // Созданный Актор
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = "Settings|Check",
+        meta = (EditCondition = bCreatesActor, EditConditionHides, AllowPrivateAccess = true))
+    AActor* CreatedActor = nullptr;
+
+    //
 
     /** Создать Актор над текущей Клеткой */
     void CreateActorOverSquare();

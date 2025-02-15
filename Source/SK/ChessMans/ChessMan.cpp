@@ -326,7 +326,7 @@ void AChessMan::MovementEnd()
     }
 
     // Отвязать и отправить на "Базу" Руку Дилера
-    CurrentDealerHand->DetachRootComponentFromParent();
+    CurrentDealerHand->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
     CurrentDealerHand->MoveToBase();
 
     // Завершить перемещение и передать ход игроку

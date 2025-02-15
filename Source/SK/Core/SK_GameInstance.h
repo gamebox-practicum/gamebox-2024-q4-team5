@@ -9,6 +9,7 @@
 // Structs:
 #include "SK/Tools/Saving/Level/LevelData.h"
 #include "SK/Tools/Saving/Level/LevelSelectionData.h"
+#include "SK/InteractiveObjects/NoteStruct.h"
 
 // Generated:
 #include "SK_GameInstance.generated.h"
@@ -172,6 +173,35 @@ public:
 
 
 
+    /* ---   Note System   --- */
+
+    // Таблица Записок
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Note System")
+    FNotesData NotesData;
+
+    //
+
+    /** Событие Взятия записки */
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Note System",
+        meta = (DisplayName = "Taking Note"))
+    void EventTakingNote(FName NoteName);
+
+    /** "Взятие" записки с проверкой по наименованию строки в соответствующим DataTable */
+    void TakingNote(const FName& NoteName);
+
+    /** Проверка на наличие данной записки */
+    bool CheckNote(const FName& NoteName) const;
+
+    /** Получить собранные Записки */
+    UFUNCTION(BlueprintCallable,
+        Category = "Note System")
+    TArray<FNotesTableRow> GetCollectedNotes() const;
+    //-------------------------------------------
+
+
+
 private:
 
     /* ---   Settings System | Saving   --- */
@@ -208,5 +238,12 @@ private:
 
     // Текущий номер Уровня (строки из "StoryLevels")
     int32 NextLevelNumber = 0;
+    //-------------------------------------------
+
+
+
+    /* ---   Note System   --- */
+
+    void NotesDataInit();
     //-------------------------------------------
 };

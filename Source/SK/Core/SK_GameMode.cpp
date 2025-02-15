@@ -4,12 +4,19 @@
 #include "SK_GameMode.h"
 //--------------------------------------------------------------------------------------
 
+
+
+/* ---   Base   --- */
+
 void ASK_GameMode::BeginPlay()
 {
     Super::BeginPlay();
 
     FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &ASK_GameMode::OnWindowFocusChanged);
 }
+//--------------------------------------------------------------------------------------
+
+
 
 /* ---   Events   --- */
 
@@ -27,10 +34,15 @@ void ASK_GameMode::SetLosingGame()
     EventLosingGame();
 }
 
-const bool* ASK_GameMode::GetFlagGameOver()
+const bool* ASK_GameMode::GetFlagGameOver() const
 {
     return &bIsGameOver;
 }
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Focus   --- */
 
 void ASK_GameMode::OnWindowFocusChanged(const bool bIsFocused)
 {

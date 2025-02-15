@@ -9,6 +9,7 @@
 // Interaction:
 #include "LevelData.h"
 #include "LevelSelectionData.h"
+#include "SK/InteractiveObjects/NoteStruct.h"
 
 // Generated:
 #include "SaveLevel.generated.h"
@@ -30,5 +31,9 @@ public:
     // Данные уровня для последующего сохранения
     UPROPERTY(BlueprintReadOnly)
     FLevelData LevelData;
+
+    // Данные уровня для последующего сохранения
+    UPROPERTY(BlueprintReadOnly)
+    FNotesData NotesData;
 };
 //--------------------------------------------------------------------------------------

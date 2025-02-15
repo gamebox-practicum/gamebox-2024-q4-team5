@@ -530,7 +530,7 @@ void AChessOperator::SaveLevelData() const
             TArray<FSquareComponentData> lSquareComponentsData;
             USquareComponent* lComponent = nullptr;
             FSquareComponentData lComponentData;
-            TArray<UActorComponent*> AllComponents;
+            TArray<USquareComponent*> AllComponents;
             ASquare* lSquare = nullptr;
 
             for (int32 i = 0; i < PointerToAllSquares->Num().X; i++)
@@ -539,18 +539,13 @@ void AChessOperator::SaveLevelData() const
                 {
                     lSquare = PointerToAllSquares->GetByIndex(i, j);
 
-                    AllComponents = lSquare->GetComponentsByClass(USquareComponent::StaticClass());
+                    lSquare->GetComponents<USquareComponent>(AllComponents);
 
                     for (auto& Data : AllComponents)
                     {
-                        lComponent = Cast<USquareComponent>(Data);
-
-                        if (lComponent)
-                        {
-                            lComponentData.Type = lComponent->GetClass();
-                            lComponentData.Position = lSquare->GetData().PositionNumber;
-                            lSquareComponentsData.Add(lComponentData);
-                        }
+                        lComponentData.Type = Data->GetClass();
+                        lComponentData.Position = lSquare->GetData().PositionNumber;
+                        lSquareComponentsData.Add(lComponentData);
                     }
                 }
             }

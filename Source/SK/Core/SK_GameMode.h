@@ -19,16 +19,24 @@ class SK_API ASK_GameMode : public AGameMode
 
 protected:
 
+    /* ---   Base   --- */
+
     virtual void BeginPlay() override;
+    //-------------------------------------------
+
+
+
     /* ---   Events   --- */
 
     /** Событие Выигрышной игры */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Game Status",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Game Status",
         meta = (DisplayName = "Winning Game"))
     void EventWinningGame();
 
     /** Событие Проигрышной игры */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Game Status",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Game Status",
         meta = (DisplayName = "Losing Game"))
     void EventLosingGame();
     //-------------------------------------------
@@ -46,20 +54,40 @@ public:
     void SetLosingGame();
 
     /** Получить ссылку на флаг завершения игры */
-    const bool* GetFlagGameOver();
+    const bool* GetFlagGameOver() const;
     //-------------------------------------------
+
+
+
+    /* ---   Focus   --- */
 
     UFUNCTION(BlueprintImplementableEvent)
     void OnWindowsLostFocus();
 
     UFUNCTION(BlueprintImplementableEvent)
     void OnWindowsGainFocus();
+    //-------------------------------------------
+
+
+
+    /* ---   Note System   --- */
+
+    //-------------------------------------------
+
+
+
 private:
 
-    void OnWindowFocusChanged(bool bIsFocused);
     /* ---   Events   --- */
 
     // Флаг завершения игры (необходим для выхода из цикла лишних действий)
     bool bIsGameOver = false;
+    //-------------------------------------------
+
+
+
+    /* ---   Focus   --- */
+
+    void OnWindowFocusChanged(bool bIsFocused);
     //-------------------------------------------
 };

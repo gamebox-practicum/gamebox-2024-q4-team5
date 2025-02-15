@@ -92,32 +92,38 @@ public:
     /* ---   Components   --- */
 
     // Капсула коллизии
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UCapsuleComponent* CapsuleComponent;
 
     // Меш Шахматной Фигуры со скелетом
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = Components,
         meta = (AllowPrivateAccess = "true"))
     USkeletalMeshComponent* ChessmanSkeletalMesh;
 
     // Статичный Меш Шахматной Фигуры
-    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+    // Category = Components,
     //    meta = (AllowPrivateAccess = "true"))
     //UStaticMeshComponent* ChessmanStaticMesh;
 
     // Точка местоположения Места Захвата данной фигуры Рукой Дилера
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = Components,
         meta = (AllowPrivateAccess = "true"))
     USceneComponent* CapturePoint = nullptr;
 
     // Компонент перемещения данного Актора
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UActorMovementComponent* MovementComponent;
 
     // Компонент вращения данного Актора
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components,
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,
+        Category = Components,
         meta = (AllowPrivateAccess = "true"))
     UActorRotationComponent* RotationComponent;
     //-------------------------------------------
@@ -150,7 +156,8 @@ public:
     void Initialize();
 
     /** Событие при завершении инициализации */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Base",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Settings|Base",
         meta = (DisplayName = "On Initialize Complete"))
     void EventOnInitializeComplete();
     //-------------------------------------------
@@ -174,13 +181,15 @@ public:
     /* ---   Type   --- */
 
     // Текущая информация о данной Фигуре
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Type")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Type")
     FChessManData CurrentData;
 
     //
 
     /** Получить информацию о типе текущей клетки (чёрная/белая) */
-    UFUNCTION(BlueprintCallable, Category = "Settings|Type")
+    UFUNCTION(BlueprintCallable,
+        Category = "Settings|Type")
     int32 GetCurrentSquareType() const;
     //-------------------------------------------
 
@@ -230,7 +239,8 @@ public:
     /* ---   Rotation   --- */
 
     // Тип поворота данной Шахматной фигуры
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Rotation")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite,
+        Category = "Settings|Rotation")
     EChessManRotationType RotationType = EChessManRotationType::NONE;
     //-------------------------------------------
 
@@ -252,7 +262,8 @@ public:
     //
 
     /** Событие при завершении хода сверху (шага) */
-    UFUNCTION(BlueprintImplementableEvent, Category = "Settings|Sounds",
+    UFUNCTION(BlueprintImplementableEvent,
+        Category = "Settings|Sounds",
         meta = (DisplayName = "On Stepping from Above"))
     void EventOnSteppingFromAbove(bool IsFigureBeingCrushed);
     //-------------------------------------------
@@ -282,12 +293,14 @@ private:
     bool bMovementTypeToUp = false;
 
     // Указатель на текущего Оператора
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AChessOperator* CurrentOperator = nullptr;
 
     // Указатель на текущую Руку Дилера
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     ADealerHand* CurrentDealerHand = nullptr;
 
@@ -315,7 +328,8 @@ private:
     /* ---   Rotation   --- */
 
     // Указатель на игрока, в сторону которого происходит поворот
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     ASK_Character* CurrentFirstPlayer = nullptr;
 
@@ -339,7 +353,8 @@ private:
     /* ---   Death   --- */
 
     // Указатель на "родительский" Генератор Шахматных фигур
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Settings|Check",
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly,
+        Category = "Settings|Check",
         meta = (AllowPrivateAccess = true))
     AChessManGenerator* CurrentChessManGenerator = nullptr;
 

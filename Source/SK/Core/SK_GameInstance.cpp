@@ -20,6 +20,7 @@
 // Interaction:
 #include "SK/Tools/Saving/Level/SaveLevel.h"
 #include "SK/Tools/Saving/Settings/SaveSettings.h"
+#include "SK/InteractiveObjects/InteractiveNote.h"
 //--------------------------------------------------------------------------------------
 
 
@@ -29,6 +30,7 @@
 void USK_GameInstance::Init()
 {
     SettingsSavingInit();
+    NotesDataInit();
     LevelSavingInit();
 
     Super::Init();
@@ -107,16 +109,18 @@ void USK_GameInstance::SaveLevelData(const FLevelData& iLevelData) const
 {
     if (SaveLevel)
     {
-        // Сбор данных об уровне
-        FLevelSelectionData lLevelSelectionData;
-        lLevelSelectionData.LevelsTable = StoryLevels;
-        lLevelSelectionData.LevelNumber = NextLevelNumber;
-
         // Данные об уровне
-        SaveLevel->LevelSelectionData = lLevelSelectionData;
+        SaveLevel->LevelSelectionData =
+        {
+            StoryLevels,
+            NextLevelNumber
+        };
 
         // Данные уровня
         SaveLevel->LevelData = iLevelData;
+
+        // Данные системы Записок 
+        SaveLevel->NotesData = NotesData;
 
         UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
     }
@@ -136,6 +140,9 @@ void USK_GameInstance::ClearLevelData()
 
         // Данные уровня
         SaveLevel->LevelData = FLevelData::Empty;
+
+        // Данные системы Записок 
+        SaveLevel->NotesData = FNotesData::Empty;
 
         UGameplayStatics::SaveGameToSlot(SaveLevel, LevelDataSlot, 0);
     }
@@ -164,7 +171,7 @@ FLevelSelectionData USK_GameInstance::LoadLevelSelectionData() const
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("'%s'::LoadLevelData: SaveLevel is NOT"),
+        UE_LOG(LogTemp, Warning, TEXT("'%s'::LoadLevelSelectionData: SaveLevel is NOT"),
             *GetNameSafe(this));
     }
 
@@ -185,7 +192,15 @@ void USK_GameInstance::LevelSavingInit()
 {
     SaveLevel = Cast<USaveLevel>(UGameplayStatics::LoadGameFromSlot(LevelDataSlot, 0));
 
-    if (!SaveLevel)
+    if (SaveLevel)
+    {
+        if (SaveLevel->NotesData.NotesTable
+            && SaveLevel->NotesData.NotesChecker.Num() > 0)
+        {
+            NotesData = SaveLevel->NotesData;
+        }
+    }
+    else
     {
         SaveLevel = Cast<USaveLevel>(UGameplayStatics::CreateSaveGameObject(
             USaveLevel::StaticClass()));
@@ -213,6 +228,8 @@ void USK_GameInstance::NewGame()
     bIsNewGame = true;
     NextLevelNumber = 0;
     IntermediatePlayerPositionY = -1;
+
+    NotesDataInit();
 
     NextLevel();
 }
@@ -268,5 +285,76 @@ void USK_GameInstance::LevelRestart()
     --NextLevelNumber;
 
     NextLevel();
+}
+//--------------------------------------------------------------------------------------
+
+
+
+/* ---   Note System   --- */
+
+void USK_GameInstance::TakingNote(const FName& NoteName)
+{
+    if (NotesData.NotesTable)
+    {
+        int32 lInd = NotesData.NotesTable->GetRowNames().IndexOfByKey(NoteName);
+
+        if (lInd != INDEX_NONE)
+        {
+            NotesData.NotesChecker[lInd] = true;
+
+            EventTakingNote(NoteName);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s'::TakingNote: NotesTable is NOT"),
+            *GetNameSafe(this));
+    }
+}
+
+bool USK_GameInstance::CheckNote(const FName& NoteName) const
+{
+    if (NotesData.NotesTable)
+    {
+        int32 lInd = NotesData.NotesTable->GetRowNames().IndexOfByKey(NoteName);
+
+        if (lInd != INDEX_NONE)
+        {
+            return NotesData.NotesChecker[lInd] == true;
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("'%s'::CheckNote: NotesTable is NOT"),
+            *GetNameSafe(this));
+    }
+
+    return false;
+}
+
+TArray<FNotesTableRow> USK_GameInstance::GetCollectedNotes() const
+{
+    TArray<FNotesTableRow> lResult;
+    TArray<FNotesTableRow*> lRows;
+
+    NotesData.NotesTable->GetAllRows<FNotesTableRow>("USK_GameInstance::GetCollectedNotes()", lRows);
+
+    for (int32 i = 0;
+        i < NotesData.NotesChecker.Num();
+        ++i)
+    {
+        if (NotesData.NotesChecker[i] == true)
+        {
+            lResult.Add(*lRows[i]);
+        }
+    }
+
+    return lResult;
+}
+
+void USK_GameInstance::NotesDataInit()
+{
+    // Инициализация и присвоение false
+    NotesData.NotesChecker.Init(false, NotesData.NotesTable ? NotesData.NotesTable->GetRowNames().Num() : 0);
 }
 //--------------------------------------------------------------------------------------
