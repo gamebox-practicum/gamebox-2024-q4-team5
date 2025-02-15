@@ -149,7 +149,6 @@ void ASquareGenerator::RecreateBoard()
 
 
 /* ---   Generator   --- */
-// Warning: Следует переделать как шаблонные функции универсального Генератора
 
 void ASquareGenerator::CreateGeneratedSquares()
 {
@@ -405,6 +404,12 @@ void ASquareGenerator::AddGeneratedSquares(const int32& iAddOnX, UDataTable* iSq
             // Создание Клетки и добавление её в массив по соответствующему индексу
             TDArraySquares.SetByIndex(CreateSquare(FIndex2D(x, y)), x, y);
         }
+    }
+
+    // Создание "буферного" (не игрового для AI) последнего ряда
+    for (int32 y = 0; y < NumberAlongAxes.Y; ++y)
+    {
+        CreateSquare(FIndex2D(NumberAlongAxes.X, y));
     }
 
     CreateGeneratedSquareComponents(iSquareComponentTable);
