@@ -197,7 +197,7 @@ public:
     /** Получить собранные Записки */
     UFUNCTION(BlueprintCallable,
         Category = "Note System")
-    TArray<FNotesTableRow> GetCollectedNotes() const;
+    TMap<int32, FNotesTableRow> GetCollectedNotes() const;
     //-------------------------------------------
 
 

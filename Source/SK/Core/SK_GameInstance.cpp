@@ -332,9 +332,9 @@ bool USK_GameInstance::CheckNote(const FName& NoteName) const
     return false;
 }
 
-TArray<FNotesTableRow> USK_GameInstance::GetCollectedNotes() const
+TMap<int32, FNotesTableRow> USK_GameInstance::GetCollectedNotes() const
 {
-    TArray<FNotesTableRow> lResult;
+    TMap<int32, FNotesTableRow> lNotesData;
     TArray<FNotesTableRow*> lRows;
 
     NotesData.NotesTable->GetAllRows<FNotesTableRow>("USK_GameInstance::GetCollectedNotes()", lRows);
@@ -345,11 +345,11 @@ TArray<FNotesTableRow> USK_GameInstance::GetCollectedNotes() const
     {
         if (NotesData.NotesChecker[i] == true)
         {
-            lResult.Add(*lRows[i]);
+            lNotesData.Add(i + 1, *lRows[i]);
         }
     }
 
-    return lResult;
+    return lNotesData;
 }
 
 void USK_GameInstance::NotesDataInit()
