@@ -14,6 +14,9 @@
 
 /* ---   Delegates   --- */
 
+// Делегат: Начало перемещения
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMove);
+
 // Делегат: Завершение перемещения
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCompletedMove);
 
@@ -43,6 +46,10 @@ UCLASS(ClassGroup = (Custom), BlueprintType, Blueprintable, EditInlineNew,
 public:
 
     /* ---   Delegates   --- */
+
+    // Делегат: Начало перемещения
+    UPROPERTY(BlueprintAssignable)
+    FOnStartMove OnStartMove;
 
     // Делегат: Завершение перемещения
     UPROPERTY(BlueprintAssignable)

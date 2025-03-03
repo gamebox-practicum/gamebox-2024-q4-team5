@@ -83,7 +83,8 @@ void USK_GameInstance::SettingsSavingInit()
         lGameUserSettings->SetScreenResolution(lAllRes[lAllRes.Num() - 1]);
 
         // FPS
-        lGameUserSettings->SetFrameRateLimit(GetDisplayFrequency());
+        lGameUserSettings->SetFrameRateLimit(60);
+        //lGameUserSettings->SetFrameRateLimit(GetDisplayFrequency());
 
 
         lGameUserSettings->ApplySettings(false);

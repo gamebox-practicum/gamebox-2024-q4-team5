@@ -75,6 +75,8 @@ void UActorMovementComponent::MoveToLocation(const FVector& iPoint)
 {
     if (CurrentActor)
     {
+        OnStartMove.Broadcast();
+
         StartLocation = CurrentActor->GetActorLocation();
         EndLocation = iPoint;
         bIsMovingToNewLocation = true;
