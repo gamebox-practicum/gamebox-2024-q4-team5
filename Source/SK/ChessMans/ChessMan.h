@@ -234,7 +234,7 @@ public:
     };
 
     /** Проверка и изменение типа перемещения */
-    void CheckMovementType(ASquare* NewSquare);
+    void CheckMovementType(const FSquareData& SquareData);
 
     /** Преобразование пешки в другую рандомную фигуру */
     bool PawnTransformation();

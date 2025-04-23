@@ -214,7 +214,7 @@ void AChessMan::MoveToSquare(ASquare* ToSquare)
 
         bIsMovingToNewLocation = true;
 
-        CheckMovementType(ToSquare);
+        CheckMovementType(ToSquare->GetData());
 
         SetCurrentSquare(ToSquare);
 
@@ -243,17 +243,15 @@ void AChessMan::SetCurrentSquare(ASquare* NewSquare)
     CurrentSquare = NewSquare;
 }
 
-void AChessMan::CheckMovementType(ASquare* NewSquare)
+void AChessMan::CheckMovementType(const FSquareData& iSquareData)
 {
-    FSquareData lNewSquareData = NewSquare->GetData();
-
     if (bOnlyToUp
-        || (CurrentSquare->GetData().PositionNumber.X - lNewSquareData.PositionNumber.X <= DistanceToUp.X
-            && CurrentSquare->GetData().PositionNumber.Y - lNewSquareData.PositionNumber.Y <= DistanceToUp.Y
-            && lNewSquareData.WarringPartiesType == EWarringPartiesType::White))
+        || (CurrentSquare->GetData().PositionNumber.X - iSquareData.PositionNumber.X <= DistanceToUp.X
+            && CurrentSquare->GetData().PositionNumber.Y - iSquareData.PositionNumber.Y <= DistanceToUp.Y
+            && iSquareData.WarringPartiesType == EWarringPartiesType::White))
     {
         bMovementTypeToUp = true;
-        bIsFigureBeingCrushed = lNewSquareData.WarringPartiesType == EWarringPartiesType::White;
+        bIsFigureBeingCrushed = iSquareData.WarringPartiesType == EWarringPartiesType::White;
     }
     else
     {
@@ -261,7 +259,7 @@ void AChessMan::CheckMovementType(ASquare* NewSquare)
         bIsFigureBeingCrushed = false;
     }
 
-    if (lNewSquareData.WarringPartiesType == EWarringPartiesType::White)
+    if (iSquareData.WarringPartiesType == EWarringPartiesType::White)
     {
         CurrentFirstPlayer->RotateToActor(this);
     }
