@@ -49,8 +49,14 @@ public:
     // переводит игровые координаты в координаты ии
     // (горизотальную ось отзеркаливает, но при обратном переводе
     // SKUtils::AIToGame отзеркаливает обратно)
-    static FIntPoint GameToAI(FIntPoint index);
+    FORCEINLINE static FIntPoint GameToAI(FIntPoint index)
+    {
+        return FIntPoint { index.Y, index.X };
+    };
 
     //переводит координаты ии в игровые координаты
-    static FCellIndex AIToGame(FCellIndex index);
+    FORCEINLINE static FCellIndex AIToGame(FCellIndex index)
+    {
+        return FCellIndex { index.X, index.Y };
+    };
 };

@@ -265,15 +265,6 @@ void AChessManGenerator::CreateGeneratedPlayers(UDataTable* iPlayersTable)
 
 /* ---   Generator | ChessMan   --- */
 
-void AChessManGenerator::CreateGeneratedChessMans(const TArray<FChessManData*>& iChessMansData)
-{
-    // Создать Шахматную фигуру согласно данным
-    for (auto& lData : iChessMansData)
-    {
-        CreateChessMansFromData(*lData);
-    }
-}
-
 void AChessManGenerator::CreateGeneratedChessMans(UDataTable* iChessMansTable)
 {
     if (iChessMansTable)
@@ -320,43 +311,6 @@ void AChessManGenerator::CreateChessMansFromData(const FChessManData& iData)
 
 
 /* ---   Data   --- */
-
-void AChessManGenerator::SetPointerToAllSquares(FSquareArray2D* iSquares)
-{
-    PointerToAllSquares = iSquares;
-}
-
-TArray<ASK_Character*>* AChessManGenerator::GetPointerToAllPlayers()
-{
-    return &AllPlayers;
-}
-
-TArray<AChessMan*>* AChessManGenerator::GetPointerToAllChessMans()
-{
-    return &AllChessMans;
-}
-
-TArray<AChessMan*>* AChessManGenerator::GetPointerToAllAvailableChessMans()
-{
-    return &AllAvailableChessMan;
-}
-
-TArray<FAttackingChessMansData>* AChessManGenerator::GetPointerToAttackingChessMans()
-{
-    return &AttackingChessMans;
-}
-
-void AChessManGenerator::RemovePlayer(ASK_Character* iPlayer)
-{
-    AllPlayers.Remove(iPlayer);
-}
-
-void AChessManGenerator::RemoveChessMan(AChessMan* iChessMan)
-{
-    AllAvailableChessMan.RemoveSwap(iChessMan);
-    AllChessMans.RemoveSwap(iChessMan);
-}
-
 void AChessManGenerator::UpdateAllAvailableChessMan()
 {
     AllAvailableChessMan.Empty();
@@ -376,21 +330,5 @@ void AChessManGenerator::UpdateAllAvailableChessMan()
             }
         }
     }
-}
-
-void AChessManGenerator::SetPointerToOperator(AChessOperator* iCurrentOperator)
-{
-    CurrentOperator = iCurrentOperator;
-}
-//--------------------------------------------------------------------------------------
-
-
-
-/* ---   Stage   --- */
-
-void AChessManGenerator::AddGeneratedChessMans(UDataTable* iPlayersTable, UDataTable* iChessMansTable)
-{
-    CreateGeneratedPlayers(iPlayersTable);
-    CreateGeneratedChessMans(iChessMansTable);
 }
 //--------------------------------------------------------------------------------------

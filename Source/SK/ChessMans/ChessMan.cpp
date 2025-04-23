@@ -238,19 +238,9 @@ void AChessMan::SetCurrentSquare(ASquare* NewSquare)
     // Освободить предыдущую клетку и занять новую
     if (CurrentSquare)
         CurrentSquare->OccupySquare(EWarringPartiesType::NONE);
+
     NewSquare->OccupySquare(EWarringPartiesType::Black);
-
     CurrentSquare = NewSquare;
-}
-
-void AChessMan::SetPointerToOperator(AChessOperator* iCurrentOperator)
-{
-    CurrentOperator = iCurrentOperator;
-}
-
-void AChessMan::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
-{
-    CurrentDealerHand = iCurrentDealerHand;
 }
 
 void AChessMan::CheckMovementType(ASquare* NewSquare)
@@ -494,11 +484,6 @@ FVector AChessMan::GetClosestToPlayer(const TArray<FIntPoint>& iVariants)
 
 
 /* ---   Death   --- */
-
-void AChessMan::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
-{
-    CurrentChessManGenerator = iGenerator;
-}
 
 void AChessMan::ChessManDeath()
 {

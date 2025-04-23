@@ -58,23 +58,3 @@ void ATimeBeacon::Cleaning()
     }
 }
 //--------------------------------------------------------------------------------------
-
-
-
-/* ---   Timer   --- */
-
-void ATimeBeacon::SetTimeForTimer(const float& iTime)
-{
-    EventSetTimeForTimer(iTime);
-}
-
-void ATimeBeacon::PlayTimer()
-{
-    EventPlayTimer();
-}
-
-void ATimeBeacon::StopTimer()
-{
-    EventStopTimer();
-}
-//--------------------------------------------------------------------------------------

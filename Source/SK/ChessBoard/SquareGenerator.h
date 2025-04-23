@@ -126,10 +126,16 @@ public:
     //
 
     /** Получение всех клеток в виде двумерного массива */
-    FSquareArray2D* GetPointerToAllSquares();
+    FORCEINLINE FSquareArray2D* GetPointerToAllSquares()
+    {
+        return &TDArraySquares;
+    };
 
     /** Установить указатель на текущий Оператор */
-    void SetPointerToOperator(AChessOperator* CurrentOperator);
+    FORCEINLINE void SetPointerToOperator(AChessOperator* iCurrentOperator)
+    {
+        CurrentOperator = iCurrentOperator;
+    };
     //-------------------------------------------
 
 
@@ -197,7 +203,10 @@ private:
     void GetSquareSize(const ASquare* Block);
 
     /** Получить локацию блока с указанным индексом матрицы */
-    FVector GetLocationForSquare(const FIntPoint& XY) const;
+    FORCEINLINE FVector GetLocationForSquare(const FIntPoint& XY) const
+    {
+        return FVector(BlockSize.X * XY.X, BlockSize.Y * XY.Y, BlockSize.Z) - PointOffset + GetActorLocation();
+    };
 
     /** Сгенерировать Триггер смены стадии уровня */
     void CreatStageTrigger();
@@ -206,7 +215,14 @@ private:
     FVector GetLocationForStageTrigger();
 
     /** Рассчитать и получить размеры для генерируемого Триггера смены стадии уровня */
-    FVector GetScaleForStageTrigger();
+    FORCEINLINE FVector GetScaleForStageTrigger()
+    {
+        // Возврат размера: Весь ряд
+        return FVector(
+            0.5f,
+            NumberAlongAxes.Y - 1,
+            1.0);
+    };
     //-------------------------------------------
 
 
@@ -225,10 +241,16 @@ private:
     void SetSquareData(ASquare* Block, FSquareData Data);
 
     /** Генерация данных Клетки */
-    FSquareData SquareDataGeneration(const FIntPoint& XY);
+    FORCEINLINE FSquareData SquareDataGeneration(const FIntPoint& XY)
+    {
+        return FSquareData(XY, GetMaterialNumber(XY));
+    };
 
     /** Генерация номера материала по координатам */
-    bool GetMaterialNumber(const FIntPoint& XY);
+    FORCEINLINE bool GetMaterialNumber(const FIntPoint& XY)
+    {
+        return bool((XY.X + XY.Y) % 2) != bWhiteSquareFirst;
+    };
     //-------------------------------------------
 
 

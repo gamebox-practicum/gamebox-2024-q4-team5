@@ -69,7 +69,10 @@ public:
     /* ---   Trigger   --- */
 
     /** Установить указатель на текущий Оператор */
-    void SetPointerToOperator(AChessOperator* CurrentOperator);
+    FORCEINLINE void SetPointerToOperator(AChessOperator* Operator)
+    {
+        CurrentOperator = Operator;
+    };
     //-------------------------------------------
 
 

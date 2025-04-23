@@ -23,7 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCompletedRotate);
 /* ---   Pre-declaration of classes   --- */
 
 // Interaction:
-class AChessMan;
+//class AActor;
 //--------------------------------------------------------------------------------------
 
 

@@ -96,16 +96,26 @@ public:
     /* ---   Data   --- */
 
     /** Установить и применить настройки по Данным клетки */
-    void SetData(const FSquareData& Data);
+    FORCEINLINE void SetData(const FSquareData& Data)
+    {
+        SquareData = Data;
+        UpdateMaterialByType(SquareData.TypeBlockMaterial);
+    };
 
     /** Получить данные (неизменяемые) */
-    const FSquareData& GetData();
+    FORCEINLINE const FSquareData& GetData()
+    {
+        return SquareData;
+    };
 
     /** Занять Клетку определённым типом стороны */
     void OccupySquare(const EWarringPartiesType& WarringPartiesType);
 
     /** Установить указатель на текущий Генератор клеток */
-    void SetPointerToSquareGenerator(ASquareGenerator* SquareGenerator);
+    FORCEINLINE void SetPointerToSquareGenerator(ASquareGenerator* SquareGenerator)
+    {
+        CurrentSquareGenerator = SquareGenerator;
+    };
     //-------------------------------------------
 
 

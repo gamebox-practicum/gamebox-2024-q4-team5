@@ -111,7 +111,10 @@ public:
     //
 
     /** Установить указатель на текущий Генератор Шахматных фигур */
-    void SetCurrentChessManGenerator(AChessManGenerator* Generator);
+    FORCEINLINE void SetCurrentChessManGenerator(AChessManGenerator* Generator)
+    {
+        CurrentChessManGenerator = Generator;
+    };
 
     /** Переместиться к указанной Точке */
     void MoveToLocation(const FVector& Point);

@@ -143,16 +143,6 @@ void ATimeBeaconGenerator::UpdateStage(const int32& CurrentStageNum)
     }
 }
 
-FVector ATimeBeaconGenerator::GetLocationForTimeBeacon(const int32& iInd)
-{
-    // Очерёдность индекса: Слева направо, снизу вверх
-    return FVector(
-        BlockSize.X * (iInd / 2),
-        (BlockSize.Y * (NumberOfSquaresAlongAxes.Y + 1) / 2) * (iInd % 2 ? 1 : -1), // Определение по оси Y с учётом стороны
-        0)
-        + GetActorLocation(); // Добавление текущей позиции Генератора
-}
-
 void ATimeBeaconGenerator::TimerAction_TriggerForBeacon()
 {
     --CounterForTimer;

@@ -227,11 +227,6 @@ void ASK_Character::MoveToSquare(ASquare* ToSquare)
     EventOnMove();
 }
 
-FIntPoint ASK_Character::GetCurrentPosition() const
-{
-    return CurrentPosition;
-}
-
 void ASK_Character::MovementForTick(const float& lDeltaTime)
 {
     // Контроль перемещения
@@ -285,16 +280,6 @@ void ASK_Character::PlayerMovesSequence(const bool& bIsPlayersMove)
     }
 }
 
-void ASK_Character::SetPointerToOperator(AChessOperator* iCurrentOperator)
-{
-    CurrentOperator = iCurrentOperator;
-}
-
-void ASK_Character::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
-{
-    CurrentChessManGenerator = iGenerator;
-}
-
 void ASK_Character::SubscribeToDelegates()
 {
     if (CurrentOperator)
@@ -313,16 +298,6 @@ void ASK_Character::SubscribeToDelegates()
 
 /* ---   Rotation   --- */
 
-void ASK_Character::RotateToActor(AActor* iActor)
-{
-    if (iActor)
-    {
-        ActorForRotation = iActor;
-
-        bPlayerControlLock = true;
-    }
-}
-
 void ASK_Character::RotateToActorForTick(const float& lDeltaTime)
 {
     if (bPlayerControlLock)
@@ -339,11 +314,6 @@ void ASK_Character::RotateToActorForTick(const float& lDeltaTime)
 
 
 /* ---   Death   --- */
-
-void ASK_Character::SetCurrentDealerHand(ADealerHand* iCurrentDealerHand)
-{
-    CurrentDealerHand = iCurrentDealerHand;
-}
 
 void ASK_Character::DeathByDealerHand()
 {

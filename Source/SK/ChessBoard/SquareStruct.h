@@ -57,6 +57,13 @@ struct FSquareData
     /* ---   Constructors   --- */
 
     FSquareData() {};
+
+    FSquareData(const FIntPoint& iPos, const bool& iMaterial, const EWarringPartiesType& iParties = EWarringPartiesType::NONE)
+        : PositionNumber(iPos)
+        , TypeBlockMaterial(iMaterial)
+        , WarringPartiesType(iParties)
+    {
+    };
     //-------------------------------------------
 };
 
@@ -118,37 +125,58 @@ struct FSquareArray2D
     /* ---   Functions   --- */
 
     /** Проверка валидности индекса массива */
-    bool IsValidIndex(const int32& X, const int32& Y) const;
+    FORCEINLINE bool IsValidIndex(const int32& X, const int32& Y) const
+    {
+        return Square2DArray.IsValidIndex(X) && Square2DArray[X].SquareArray.IsValidIndex(Y);
+    };
     /** Проверка валидности индекса массива */
-    bool IsValidIndex(const FIntPoint& XY) const;
+    FORCEINLINE bool IsValidIndex(const FIntPoint& XY) const
+    {
+        return IsValidIndex(XY.X, XY.Y);
+    };
 
     /** Очистка массива  */
     void Empty();
     /** Проверка на пустой ли массив  */
-    bool IsEmpty() const;
+    FORCEINLINE bool IsEmpty() const
+    {
+        return IsValidIndex(0, 0);
+    };
 
     /** Изменить размер массива на заданное количество элементов */
     void SetNum(const int32& X, const int32& Y);
     /** Изменить размер массива на заданное количество элементов */
-    void SetNum(const FIntPoint& XY);
+    FORCEINLINE void SetNum(const FIntPoint& XY)
+    {
+        SetNum(XY.X, XY.Y);
+    };
 
     /** Получить 2D-размер массива элементов */
     FIntPoint Num() const;
 
     /** Получить массив с конкретным индексом X */
-    TArray<ASquare*> GetArrayByX(const int32& X) const;
+    FORCEINLINE TArray<ASquare*> GetArrayByX(const int32& X) const
+    {
+        return Square2DArray[X].SquareArray;
+    };
     /** Получить массив с конкретным индексом Y */
     TArray<ASquare*> GetArrayByY(const int32& Y) const;
 
     /** Получить элемент по Индексу */
     ASquare* GetByIndex(const int32& X, const int32& Y) const;
     /** Получить элемент по Двумерному Индексу */
-    ASquare* GetByIndex(const FIntPoint& XY) const;
+    FORCEINLINE ASquare* GetByIndex(const FIntPoint& XY) const
+    {
+        return GetByIndex(XY.X, XY.Y);
+    };
 
     /** Записать элемент по Индексу */
     bool SetByIndex(ASquare* Square, const int32& X, const int32& Y);
     /** Записать элемент по Двумерному Индексу */
-    bool SetByIndex(ASquare* Square, const FIntPoint& XY);
+    FORCEINLINE bool SetByIndex(ASquare* Square, const FIntPoint& XY)
+    {
+        return SetByIndex(Square, XY.X, XY.Y);
+    };
     //-------------------------------------------
 
 

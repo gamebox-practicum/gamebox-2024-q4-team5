@@ -48,13 +48,26 @@ public:
     /* ---   Events   --- */
 
     /** Установить Игру как Выигрышную */
-    void SetWinningGame();
+    FORCEINLINE void SetWinningGame()
+    {
+        bIsGameOver = true;
+
+        EventWinningGame();
+    };
 
     /** Установить Игру как Проигрышную */
-    void SetLosingGame();
+    FORCEINLINE void SetLosingGame()
+    {
+        bIsGameOver = true;
+
+        EventLosingGame();
+    };
 
     /** Получить ссылку на флаг завершения игры */
-    const bool* GetFlagGameOver() const;
+    FORCEINLINE const bool* GetFlagGameOver() const
+    {
+        return &bIsGameOver;
+    };
     //-------------------------------------------
 
 

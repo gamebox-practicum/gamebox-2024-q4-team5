@@ -12,6 +12,7 @@
 
 // Interaction:
 #include "SK/Core/SK_Character.h"
+#include "SK/Core/SK_GameInstance.h"
 #include "SK/Core/SK_GameMode.h"
 #include "SK/ChessBoard/SquareGenerator.h"
 #include "SK/ChessBoard/Square.h"
@@ -213,11 +214,6 @@ ASquareGenerator* AChessOperator::GetCurrentSquareGenerator()
 
     return nullptr;
 }
-
-ASquareGenerator* AChessOperator::GetFirstSquareGenerator()
-{
-    return GetFirstActor<ASquareGenerator>();
-}
 //--------------------------------------------------------------------------------------
 
 
@@ -270,11 +266,6 @@ AChessManGenerator* AChessOperator::GetCurrentChessManGenerator()
 
     return nullptr;
 }
-
-AChessManGenerator* AChessOperator::GetFirstChessManGenerator()
-{
-    return GetFirstActor<AChessManGenerator>();
-}
 //--------------------------------------------------------------------------------------
 
 
@@ -320,11 +311,6 @@ ATimeBeaconGenerator* AChessOperator::GetCurrentTimeBeaconGenerator()
     }
 
     return nullptr;
-}
-
-ATimeBeaconGenerator* AChessOperator::GetFirstTimeBeaconGenerator()
-{
-    return GetFirstActor<ATimeBeaconGenerator>();
 }
 //--------------------------------------------------------------------------------------
 

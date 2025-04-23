@@ -50,7 +50,14 @@ public:
     /* ---   Mouse   --- */
 
     /** Включить события мыши */
-    void EnableMouseEvents(const bool& bControl);
+    FORCEINLINE void EnableMouseEvents(const bool& bControl)
+    {
+        // Выключение реакций от наведения мыши данным контроллером
+        bEnableMouseOverEvents = bControl;
+
+        // Выключение реакций от нажатия мыши данным контроллером
+        bEnableClickEvents = bControl;
+    };
     //-------------------------------------------
 
 

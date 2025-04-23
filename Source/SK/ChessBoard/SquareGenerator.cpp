@@ -211,11 +211,6 @@ void ASquareGenerator::GetSquareSize(const ASquare* iBlock)
     }
 }
 
-FVector ASquareGenerator::GetLocationForSquare(const FIntPoint& iXY) const
-{
-    return FVector(BlockSize.X * iXY.X, BlockSize.Y * iXY.Y, BlockSize.Z) - PointOffset + GetActorLocation();
-}
-
 void ASquareGenerator::CreatStageTrigger()
 {
     if (StageTriggerType)
@@ -265,15 +260,6 @@ FVector ASquareGenerator::GetLocationForStageTrigger()
         GetActorLocation().Y,
         GetActorLocation().Z);
 }
-
-FVector ASquareGenerator::GetScaleForStageTrigger()
-{
-    // Возврат размера: Весь ряд
-    return FVector(
-        0.5f,
-        NumberAlongAxes.Y - 1,
-        1.0);
-}
 //--------------------------------------------------------------------------------------
 
 
@@ -292,36 +278,6 @@ void ASquareGenerator::SetSquareData(ASquare* iBlock, FSquareData iData)
 
         iBlock->SetData(iData);
     }
-}
-
-FSquareData ASquareGenerator::SquareDataGeneration(const FIntPoint& iXY)
-{
-    FSquareData rData;
-
-    rData.PositionNumber = iXY;
-    rData.TypeBlockMaterial = GetMaterialNumber(iXY);
-
-    return rData;
-}
-
-bool ASquareGenerator::GetMaterialNumber(const FIntPoint& iXY)
-{
-    return bool((iXY.X + iXY.Y) % 2) != bWhiteSquareFirst;
-}
-//--------------------------------------------------------------------------------------
-
-
-
-/* ---   Get Data   --- */
-
-FSquareArray2D* ASquareGenerator::GetPointerToAllSquares()
-{
-    return &TDArraySquares;
-}
-
-void ASquareGenerator::SetPointerToOperator(AChessOperator* iCurrentOperator)
-{
-    CurrentOperator = iCurrentOperator;
 }
 //--------------------------------------------------------------------------------------
 

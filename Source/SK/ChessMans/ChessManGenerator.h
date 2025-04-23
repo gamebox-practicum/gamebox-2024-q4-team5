@@ -131,7 +131,14 @@ public:
     //
 
     /** Запуск генерации Шахматных фигур по данным из Массива */
-    void CreateGeneratedChessMans(const TArray<FChessManData*>& ChessMansData);
+    FORCEINLINE void CreateGeneratedChessMans(const TArray<FChessManData*>& ChessMansData)
+    {
+        // Создать Шахматную фигуру согласно данным
+        for (auto& lData : ChessMansData)
+        {
+            CreateChessMansFromData(*lData);
+        }
+    };
 
     /** Запуск генерации Шахматных фигур по данным */
     void CreateChessMansFromData(const FChessManData& Data);
@@ -142,32 +149,57 @@ public:
     /* ---   Data   --- */
 
     /** Сохранить двумерный массив указателей на Клетки */
-    void SetPointerToAllSquares(FSquareArray2D* Squares);
+    FORCEINLINE void SetPointerToAllSquares(FSquareArray2D* Squares)
+    {
+        PointerToAllSquares = Squares;
+    };
     // PS: UFUNCTION() для него не работает
 
     /** Получение указателя на все Фигуры Игроков */
-    TArray<ASK_Character*>* GetPointerToAllPlayers();
+    FORCEINLINE TArray<ASK_Character*>* GetPointerToAllPlayers()
+    {
+        return &AllPlayers;
+    };
 
     /** Получение указателя на все Шахматные фигуры */
-    TArray<AChessMan*>* GetPointerToAllChessMans();
+    FORCEINLINE TArray<AChessMan*>* GetPointerToAllChessMans()
+    {
+        return &AllChessMans;
+    };
 
     /** Получение указателя на все доступные Шахматные фигуры */
-    TArray<AChessMan*>* GetPointerToAllAvailableChessMans();
+    FORCEINLINE TArray<AChessMan*>* GetPointerToAllAvailableChessMans()
+    {
+        return &AllAvailableChessMan;
+    };
 
     /** Получение указателя на все Атакующие фигуры */
-    TArray<FAttackingChessMansData>* GetPointerToAttackingChessMans();
+    FORCEINLINE TArray<FAttackingChessMansData>* GetPointerToAttackingChessMans()
+    {
+        return &AttackingChessMans;
+    };
 
     /** Удалить данные о Игроке */
-    void RemovePlayer(ASK_Character* Player);
+    FORCEINLINE void RemovePlayer(ASK_Character* Player)
+    {
+        AllPlayers.Remove(Player);
+    };
 
     /** Удалить данные о Шахматной фигуре */
-    void RemoveChessMan(AChessMan* ChessMan);
+    FORCEINLINE void RemoveChessMan(AChessMan* ChessMan)
+    {
+        AllAvailableChessMan.RemoveSwap(ChessMan);
+        AllChessMans.RemoveSwap(ChessMan);
+    };
 
     /** Обновить данные о доступных Шахматных фигурах */
     void UpdateAllAvailableChessMan();
 
     /** Установить указатель на текущий Оператор */
-    void SetPointerToOperator(AChessOperator* CurrentOperator);
+    FORCEINLINE void SetPointerToOperator(AChessOperator* Operator)
+    {
+        CurrentOperator = Operator;
+    };
     //-------------------------------------------
 
 
@@ -175,7 +207,11 @@ public:
     /* ---   Stage   --- */
 
     /** Добавить генерируемых Шахматных фигур */
-    void AddGeneratedChessMans(UDataTable* PlayersTable, UDataTable* ChessMansTable);
+    FORCEINLINE void AddGeneratedChessMans(UDataTable* iPlayersTable, UDataTable* iChessMansTable)
+    {
+        CreateGeneratedPlayers(iPlayersTable);
+        CreateGeneratedChessMans(iChessMansTable);
+    };
     //-------------------------------------------
 
 

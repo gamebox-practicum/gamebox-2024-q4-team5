@@ -59,11 +59,6 @@ void ADealerHand::Tick(float DeltaTime)
 
 /* ---   Movement   --- */
 
-void ADealerHand::SetCurrentChessManGenerator(AChessManGenerator* iGenerator)
-{
-    CurrentChessManGenerator = iGenerator;
-}
-
 void ADealerHand::MoveToLocation(const FVector& Point)
 {
     if (bOriginalMeaning_ControlSpeedAtStart)

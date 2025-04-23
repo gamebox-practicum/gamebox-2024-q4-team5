@@ -8,7 +8,7 @@
 
 // Structs:
 #include "SK/ChessBoard/SquareStruct.h"
-#include "SK/Core/SK_GameInstance.h"
+//#include "SK/Core/SK_GameInstance.h"
 #include "SK/Tools/Chess_AI/ChessBoardInfo.h"
 #include "ChessOperatorStruct.h"
 
@@ -38,6 +38,7 @@ class AChessMan;
 class ASK_Character;
 class ATimeBeaconGenerator;
 class ATimeBeacon;
+class USK_GameInstance;
 //--------------------------------------------------------------------------------------
 
 
@@ -257,7 +258,10 @@ private:
     ASquareGenerator* GetCurrentSquareGenerator();
 
     /** Получить первый (по порядку на карте) Генератор Клеток */
-    ASquareGenerator* GetFirstSquareGenerator();
+    FORCEINLINE ASquareGenerator* GetFirstSquareGenerator()
+    {
+        return GetFirstActor<ASquareGenerator>();
+    };
     //-------------------------------------------
 
 
@@ -271,7 +275,10 @@ private:
     AChessManGenerator* GetCurrentChessManGenerator();
 
     /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
-    AChessManGenerator* GetFirstChessManGenerator();
+    FORCEINLINE AChessManGenerator* GetFirstChessManGenerator()
+    {
+        return GetFirstActor<AChessManGenerator>();
+    };
     //-------------------------------------------
 
 
@@ -282,7 +289,10 @@ private:
     ATimeBeaconGenerator* GetCurrentTimeBeaconGenerator();
 
     /** Получить первый (по порядку на карте) Генератор Шахматных фигур */
-    ATimeBeaconGenerator* GetFirstTimeBeaconGenerator();
+    FORCEINLINE ATimeBeaconGenerator* GetFirstTimeBeaconGenerator()
+    {
+        return GetFirstActor<ATimeBeaconGenerator>();
+    };
     //-------------------------------------------
 
 

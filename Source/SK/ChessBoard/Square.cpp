@@ -139,17 +139,6 @@ int32 ASquare::GetMaterialType() const
     return oNumType;
 }
 
-void ASquare::SetData(const FSquareData& iData)
-{
-    SquareData = iData;
-    UpdateMaterialByType(SquareData.TypeBlockMaterial);
-}
-
-const FSquareData& ASquare::GetData()
-{
-    return SquareData;
-}
-
 void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
 {
     if (CurrentSquareGenerator)
@@ -182,10 +171,5 @@ void ASquare::OccupySquare(const EWarringPartiesType& iWarringPartiesType)
     //{
     //    BlockMesh->SetCustomDepthStencilValue(0);
     //}
-}
-
-void ASquare::SetPointerToSquareGenerator(ASquareGenerator* iSquareGenerator)
-{
-    CurrentSquareGenerator = iSquareGenerator;
 }
 //--------------------------------------------------------------------------------------

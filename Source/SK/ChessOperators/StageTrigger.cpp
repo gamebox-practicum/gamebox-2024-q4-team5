@@ -66,13 +66,3 @@ void AStageTrigger::NotifyActorBeginOverlap(AActor* OtherActor)
     }
 }
 //--------------------------------------------------------------------------------------
-
-
-
-/* ---   Trigger   --- */
-
-void AStageTrigger::SetPointerToOperator(AChessOperator* iCurrentOperator)
-{
-    CurrentOperator = iCurrentOperator;
-}
-//--------------------------------------------------------------------------------------

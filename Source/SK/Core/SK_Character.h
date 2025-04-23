@@ -155,7 +155,10 @@ public:
     void EventOnMove();
 
     /** Получить текущую позицию на Шахматной доске */
-    FIntPoint GetCurrentPosition() const;
+    FORCEINLINE FIntPoint GetCurrentPosition() const
+    {
+        return CurrentPosition;
+    };
     //-------------------------------------------
 
 
@@ -167,10 +170,16 @@ public:
     void PlayerMovesSequence(const bool& bIsPlayersMove);
 
     /** Установить указатель на текущий Оператор */
-    void SetPointerToOperator(AChessOperator* CurrentOperator);
+    FORCEINLINE void SetPointerToOperator(AChessOperator* Operator)
+    {
+        CurrentOperator = Operator;
+    };
 
     /** Записать Указатель на "родительский" Генератор Шахматных фигур */
-    void SetCurrentChessManGenerator(AChessManGenerator* Generator);
+    FORCEINLINE void SetCurrentChessManGenerator(AChessManGenerator* Generator)
+    {
+        CurrentChessManGenerator = Generator;
+    };
     //-------------------------------------------
 
 
@@ -178,7 +187,15 @@ public:
     /* ---   Rotation   --- */
 
     /** Поворот в сторону игрока с учётом выбранного типа поворота */
-    void RotateToActor(AActor* Actor);
+    FORCEINLINE void RotateToActor(AActor* Actor)
+    {
+        if (Actor)
+        {
+            ActorForRotation = Actor;
+
+            bPlayerControlLock = true;
+        }
+    };
     //-------------------------------------------
 
 
@@ -186,7 +203,10 @@ public:
     /* ---   Death   --- */
 
     /** Установить указатель на текущую Руку Дилера */
-    void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+    FORCEINLINE void SetCurrentDealerHand(ADealerHand* DealerHand)
+    {
+        CurrentDealerHand = DealerHand;
+    };
 
     /** Запуск смерти от Руки Дилера */
     void DeathByDealerHand();

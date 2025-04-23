@@ -222,10 +222,16 @@ public:
     void SetCurrentSquare(ASquare* NewSquare);
 
     /** Установить указатель на текущий Оператор */
-    void SetPointerToOperator(AChessOperator* CurrentOperator);
+    FORCEINLINE void SetPointerToOperator(AChessOperator* Operator)
+    {
+        CurrentOperator = Operator;
+    };
 
     /** Установить указатель на текущую Руку Дилера */
-    void SetCurrentDealerHand(ADealerHand* CurrentDealerHand);
+    FORCEINLINE void SetCurrentDealerHand(ADealerHand* DealerHand)
+    {
+        CurrentDealerHand = DealerHand;
+    };
 
     /** Проверка и изменение типа перемещения */
     void CheckMovementType(ASquare* NewSquare);
@@ -249,7 +255,10 @@ public:
     /* ---   Death   --- */
 
     /** Записать Указатель на "родительский" Генератор Шахматных фигур */
-    void SetCurrentChessManGenerator(AChessManGenerator* Generator);
+    FORCEINLINE void SetCurrentChessManGenerator(AChessManGenerator* Generator)
+    {
+        CurrentChessManGenerator = Generator;
+    };
     //-------------------------------------------
 
 

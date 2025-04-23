@@ -18,30 +18,6 @@ void ASK_GameMode::BeginPlay()
 
 
 
-/* ---   Events   --- */
-
-void ASK_GameMode::SetWinningGame()
-{
-    bIsGameOver = true;
-
-    EventWinningGame();
-}
-
-void ASK_GameMode::SetLosingGame()
-{
-    bIsGameOver = true;
-
-    EventLosingGame();
-}
-
-const bool* ASK_GameMode::GetFlagGameOver() const
-{
-    return &bIsGameOver;
-}
-//--------------------------------------------------------------------------------------
-
-
-
 /* ---   Focus   --- */
 
 void ASK_GameMode::OnWindowFocusChanged(const bool bIsFocused)

@@ -119,7 +119,15 @@ private:
     //
 
     /** Получить локацию Маяка с указанным индексом массива */
-    FVector GetLocationForTimeBeacon(const int32& Ind);
+    FORCEINLINE FVector GetLocationForTimeBeacon(const int32& Ind)
+    {
+        // Очерёдность индекса: Слева направо, снизу вверх
+        return FVector(
+            BlockSize.X * (Ind / 2),
+            (BlockSize.Y * (NumberOfSquaresAlongAxes.Y + 1) / 2) * (Ind % 2 ? 1 : -1), // Определение по оси Y с учётом стороны
+            0)
+            + GetActorLocation(); // Добавление текущей позиции Генератора
+    };
     //-------------------------------------------
 
 

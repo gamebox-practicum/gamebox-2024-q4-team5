@@ -82,13 +82,4 @@ void ASK_PlayerController::SetMouseToCenter()
         }
     }
 }
-
-void ASK_PlayerController::EnableMouseEvents(const bool& bControl)
-{
-    // Выключение реакций от наведения мыши данным контроллером
-    bEnableMouseOverEvents = bControl;
-
-    // Выключение реакций от нажатия мыши данным контроллером
-    bEnableClickEvents = bControl;
-}
 //--------------------------------------------------------------------------------------

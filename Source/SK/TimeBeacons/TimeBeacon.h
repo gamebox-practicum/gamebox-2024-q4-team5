@@ -65,13 +65,22 @@ public:
     /* ---   Timer   --- */
 
     /** Записать значения времени для Таймера */
-    void SetTimeForTimer(const float& Time);
+    FORCEINLINE void SetTimeForTimer(const float& Time)
+    {
+        EventSetTimeForTimer(Time);
+    };
 
     /** Запустить Таймер */
-    void PlayTimer();
+    FORCEINLINE void PlayTimer()
+    {
+        EventPlayTimer();
+    };
 
     /** Остановить Таймер */
-    void StopTimer();
+    FORCEINLINE void StopTimer()
+    {
+        EventStopTimer();
+    };
     //-------------------------------------------
 
 
